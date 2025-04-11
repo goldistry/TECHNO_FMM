@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\MajorFinderController;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [MajorFinderController::class, 'index'])->name('chatbot.index');
