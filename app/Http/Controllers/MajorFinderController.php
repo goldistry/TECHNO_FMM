@@ -23,7 +23,7 @@ class MajorFinderController extends Controller
                     'Pertanyaan 8 Bakat & Minat',
 
                 ],
-                'summary' => '', // Summary akan diisi oleh JavaScript berdasarkan input
+                'summary' => '', //summary diisi pake JavaScript based on input
             ],
             'keinginan_ortu' => [
                 'label' => 'Keinginan Orang Tua',
@@ -34,7 +34,7 @@ class MajorFinderController extends Controller
                     'Pertanyaan 4 Keinginan Orang Tua',
 
                 ],
-                'summary' => '', // Summary akan diisi oleh JavaScript berdasarkan input
+                'summary' => '', 
             ],
             'financial' => [
                 'label' => 'FINANCIAL',
@@ -107,8 +107,8 @@ class MajorFinderController extends Controller
         ];
 
         $overallSummary = 'Summary keseluruhan akan muncul di sini setelah Anda berinteraksi dengan kategori.';
-        $bakatMinatMatch = 85; // Contoh persentase berdasarkan analisis
-        $keinginanOrtuMatch = 70; // Contoh persentase berdasarkan analisis
+        $bakatMinatMatch = 85; // ex. of persentase berdasarkan analisis
+        $keinginanOrtuMatch = 70; // ex. of persentase berdasarkan analisis
         $kompromiJurusan = 'Desain Grafis dengan fokus Multimedia atau Animasi';
 
         return view('chatbot', compact('categories', 'overallSummary', 'bakatMinatMatch', 'keinginanOrtuMatch', 'kompromiJurusan'));

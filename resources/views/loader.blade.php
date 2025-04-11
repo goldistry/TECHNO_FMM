@@ -1,16 +1,15 @@
 <style>
-  /* Loader Overlay */
   #loader-overlay {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background-color: rgba(248, 241, 229, 0.8); /* Latar belakang lembut seperti halaman */
+      background-color: rgba(248, 241, 229, 0.8); 
       display: flex;
       justify-content: center;
       align-items: center;
-      z-index: 9999; /* Pastikan di atas konten lain */
+      z-index: 9999;
       transition: opacity 0.5s ease-out;
   }
 
@@ -18,13 +17,13 @@
       border-radius: 50%;
       width: 60px;
       height: 60px;
-      border: 6px solid #a8c778; /* Hijau muda sebagai border utama */
-      border-top-color: #fd7205; /* Oranye sebagai warna animasi */
+      border: 6px solid #a8c778; 
+      border-top-color: #fd7205; 
       animation: spin 1s linear infinite;
   }
 
   .loader-text {
-      color: #7f9c53; /* Hijau tua untuk teks */
+      color: #7f9c53; 
       font-size: 1.2rem;
       margin-top: 16px;
   }
@@ -51,12 +50,11 @@
 <script>
   document.addEventListener('DOMContentLoaded', function() {
       const loaderOverlay = document.getElementById('loader-overlay');
-      // Sembunyikan loader setelah halaman selesai dimuat (bisa disesuaikan waktunya)
       setTimeout(() => {
           loaderOverlay.classList.add('fade-out');
           setTimeout(() => {
               loaderOverlay.style.display = 'none';
-          }, 500); // Tunggu animasi fade-out selesai
-      }, 1500); // Sesuaikan durasi loader di sini (dalam milidetik)
+          }, 500); 
+      }, 1500); 
   });
 </script>

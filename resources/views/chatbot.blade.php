@@ -1,12 +1,9 @@
 @extends('layout')
 @section('content')
     <style>
-        /* Gaya tambahan untuk tampilan chatbot-like */
         #question-console {
-            /* background-white rounded-lg shadow-md p-6 mb-8 hidden; */
             max-height: 400px;
             overflow-y: auto;
-            /* border: 1px solid #e2e8f0; */
         }
 
         .chatbot-message {
@@ -103,7 +100,7 @@
                 <h2 class="text-2xl font-semibold text-[#fd7205] mb-4">Summary Keseluruhan</h2>
                 <p class="text-gray-600" id="overall-summary-text">
                     @if (!empty($userAnswers['Bakat & Minat']) && !empty($userAnswers['Keinginan Orang Tua']))
-                        {{-- Persentase dan jurusan kompromi akan diisi oleh JavaScript --}}
+                        {{-- persentase dan jurusan kompromi --}}
                     @else
                         Silakan jawab pertanyaan Bakat & Minat dan Keinginan Orang Tua terlebih dahulu.
                     @endif
@@ -169,7 +166,7 @@
                 chatHistory.appendChild(botMessage);
                 userInput.focus();
             } else {
-                // Semua pertanyaan terjawab, tampilkan tombol summary
+                // kalau semua pertanyaan terjawab, tampilkan tombol summary
                 const summaryButton = document.createElement('button');
                 summaryButton.textContent = 'Lihat Summary Kategori';
                 summaryButton.className =
@@ -190,7 +187,7 @@
                 userInput.value = '';
                 currentQuestionIndex++;
                 displayNextQuestion();
-                chatHistory.scrollTop = chatHistory.scrollHeight; // Scroll ke bawah
+                chatHistory.scrollTop = chatHistory.scrollHeight; //scroll ke bawah
             }
         }
 
@@ -224,9 +221,9 @@
         function updateOverallSummary() {
             let bakatMinatSummary = '';
             let keinginanOrtuSummary = '';
-            let bakatMinatMatch = {{ $bakatMinatMatch }}; // Ambil nilai dari controller
-            let keinginanOrtuMatch = {{ $keinginanOrtuMatch }}; // Ambil nilai dari controller
-            let kompromiJurusan = "{{ $kompromiJurusan }}"; // Ambil nilai dari controller
+            let bakatMinatMatch = {{ $bakatMinatMatch }}; 
+            let keinginanOrtuMatch = {{ $keinginanOrtuMatch }}; 
+            let kompromiJurusan = "{{ $kompromiJurusan }}"; 
 
             if (userAnswers['Bakat & Minat'] && userAnswers['Bakat & Minat'].length > 0) {
                 bakatMinatSummary =
