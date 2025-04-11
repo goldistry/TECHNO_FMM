@@ -3,10 +3,10 @@
 @section('title', 'Info Jurusan')
 
 @section('content')
-  <div class="py-12 px-4 text-white text-center rounded-bl-[4rem] rounded-br-[4rem]" style="background-color: var(--green);">
+  <div class="py-12 px-4 text-white text-center rounded-bl-[4rem] rounded-br-[4rem]" style="background-color: var(--light-green);">
     <h1 class="text-3xl md:text-4xl font-bold mt-2">
       Temukan Jurusan yang Paling Cocok Untukmu <br>
-      <span style="color: var(--primary);">bersama Find My Major</span>
+      <span style="color: var(--primary);">Bersama Find My Major</span>
     </h1>
 
     <!-- Search Bar -->

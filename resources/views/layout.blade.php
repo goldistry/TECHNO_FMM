@@ -18,6 +18,8 @@
             --green: #7f9c53;
             --beige: #f8f1e5;
             --light-beige: #fffdf9;
+            --light-green: #a8c778;
+            --light-orange:#ff933c;
         }
 
         body {
