@@ -81,7 +81,7 @@
 </head>
 
 <body class="p-8">
-    {{-- @include('loader') --}}
+    @include('loader')
     <div class="min-h-screen overflow-x-hidden bg-neutral text-white">
         @yield('content')
     </div>

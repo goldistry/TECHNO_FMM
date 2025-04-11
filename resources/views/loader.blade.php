@@ -1,49 +1,62 @@
-<title>Loader Example</title>
-<!-- Tailwind CDN -->
-<script src="https://cdn.tailwindcss.com"></script>
 <style>
-  /* Typewriter effect for the text */
-  .typewriter {
-    overflow: hidden;
-    border-right: 0.15em solid white;
-    white-space: nowrap;
-    animation: typing 2s steps(13, end), blink-caret 0.75s step-end infinite;
+  /* Loader Overlay */
+  #loader-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(248, 241, 229, 0.8); /* Latar belakang lembut seperti halaman */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999; /* Pastikan di atas konten lain */
+      transition: opacity 0.5s ease-out;
   }
-  @keyframes typing {
-    from { width: 0; }
-    to { width: 13ch; }
+
+  .loader-spinner {
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      border: 6px solid #a8c778; /* Hijau muda sebagai border utama */
+      border-top-color: #fd7205; /* Oranye sebagai warna animasi */
+      animation: spin 1s linear infinite;
   }
-  @keyframes blink-caret {
-    from, to { border-color: transparent; }
-    50% { border-color: white; }
+
+  .loader-text {
+      color: #7f9c53; /* Hijau tua untuk teks */
+      font-size: 1.2rem;
+      margin-top: 16px;
   }
-  /* Slide-up animation for the loader overlay */
-  @keyframes slideUp {
-    0% { transform: translateY(0); }
-    100% { transform: translateY(-100vh); }
+
+  @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
   }
-  .slide-up {
-    animation: slideUp 1s ease-in-out forwards;
-    /* Removed animation-delay to let JS handle the timing */
+
+  .fade-out {
+      opacity: 0;
+      visibility: hidden;
   }
 </style>
-</head>
 
-<!-- Loader overlay -->
-<div id="loader" class="fixed inset-0 bg-black flex items-center justify-center z-50">
-  <span id="loader-text" class="inline-block text-white text-4xl font-bold typewriter">
-    Welcome to...
-  </span>
+
+<div id="loader-overlay">
+  <div class="flex flex-col items-center">
+      <div class="loader-spinner"></div>
+      <p class="loader-text">Memuat...</p>
+  </div>
 </div>
 
 <script>
-  // Wait 2.5s for the typewriter effect to finish, then trigger the slide-up
-  setTimeout(() => {
-    const loader = document.getElementById('loader');
-    loader.classList.add('slide-up');
-    // Remove the loader after the slide-up animation completes (1 second)
-    setTimeout(() => {
-      loader.remove();
-    }, 1000);
-  }, 2500);
+  document.addEventListener('DOMContentLoaded', function() {
+      const loaderOverlay = document.getElementById('loader-overlay');
+      // Sembunyikan loader setelah halaman selesai dimuat (bisa disesuaikan waktunya)
+      setTimeout(() => {
+          loaderOverlay.classList.add('fade-out');
+          setTimeout(() => {
+              loaderOverlay.style.display = 'none';
+          }, 500); // Tunggu animasi fade-out selesai
+      }, 1500); // Sesuaikan durasi loader di sini (dalam milidetik)
+  });
 </script>
