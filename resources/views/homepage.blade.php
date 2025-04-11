@@ -84,7 +84,7 @@
         <p class="text-gray-800 max-w-xl text-md">
             Dapatkan detail informasi seputar jurusanmu dengan mudah dan cepat melalui Find My Major!
         </p>
-        <a href="{{route('infoJurusan')}}" class="text-center inline-block px-6 py-3 rounded-full border border-[var(--green)] text-[var(--green)] font-semibold hover:bg-[var(--beige)] hover:shadow-md transition duration-300">
+        <a href="{{route('majors.index')}}" class="text-center inline-block px-6 py-3 rounded-full border border-[var(--green)] text-[var(--green)] font-semibold hover:bg-[var(--beige)] hover:shadow-md transition duration-300">
             Lihat Info Jurusan
         </a>
     </div>
