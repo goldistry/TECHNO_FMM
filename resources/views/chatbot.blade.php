@@ -61,7 +61,7 @@
     </head>
 
     <div class="container min-h-[80%] mx-auto p-8 bg-[#f8f1e5]">
-        <h1 class="text-3xl font-bold text-center text-[#7f9c53] mb-8">Find My Major Chatbot</h1>
+        <h1 class="text-3xl font-bold text-center text-[#7f9c53] mb-8">AI MATE</h1>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
             @foreach ($categories as $id => $category)
