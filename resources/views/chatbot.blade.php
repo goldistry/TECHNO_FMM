@@ -65,25 +65,19 @@
 
         .header-ai img {
             display: block;
-            /* Prevent extra space below the image */
         }
 
         .welcome-bubble {
             position: absolute;
             top: 10px;
-            /* Sesuaikan posisi vertikal bubble */
             left: 110%;
-            /* Sesuaikan posisi horizontal awal bubble */
             background-color: #a8c778;
             width: 300%;
             color: white;
             padding: 8px 12px;
             border-radius: 15px;
             box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
-            /* white-space: nowrap; */
-            /* Mencegah teks turun ke baris baru */
             overflow: hidden;
-            /* Untuk menyembunyikan kursor saat belum mulai */
         }
 
         .typed-cursor {
@@ -169,7 +163,6 @@
                 <h2 class="text-2xl font-semibold text-[#fd7205] mb-4">Summary Keseluruhan</h2>
                 <p class="text-gray-600" id="overall-summary-text">
                     @if (!empty($userAnswers['Bakat & Minat']) && !empty($userAnswers['Keinginan Orang Tua']))
-                        {{-- persentase dan jurusan kompromi --}}
                     @else
                         Silakan jawab pertanyaan Bakat & Minat dan Keinginan Orang Tua terlebih dahulu.
                     @endif
@@ -253,7 +246,6 @@
                 chatHistory.appendChild(botMessage);
                 userInput.focus();
             } else {
-                // kalau semua pertanyaan terjawab, tampilkan tombol summary
                 const summaryButton = document.createElement('button');
                 summaryButton.textContent = 'Lihat Summary Kategori';
                 summaryButton.className =
@@ -341,8 +333,8 @@
 
             const summaryMessage = document.createElement('div');
             summaryMessage.className =
-                'chatbot-message bot-message self-start mt-2 whitespace-pre-line'; // Tambahkan whitespace-pre-line
-            summaryMessage.innerHTML = summaryText; // GANTI textContent menjadi innerHTML
+                'chatbot-message bot-message self-start mt-2 whitespace-pre-line'; 
+            summaryMessage.innerHTML = summaryText; 
             chatHistory.appendChild(summaryMessage);
             chatHistory.scrollTop = chatHistory.scrollHeight;
             updateOverallSummary();
