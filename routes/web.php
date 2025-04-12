@@ -3,9 +3,12 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MajorFinderController;
 use App\Http\Controllers\MajorController;
+use App\Http\Controllers\TestimonialController;
 
 Route::get('/', [MajorFinderController::class, 'index'])->name('chatbot.index');
 Route::get('/home', function () {return view('homepage');});
 Route::get('/jurusan', [MajorController::class, 'index'])->name('majors.index');
 Route::get('/jurusan/{id}', [MajorController::class, 'show'])->name('majors.show');
+Route::get('/testimonials', [TestimonialController::class, 'index'])->name('testimonials.index');
+Route::post('/testimonials', [TestimonialController::class, 'store'])->name('testimonials.store');
 
