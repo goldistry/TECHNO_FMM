@@ -35,28 +35,17 @@
 
     {{-- SwiperJS --}}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />   
-
+    <link href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap');
-
-        * {
-            font-family: 'Jost', sans-serif;
-            --neutral: #292A67;
-            --yellow: #F6CE3E;
-            --red: #E62D63;
-            --red-lg: #ff6e9a;
-            --magenta: #902680;
-            --purple: #633F92;
-            --purple-dark: #5500a4;
-            --tosca: #4CB79C;
-            --tosca-lg: rgb(74, 231, 192);
-            --yellow-grad: linear-gradient(45deg, var(--yellow) 0%, var(--magenta) 100%);
-            --tosca-grad: linear-gradient(45deg, var(--tosca) 0%, var(--purple) 100%);
-            --ig-grad: linear-gradient(45deg, #ffde85 0%, #f7792a 30%, #f7504f 40%, #d82b81 60%, #d82b81 75%, #9536c2 100%);
-            --line-grad: linear-gradient(45deg, #1a6c2a, #4cc764);
-            --yt-grad: linear-gradient(45deg, #f76161, #dc2626);
-            --spotify-grad: linear-gradient(45deg, #1DB954, #191414);
-            --tiktok-grad: linear-gradient(45deg, #ff0050, #191414 40%, #191414 60%, #00f2ea);
+        :root {
+            --primary: #fd7205;
+            --blue: #0066ff;
+            --blue-dark: #0056c9;
+            --green: #7f9c53;
+            --beige: #f8f1e5;
+            --light-beige: #fffdf9;
+            --light-green: #a8c778;
+            --light-orange:#ff933c;
         }
 
 
@@ -68,13 +57,9 @@
             font-style: normal;
         }
 
-        .swal2-confirm {
-            background: rgb(46, 143, 255) !important;
-        }
-
-        .swal2-deny,
-        .swal2-cancel {
-            background: rgb(255, 79, 79) !important;
+        body {
+            font-family: 'Jost', sans-serif;
+            background-color: var(--beige);
         }
     </style>
     @yield('head')

@@ -37,11 +37,11 @@
             </p>
             <div class="mt-8 flex flex-col sm:flex-row gap-4">
                 <!-- Ref chatbot -->
-                <a href="#" class="w-full sm:w-auto bg-[var(--blue)] text-white px-6 py-3 rounded-full text-lg font-semibold text-center hover:bg-[var(--blue-dark)] transition">
+                <a href="{{ Route('chatbot.index') }}" class="w-full sm:w-auto bg-[var(--blue)] text-white px-6 py-3 rounded-full text-lg font-semibold text-center hover:bg-[var(--blue-dark)] transition">
                     Coba Sekarang
                 </a>
                 <!-- Ref QnA/forum(?) -->
-                <a href="#" class="group w-full sm:w-auto border border-[var(--blue)] text-[var(--blue)] px-6 py-3 rounded-full text-lg font-semibold text-center hover:bg-white transition inline-flex items-center justify-center">
+                <a href="{{ Route('chatbot.index') }}" class="group w-full sm:w-auto border border-[var(--blue)] text-[var(--blue)] px-6 py-3 rounded-full text-lg font-semibold text-center hover:bg-white transition inline-flex items-center justify-center">
                     Tanya lebih lanjut
                     <span class="ml-2 transform transition-transform duration-300 group-hover:translate-x-1">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
