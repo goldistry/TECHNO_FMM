@@ -65,9 +65,9 @@
     @yield('head')
 </head>
 
-<body class="p-8">
+<body>
     @include('loader')
-    <div class="min-h-screen overflow-x-hidden bg-neutral text-white">
+    <div class="min-h-screen overflow-x-hidden bg-neutral text-white mt-8">
         @include('utils.header')
         <div class="mt-4">
             @yield('content')

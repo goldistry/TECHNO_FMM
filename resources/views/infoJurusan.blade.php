@@ -30,7 +30,7 @@
             <button class="absolute top-2 right-2 bg-white rounded-full p-2 shadow hover:bg-gray-100">❤️</button>
           </div>
           <div class="p-4">
-            <h4 class="text-lg font-semibold mb-1">{{ $major['title'] }}</h4>
+            <h4 class="text-black text-lg font-semibold mb-1">{{ $major['title'] }}</h4>
             <p class="text-sm text-gray-600">{{ $major['short_desc'] }}</p>
             <a href="#" class="mt-4 inline-block font-semibold hover:underline" style="color: var(--blue);">
               Selengkapnya →
