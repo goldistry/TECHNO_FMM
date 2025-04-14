@@ -164,7 +164,7 @@
                 <p class="text-gray-600" id="overall-summary-text">
                     @if (!empty($userAnswers['Bakat & Minat']) && !empty($userAnswers['Keinginan Orang Tua']))
                     @else
-                        Silakan jawab pertanyaan Bakat & Minat dan Keinginan Orang Tua terlebih dahulu.
+                        Silakan jawab pertanyaan dari minimal dua kategori terlebih dahulu.
                     @endif
                 </p>
                 <button onclick="hideOverallSummary()"
