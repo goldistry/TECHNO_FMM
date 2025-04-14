@@ -119,7 +119,7 @@
             <img src="{{ asset('logoAI\AI.png') }}" alt="AI Mate Logo" style="width: 150px; height: auto;">
             <div class="welcome-bubble text-xl"><span class="auto-type"></span></div>
         </div>
-        <h1 class="text-6xl font-bold text-center text-[#7f9c53] mb-8">AI MATE</h1>
+        <h1 class="text-6xl font-bold text-center text-[#fd7205] mb-8">AI <span class="text-[#7f9c53]">MATE</span></h1>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
             @foreach ($categories as $id => $category)
