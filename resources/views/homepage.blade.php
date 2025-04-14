@@ -26,7 +26,7 @@
 
 @section('content')
     <!-- Hero sectio -->
-    <div class="text-center md:text-left m-5 px-6 py-16 rounded-[32px] overflow-hidden shadow-md hero-bg">
+    <div class="text-center md:text-left mx-5 my-20 px-6 py-16 rounded-[32px] overflow-hidden shadow-md hero-bg">
         <div class="bg-white/20 p-8 md:p-12 rounded-[24px] text-white max-w-3xl">
             <h2 class="text-4xl md:text-5xl font-bold leading-tight">
                 Jurusan Tepat<br>

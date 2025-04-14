@@ -114,7 +114,7 @@
             }
         }
     </style>
-    <div class="container min-h-[80%] mx-auto p-8 bg-[#f8f1e5]">
+    <div class="container min-h-[80%] mx-auto p-8 bg-[#f8f1e5] mt-12">
         <div class="header-ai">
             <img src="{{ asset('logoAI\AI.png') }}" alt="AI Mate Logo" style="width: 150px; height: auto;">
             <div class="welcome-bubble text-xl"><span class="auto-type"></span></div>
