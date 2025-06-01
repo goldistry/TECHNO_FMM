@@ -1,66 +1,112 @@
-@extends('layout')
+@extends('layout') {{-- Sesuaikan jika nama layout Anda berbeda --}}
+
 @section('content')
     <style>
+        /* Styling dari contoh awal Anda - bisa dipindahkan ke file CSS terpisah */
         #question-console {
-            max-height: 400px;
+            max-height: 450px;
+            /* Sedikit lebih tinggi untuk summary */
             overflow-y: auto;
+            display: flex;
+            flex-direction: column;
         }
 
         .chatbot-message {
             padding: 8px 12px;
             margin-bottom: 8px;
-            border-radius: 8px;
+            border-radius: 12px;
+            /* Lebih rounded */
+            max-width: 80%;
+            word-wrap: break-word;
         }
 
         .user-message {
             background-color: #edf2f7;
+            /* Tailwind gray-200 */
             color: #2d3748;
+            /* Tailwind gray-800 */
             align-self: flex-end;
+            margin-left: auto;
+            /* Dorong ke kanan */
         }
 
         .bot-message {
             background-color: #a8c778;
             color: white;
-            font-weight: bold;
+            font-weight: normal;
+            /* Normal weight untuk pertanyaan, bold untuk judul summary */
             align-self: flex-start;
+            margin-right: auto;
+            /* Dorong ke kiri */
+        }
+
+        .bot-message.summary-title {
+            font-weight: bold;
+        }
+
+        .bot-message.loading-message,
+        .bot-message.error-message {
+            font-style: italic;
+        }
+
+        .bot-message.error-message {
+            background-color: #fed7d7;
+            /* Tailwind red-200 */
+            color: #c53030;
+            /* Tailwind red-700 */
         }
 
         .input-area {
             display: flex;
             gap: 8px;
             margin-top: 16px;
+            padding-top: 10px;
+            /* Beri jarak dari chat history */
+            border-top: 1px solid #e2e8f0;
+            /* Garis pemisah tipis */
         }
 
         .input-area input[type="text"] {
             flex-grow: 1;
-            padding: 8px;
+            padding: 10px;
             border: 1px solid #cbd5e0;
-            border-radius: 4px;
-            color: white;
+            /* Tailwind gray-300 */
+            border-radius: 8px;
+            color: #2d3748;
+            /* Warna teks input agar kontras */
+        }
+
+        .input-area input[type="text"]::placeholder {
+            color: #a0aec0;
+            /* Tailwind gray-500 */
         }
 
         .input-area button {
-            padding: 8px 16px;
+            padding: 10px 16px;
             background-color: #fd7205;
             color: white;
             border: none;
-            border-radius: 4px;
+            border-radius: 8px;
             cursor: pointer;
             transition: background-color 0.2s ease-in-out;
         }
 
         .input-area button:hover {
-            background-color: #7f9c53;
+            background-color: #e95e00;
+            /* Warna hover lebih gelap */
         }
 
-        .input-area input::placeholder {
-            color: #cccccc;
-            opacity: 1;
+        .input-area button:disabled {
+            background-color: #fbd38d;
+            /* Tailwind orange-300 */
+            cursor: not-allowed;
         }
+
 
         .header-ai {
             position: relative;
             display: inline-block;
+            margin-bottom: 20px;
         }
 
         .header-ai img {
@@ -70,335 +116,733 @@
         .welcome-bubble {
             position: absolute;
             top: 10px;
-            left: 110%;
+            left: calc(100% + 15px);
+            /* Posisi bubble dari logo AI */
             background-color: #a8c778;
-            width: 300%;
+            min-width: 280px;
+            /* Lebar minimum agar teks cukup */
+            max-width: 400px;
+            /* Lebar maksimum */
             color: white;
-            padding: 8px 12px;
+            padding: 10px 15px;
             border-radius: 15px;
             box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
+            font-size: 0.95rem;
+            /* Sesuaikan ukuran font bubble */
+            line-height: 1.4;
         }
 
         .typed-cursor {
             opacity: 1;
-            -webkit-animation: blink 0.7s infinite;
             animation: blink 0.7s infinite;
         }
 
-        @-webkit-keyframes blink {
-            0% {
+        @keyframes blink {
+
+            0%,
+            100% {
                 opacity: 1;
             }
 
             50% {
                 opacity: 0;
-            }
-
-            100% {
-                opacity: 1;
             }
         }
 
-        @keyframes blink {
-            0% {
-                opacity: 1;
-            }
+        .category-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            /* Tailwind shadow-md */
+            padding: 20px;
+            cursor: pointer;
+            transition: box-shadow 0.3s ease-in-out, transform 0.2s ease-in-out;
+        }
 
-            50% {
-                opacity: 0;
-            }
+        .category-card:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            /* Tailwind shadow-lg */
+            transform: translateY(-3px);
+        }
 
-            100% {
-                opacity: 1;
+        .category-card h2 {
+            font-size: 1.25rem;
+            /* text-xl */
+            font-weight: 600;
+            /* semibold */
+            color: #fd7205;
+            margin-bottom: 8px;
+        }
+
+        .category-card p {
+            color: #718096;
+            /* gray-600 */
+            font-size: 0.875rem;
+            /* text-sm */
+        }
+
+        #category-selection-modal,
+        #overall-summary-modal {
+            /* Menggunakan modal agar lebih fokus */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+            /* Lebar maksimum modal */
+        }
+
+        .modal-content h2 {
+            font-size: 1.5rem;
+            /* text-2xl */
+            font-weight: 600;
+            /* semibold */
+            color: #4a5568;
+            /* gray-700 */
+            margin-bottom: 16px;
+        }
+
+        .question-option-button {
+            background-color: #a8c778;
+            color: white;
+            font-weight: bold;
+            padding: 10px 15px;
+            border-radius: 6px;
+            transition: background-color 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            border: none;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .question-option-button:hover {
+            background-color: #7f9c53;
+        }
+
+        .question-option-button:disabled {
+            background-color: #cbd5e0;
+            /* gray-300 */
+            color: #a0aec0;
+            /* gray-500 */
+            cursor: not-allowed;
+        }
+
+        .question-option-button img {
+            width: 20px;
+            height: auto;
+        }
+
+        .modal-close-button {
+            background-color: #e2e8f0;
+            /* gray-300 */
+            color: #4a5568;
+            /* gray-700 */
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: 6px;
+            margin-top: 20px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .modal-close-button:hover {
+            background-color: #cbd5e0;
+            /* gray-400 */
+        }
+
+        .user-info {
+            text-align: right;
+            margin-bottom: 20px;
+            font-size: 1rem;
+            color: #4A5568;
+            /* gray-700 */
+        }
+
+        .user-info strong {
+            color: #2D3748;
+            /* gray-800 */
+        }
+
+        .user-info img {
+            width: 20px;
+            height: auto;
+            vertical-align: middle;
+            margin-left: 5px;
+        }
+
+        #overall-summary-content {
+            /* Untuk styling konten summary keseluruhan */
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 10px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        .spinner {
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            width: 16px;
+            height: 16px;
+            animation: spin 1s ease-in-out infinite;
+            display: inline-block;
+            margin-left: 8px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
             }
+        }
+
+        .summary-per-kategori-button {
+            background-color: #ecc94b;
+            /* Tailwind yellow-500 */
+            color: #2d3748;
+        }
+
+        .summary-per-kategori-button:hover {
+            background-color: #d69e2e;
+            /* Tailwind yellow-600 */
         }
     </style>
-    <div class="container min-h-[80%] mx-auto p-8 bg-[#f8f1e5] mt-12">
+
+    <div class="container min-h-[80vh] mx-auto p-4 md:p-8 bg-[#f8f1e5] mt-12 rounded-lg shadow-xl">
         <div class="header-ai">
-            <img src="{{ asset('logoAI\AI.png') }}" alt="AI Mate Logo" style="width: 150px; height: auto;">
-            <div class="welcome-bubble text-xl"><span class="auto-type"></span></div>
+            <img src="{{ asset('logoAI/AI.png') }}" alt="AI Mate Logo" style="width: 130px; height: auto;">
+            <div class="welcome-bubble text-base"><span id="typed-welcome"></span></div>
         </div>
-        <h1 class="text-6xl font-bold text-center text-[#fd7205] mb-8">AI <span class="text-[#7f9c53]">MATE</span></h1>
 
+        <div class="user-info">
+            Halo, <strong>{{ Auth::user()->name ?? 'Pengguna' }}</strong>!
+            Koin Anda: <strong id="user-coin-balance">{{ $userCoins }}</strong>
+            <img src="{{ asset('logoAI/coin.png') }}" alt="Koin">
+        </div>
+
+        <h1 class="text-4xl md:text-5xl font-bold text-center text-[#fd7205] mb-8">AI <span
+                class="text-[#7f9c53]">MATE</span></h1>
+        <p class="text-center text-gray-600 mb-10 text-lg">Pilih kategori di bawah untuk menemukan jurusan yang paling cocok
+            untukmu!</p>
+
+        {{-- Daftar Kategori --}}
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-            @foreach ($categories as $id => $category)
-                <div class="bg-white rounded-lg shadow-md p-6 cursor-pointer hover:shadow-lg transition duration-300"
-                    onclick="showCategorySelection('{{ $id }}', {{ count($category['questions']) }})">
-                    <h2 class="text-xl font-semibold text-[#fd7205] mb-2">{{ $category['label'] }}</h2>
-                    <p class="text-gray-500 text-sm">{{ count($category['questions']) }} Pertanyaan</p>
+            @forelse ($categories as $categoryId => $category)
+                <div class="category-card"
+                    onclick="showCategorySelection({{ Illuminate\Support\Js::from($categoryId) }}, {{ Illuminate\Support\Js::from($category['label']) }}, {{ count($category['questions']) }}, {{ $category['cost_per_question'] ?? 15 }})">
+                    <h2>{{ $category['label'] }}</h2>
+                    <p>{{ count($category['questions']) }} Pertanyaan</p>
                 </div>
-            @endforeach
+            @empty
+                <p class="text-center col-span-full text-gray-500">Tidak ada kategori tersedia saat ini.</p>
+            @endforelse
         </div>
 
-        <div id="category-selection" class="bg-white rounded-lg shadow-md p-6 mb-8 hidden">
-            <h2 id="selection-title" class="text-2xl font-semibold text-gray-500 mb-4">Pilih Jumlah Pertanyaan</h2>
-            <div id="question-options" class="grid gap-2 grid-cols-1 md:grid-cols-4 lg:grid-cols-6">
+        {{-- Modal Pemilihan Jumlah Pertanyaan --}}
+        <div id="category-selection-modal" class="hidden">
+            <div class="modal-content">
+                <h2 id="selection-title">Pilih Jumlah Pertanyaan</h2>
+                <div id="question-options-container" class="grid gap-3 grid-cols-2 md:grid-cols-2">
+                    {{-- Opsi akan dimasukkan oleh JavaScript --}}
+                </div>
+                <button onclick="hideCategorySelection()" class="modal-close-button">Kembali</button>
             </div>
-            <button onclick="hideCategorySelection()"
-                class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded focus:outline-none focus:shadow-outline mt-4">Kembali</button>
         </div>
 
-        <div id="question-console" class="hidden flex flex-col bg-[#7f9c53] p-4 rounded-lg mb-4">
-            <h2 id="console-title" class="text-2xl font-semibold text-white mb-4"></h2>
-            <div id="chat-history" class="flex-grow overflow-y-auto mb-4"></div>
+        {{-- Konsol Pertanyaan (Chatbox) --}}
+        <div id="question-console" class="bg-[#f0f4f8] p-4 rounded-lg mb-6 shadow-inner hidden"> {{-- Warna latar chatbox diubah agar kontras --}}
+            <h2 id="console-title" class="text-2xl font-semibold text-[#2d3748] mb-4 text-center"></h2>
+            <div id="chat-history" class="flex-grow overflow-y-auto mb-4 p-2 space-y-3">
+                {{-- Riwayat chat akan muncul di sini --}}
+            </div>
             <div class="input-area">
-                <input type="text" id="user-input" placeholder="Ketik jawabanmu di sini..." class="text-white">
-                <button onclick="processUserInput()">Kirim</button>
+                <input type="text" id="user-input" placeholder="Ketik jawabanmu di sini..." autocomplete="off">
+                <button id="send-button" onclick="processUserInput()">Kirim</button>
             </div>
-            <button onclick="hideQuestionConsole()"
-                class="bg-[#f8f1e5] hover:bg-[#ff933c] text-gray-800 hover:text-white font-semibold py-2 px-4 rounded focus:outline-none focus:shadow-outline mt-4">Tutup</button>
+            <button onclick="hideQuestionConsole()" class="modal-close-button w-full mt-4">Tutup Konsol Kategori</button>
         </div>
 
-        <div class="flex w-full flex-col items-center justify-center mt-8">
-            <button onclick="showOverallSummary()"
-                class="bg-[#ff933c] hover:bg-[#a8c778] text-white font-bold py-3 px-6 rounded-full focus:outline-none min-w-[250px] flex flex-col items-center justify-center">
-                <span class="mb-1">Lihat Summary Keseluruhan</span>
-                <div class="flex items-center gap-2">
-                    <img src="{{ asset('logoAI/coin.png') }}" alt="coin Logo" class="w-5 h-auto">
-                    <span>5 coins</span>
+        {{-- Tombol & Area Summary Keseluruhan --}}
+        <div class="flex w-full flex-col items-center justify-center mt-10">
+            <button id="request-overall-summary-button" onclick="requestOverallSummary()"
+                class="bg-[#ff933c] hover:bg-[#a8c778] text-white font-bold py-3 px-8 rounded-full focus:outline-none min-w-[280px] flex flex-col items-center justify-center text-lg shadow-lg transition-transform transform hover:scale-105">
+                <span class="mb-1">Lihat Rekomendasi Jurusan Final</span>
+                <div class="flex items-center gap-2 text-sm">
+                    <img src="{{ asset('logoAI/coin.png') }}" alt="koin" class="w-5 h-auto">
+                    <span>5 Koin</span> {{-- Biaya summary keseluruhan --}}
                 </div>
             </button>
-            <div id="overall-summary" class="mt-6 bg-white rounded-lg shadow-md p-6 hidden">
-                <h2 class="text-2xl font-semibold text-[#fd7205] mb-4">Summary Keseluruhan</h2>
-                <p class="text-gray-600" id="overall-summary-text">
-                    @if (!empty($userAnswers['Bakat & Minat']) && !empty($userAnswers['Keinginan Orang Tua']))
-                    @else
-                        Silakan jawab pertanyaan dari minimal dua kategori terlebih dahulu.
-                    @endif
-                </p>
-                <button onclick="hideOverallSummary()"
-                    class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded focus:outline-none focus:shadow-outline mt-4">Tutup</button>
+            <div id="overall-summary-content" class="mt-6 w-full max-w-3xl hidden">
+                <h2 class="text-2xl font-semibold text-[#fd7205] mb-4 text-center">Rekomendasi Jurusan Final Untukmu</h2>
+                <div id="overall-summary-text" class="text-gray-700 leading-relaxed">
+                    {{-- Summary keseluruhan akan muncul di sini --}}
+                </div>
+                <button onclick="hideOverallSummaryContainer()" class="modal-close-button w-full mt-4">Tutup Rekomendasi
+                    Final</button>
             </div>
         </div>
     </div>
-
+@endsection
+@section('scripts')
+    <script src="https://unpkg.com/typed.js@2.1.0/dist/typed.umd.js"></script>
     <script>
-        let currentCategoryId = null;
-        let currentCategoryQuestions = [];
-        let currentQuestionIndex = 0;
-        const chatHistory = document.getElementById('chat-history');
-        const userInput = document.getElementById('user-input');
-        const consoleTitle = document.getElementById('console-title');
-        const questionConsole = document.getElementById('question-console');
-        const categorySelection = document.getElementById('category-selection');
-        const questionOptions = document.getElementById('question-options');
-        const selectionTitle = document.getElementById('selection-title');
+        // Data dari Backend (Global)
         const categoriesData = @json($categories);
-        const overallSummaryElement = document.getElementById('overall-summary-text');
-        let userAnswers = {};
+        let currentUserCoins = {{ $userCoins }};
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-        function showCategorySelection(categoryId, totalQuestions) {
-            currentCategoryId = categoryId;
-            currentCategoryQuestions = [...categoriesData[categoryId].questions];
-            selectionTitle.textContent = `Pilih Jumlah Pertanyaan untuk Kategori "${categoriesData[categoryId].label}"`;
-            questionOptions.innerHTML = '';
+        // State Aplikasi (Global)
+        let currentCategoryId = null;
+        let currentCategoryLabel = '';
+        let currentCategoryQuestions = [];
+        let questionsToAsk = [];
+        let currentQuestionIndex = 0;
+        let userAnswersForCurrentCategory = [];
+        let allUserAnswers = {};
 
-            const gridContainer = document.getElementById('question-options');
+        // Elemen DOM (Deklarasikan Global, Isi di DOMContentLoaded)
+        let coinBalanceElement, categorySelectionModal, selectionTitleElement, questionOptionsContainer,
+            questionConsoleElement, consoleTitleElement, chatHistoryElement, userInputElement,
+            sendButton, overallSummaryContentElement, overallSummaryTextElement, requestOverallSummaryButton;
 
-            for (let i = 2; i <= totalQuestions; i++) {
-                const button = document.createElement('button');
-                button.className =
-                    'bg-[#a8c778] hover:bg-[#7f9c53] text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline flex items-center justify-center gap-2 min-w-0';
+        // --- FUNGSI HELPER DAN INTERAKTIF (GLOBAL SCOPE) ---
 
-                const coinImage = document.createElement('img');
-                coinImage.src = "{{ asset('logoAI/coin.png') }}";
-                coinImage.alt = "Coin Logo";
-                coinImage.style.width = '20px';
-                coinImage.style.height = 'auto';
-
-                const textSpan = document.createElement('span');
-                const price = i * 15;
-                textSpan.textContent = `${i} Quest`;
-                const priceSpan = document.createElement('span');
-                priceSpan.textContent = `${price} Coins`;
-
-                button.appendChild(textSpan);
-                button.appendChild(coinImage);
-                button.appendChild(priceSpan);
-                button.onclick = () => startQuestionConsole(i);
-                gridContainer.appendChild(button);
+        function updateCoinBalanceUI(newBalance) {
+            console.log("Updating coin balance UI to:", newBalance);
+            currentUserCoins = newBalance;
+            if (coinBalanceElement) {
+                coinBalanceElement.textContent = currentUserCoins;
+            } else {
+                console.warn("coinBalanceElement not found when trying to update UI.");
             }
-            categorySelection.classList.remove('hidden');
+        }
+
+        function displayMessageInChat(message, type, isHTML = false) {
+            if (!chatHistoryElement) {
+                // console.warn("chatHistoryElement not found for displayMessageInChat. Message:", message);
+                return;
+            }
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('chatbot-message', type === 'user' ? 'user-message' : 'bot-message');
+            if (isHTML) {
+                messageDiv.innerHTML = message;
+            } else {
+                messageDiv.textContent = message;
+            }
+            chatHistoryElement.appendChild(messageDiv);
+            chatHistoryElement.scrollTop = chatHistoryElement.scrollHeight;
+        }
+
+        function displayLoadingMessage(text = "Sedang memproses...") {
+            const loadingId = 'loading-' + Date.now();
+            displayMessageInChat(`<span id="${loadingId}">${text} <span class="spinner"></span></span>`, 'bot', true);
+            return loadingId;
+        }
+
+        function removeLoadingMessage(loadingId) {
+            const el = document.getElementById(loadingId);
+            if (el && el.parentElement) {
+                if (el.parentElement.classList.contains('bot-message')) {
+                    el.parentElement.remove();
+                } else {
+                    el.remove();
+                }
+            }
+        }
+
+        function displayErrorMessageInChat(message) {
+            displayMessageInChat(`<strong>Error:</strong> ${message}`, 'bot error-message', true);
+        }
+
+        function showCategorySelection(categoryId, categoryLabel, totalQuestions, costPerQuestion) {
+            console.log("--- showCategorySelection CALLED ---");
+            console.log("Args:", {
+                categoryId,
+                categoryLabel,
+                totalQuestions,
+                costPerQuestion
+            });
+            console.log("Current categoriesData:", JSON.parse(JSON.stringify(categoriesData))); // Log a copy
+            console.log("Current currentUserCoins:", currentUserCoins);
+
+            // Pastikan elemen DOM sudah diinisialisasi (seharusnya sudah via DOMContentLoaded)
+            if (!selectionTitleElement || !questionOptionsContainer || !categorySelectionModal) {
+                console.error(
+                    "CRITICAL: Modal DOM elements (selectionTitleElement, questionOptionsContainer, or categorySelectionModal) not found!"
+                );
+                alert("Terjadi kesalahan internal: Komponen modal tidak siap. Silakan refresh halaman.");
+                return;
+            }
+            console.log("Modal elements seem to be found.");
+
+            currentCategoryId = categoryId;
+            currentCategoryLabel = categoryLabel;
+
+            if (!categoriesData || !categoriesData[categoryId] || typeof categoriesData[categoryId].questions ===
+                'undefined') {
+                console.error("ERROR: Category data is invalid, or 'questions' array is missing for categoryId:",
+                    categoryId);
+                console.log("Details of categoriesData[categoryId]:", categoriesData ? categoriesData[categoryId] :
+                    'categoriesData is null/undefined');
+                selectionTitleElement.textContent = `Error Data Kategori`;
+                questionOptionsContainer.innerHTML =
+                    '<p class="text-red-500 text-center col-span-full">Maaf, data pertanyaan untuk kategori ini tidak dapat dimuat.</p>';
+                categorySelectionModal.classList.remove('hidden');
+                return;
+            }
+            currentCategoryQuestions = categoriesData[categoryId].questions; // Simpan semua pertanyaan asli
+            console.log("Original questions for this category:", currentCategoryQuestions);
+
+
+            selectionTitleElement.textContent = `Pilih Jumlah Pertanyaan untuk "${categoryLabel}"`;
+            questionOptionsContainer.innerHTML = ''; // Kosongkan opsi sebelumnya
+            console.log("Cleared questionOptionsContainer.");
+
+            // totalQuestions harusnya dari count($category['questions']) di Blade, pastikan itu angka
+            totalQuestions = Number(totalQuestions);
+            costPerQuestion = Number(costPerQuestion || 15); // Default cost if undefined
+
+            console.log("Processed totalQuestions:", totalQuestions, "Processed costPerQuestion:", costPerQuestion);
+
+            if (isNaN(totalQuestions) || totalQuestions < 0) {
+                console.error("Invalid totalQuestions value:", totalQuestions);
+                questionOptionsContainer.innerHTML =
+                    '<p class="text-center text-gray-500 col-span-full">Jumlah pertanyaan tidak valid.</p>';
+            } else if (totalQuestions === 0) {
+                console.log("No questions available (totalQuestions is 0).");
+                questionOptionsContainer.innerHTML =
+                    '<p class="text-center text-gray-500 col-span-full">Tidak ada pertanyaan untuk kategori ini.</p>';
+            } else {
+                const minQuestions = Math.max(1, Math.min(2, totalQuestions));
+                console.log("Calculated minQuestions:", minQuestions);
+
+                let buttonsHtml = '';
+                for (let i = minQuestions; i <= totalQuestions; i++) {
+                    console.log("Looping to create button for 'i':", i);
+                    const cost = i * costPerQuestion;
+                    let disabledAttr = '';
+                    let disabledText = '';
+                    if (currentUserCoins < cost) {
+                        disabledAttr = 'disabled title="Koin tidak cukup"';
+                        disabledText =
+                            ' <small style="display:block; font-size:0.7rem; color:var(--red-500)">(Koin tdk cukup)</small>'; // Ganti warna jika perlu
+                    }
+                    // Simpan parameter fungsi startQuestionConsole ke data- attributes
+                    buttonsHtml += `
+                    <button class="question-option-button" 
+                            data-questions="${i}" 
+                            data-cost="${cost}"
+                            ${disabledAttr}>
+                        ${i} Pertanyaan
+                        <img src="{{ asset('logoAI/coin.png') }}" alt="koin" style="width:20px; height:auto;">
+                        <span>${cost} Koin</span>
+                        ${disabledText}
+                    </button>
+                `;
+                }
+                questionOptionsContainer.innerHTML = buttonsHtml;
+                console.log("Generated buttons HTML:", buttonsHtml);
+
+                // Tambahkan event listener ke tombol yang baru dibuat
+                questionOptionsContainer.querySelectorAll('.question-option-button').forEach(button => {
+                    if (button.disabled) return; // Jangan tambahkan listener ke tombol disabled
+                    button.addEventListener('click', function() {
+                        const numQ = parseInt(this.dataset.questions);
+                        const cost = parseInt(this.dataset.cost);
+                        console.log("Question option button clicked for", numQ, "questions. Cost:", cost);
+                        if (currentUserCoins >= cost) {
+                            startQuestionConsole(numQ, cost);
+                        } else {
+                            alert(`Koin Anda (${currentUserCoins}) tidak cukup. Butuh ${cost} koin.`);
+                        }
+                    });
+                });
+
+
+                if (questionOptionsContainer.childElementCount === 0 && totalQuestions > 0) {
+                    console.warn(
+                        "Loop for buttons ran, but no buttons were added. Check minQuestions and totalQuestions logic.");
+                    questionOptionsContainer.innerHTML =
+                        '<p class="text-center text-gray-500 col-span-full">Tidak ada opsi jumlah pertanyaan yang valid saat ini.</p>';
+                }
+            }
+            categorySelectionModal.classList.remove('hidden');
+            console.log("Modal should be visible. Number of buttons in container:", questionOptionsContainer
+                .childElementCount);
+            console.log("--- showCategorySelection END ---");
         }
 
         function hideCategorySelection() {
-            categorySelection.classList.add('hidden');
+            console.log("--- hideCategorySelection CALLED ---");
+            const modal = document.getElementById('category-selection-modal');
+            if (modal) {
+                modal.classList.add('hidden');
+                console.log("Modal 'hidden' class ADDED.");
+            } else {
+                console.error("CRITICAL: categorySelectionModal element not found for hideCategorySelection!");
+                alert("Error: Komponen modal tidak bisa ditutup.");
+            }
+            console.log("--- hideCategorySelection END ---");
         }
 
-        function startQuestionConsole(numQuestions) {
+        // Pastikan modal tidak muncul saat halaman dimuat
+        document.addEventListener('DOMContentLoaded', function() {
+            const modal = document.getElementById('category-selection-modal');
+            if (modal) {
+                modal.classList.add('hidden');
+            }
+        });
+
+        // ... (sisa fungsi Anda: startQuestionConsole, displayNextQuestion, processUserInput, dll. tetap sama seperti sebelumnya)
+        // Pastikan fungsi-fungsi ini juga di luar DOMContentLoaded
+        function startQuestionConsole(numQuestionsToAsk, cost) {
+            console.log("startQuestionConsole called with:", numQuestionsToAsk, cost);
+            if (currentUserCoins < cost) {
+                alert("Koin tidak cukup.");
+                return;
+            }
             hideCategorySelection();
-            questionConsole.classList.remove('hidden');
-            consoleTitle.textContent = `Kategori: ${categoriesData[currentCategoryId].label}`;
-            chatHistory.innerHTML = '';
+            if (consoleTitleElement) consoleTitleElement.textContent = `Kategori: ${currentCategoryLabel}`;
+            if (chatHistoryElement) chatHistoryElement.innerHTML = '';
+            userAnswersForCurrentCategory = [];
             currentQuestionIndex = 0;
-            currentCategoryQuestions = currentCategoryQuestions.slice(0, numQuestions);
-            userAnswers[categoriesData[currentCategoryId].label] = [];
+            questionsToAsk = currentCategoryQuestions.slice(0, numQuestionsToAsk);
+            console.log("Questions to ask:", questionsToAsk);
+            if (questionConsoleElement) questionConsoleElement.classList.remove('hidden');
+            if (userInputElement) {
+                userInputElement.disabled = false;
+                userInputElement.value = '';
+                userInputElement.focus();
+            }
+            if (sendButton) sendButton.disabled = false;
             displayNextQuestion();
         }
 
         function displayNextQuestion() {
-            if (currentQuestionIndex < currentCategoryQuestions.length) {
-                const question = currentCategoryQuestions[currentQuestionIndex];
-                const botMessage = document.createElement('div');
-                botMessage.className = 'chatbot-message bot-message self-start';
-                botMessage.textContent = question;
-                chatHistory.appendChild(botMessage);
-                userInput.focus();
+            console.log("displayNextQuestion called. Current index:", currentQuestionIndex, "Total to ask:", questionsToAsk
+                .length);
+            if (!userInputElement || !sendButton || !chatHistoryElement) {
+                console.error("Chat console elements not ready for displayNextQuestion.");
+                return;
+            }
+            if (currentQuestionIndex < questionsToAsk.length) {
+                displayMessageInChat(questionsToAsk[currentQuestionIndex], 'bot');
             } else {
+                console.log("All questions answered for this category.");
+                userInputElement.disabled = true;
+                sendButton.disabled = true;
+                displayMessageInChat(
+                    "Semua pertanyaan untuk kategori ini telah selesai. Klik tombol di bawah untuk melihat summary.",
+                    'bot summary-title');
                 const summaryButton = document.createElement('button');
-                summaryButton.textContent = 'Lihat Summary Kategori';
+                summaryButton.textContent = 'Lihat Summary Kategori Ini';
                 summaryButton.className =
-                    'bg-[#ff933c] hover:bg-[#fd7205] text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline self-center mt-4';
-                summaryButton.onclick = () => displayCategorySummary();
-                chatHistory.appendChild(summaryButton);
+                    'chatbot-message bot-message summary-per-kategori-button self-center mt-4 py-2 px-4 rounded-lg cursor-pointer';
+                summaryButton.onclick = () => {
+                    console.log("Category summary button clicked.");
+                    requestCategorySummary();
+                    summaryButton.remove();
+                };
+                chatHistoryElement.appendChild(summaryButton);
+                chatHistoryElement.scrollTop = chatHistoryElement.scrollHeight;
             }
         }
 
         function processUserInput() {
-            const answer = userInput.value.trim();
-            if (answer) {
-                const userMessage = document.createElement('div');
-                userMessage.className = 'chatbot-message user-message self-end';
-                userMessage.textContent = answer;
-                chatHistory.appendChild(userMessage);
-                userAnswers[categoriesData[currentCategoryId].label].push(answer);
-                userInput.value = '';
+            console.log("processUserInput called.");
+            if (!userInputElement) {
+                console.error("userInputElement not found for processUserInput.");
+                return;
+            }
+            const answer = userInputElement.value.trim();
+            if (answer && !userInputElement.disabled) {
+                displayMessageInChat(answer, 'user');
+                userAnswersForCurrentCategory.push(answer);
+                userInputElement.value = '';
                 currentQuestionIndex++;
                 displayNextQuestion();
-                chatHistory.scrollTop = chatHistory.scrollHeight; //scroll ke bawah
             }
         }
 
         function hideQuestionConsole() {
-            questionConsole.classList.add('hidden');
+            console.log("hideQuestionConsole called.");
+            if (questionConsoleElement) questionConsoleElement.classList.add('hidden');
         }
 
-        function displayCategorySummary() {
-            const categoryLabel = categoriesData[currentCategoryId].label;
-            const answers = userAnswers[categoryLabel];
-            let summaryText = `Summary Berdasarkan Jawaban Anda untuk Kategori "${categoryLabel}":\n`;
+        async function requestCategorySummary() {
+            console.log("requestCategorySummary called for category:", currentCategoryLabel);
+            const loadingId = displayLoadingMessage(`Memproses summary untuk "${currentCategoryLabel}"...`);
+            try {
+                const response = await fetch("{{ route('ai.mate.categorySummary') }}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken
+                    },
+                    body: JSON.stringify({
+                        categoryId: currentCategoryId,
+                        numQuestions: userAnswersForCurrentCategory.length,
+                        answers: userAnswersForCurrentCategory
+                    })
+                });
+                removeLoadingMessage(loadingId);
+                const data = await response.json();
+                console.log("Category summary response data:", data);
+                if (!response.ok) {
+                    displayErrorMessageInChat(data.error || `Gagal mendapatkan summary (Status: ${response.status}).`);
+                    if (data.new_coin_balance !== undefined) updateCoinBalanceUI(data.new_coin_balance);
+                    return;
+                }
+                if (data.summary) {
+                    displayMessageInChat(data.summary, 'bot summary-title', true);
+                    allUserAnswers[currentCategoryLabel] = {
+                        questions: questionsToAsk,
+                        answers: userAnswersForCurrentCategory
+                    };
+                    console.log("Updated allUserAnswers:", allUserAnswers);
+                }
+                if (data.new_coin_balance !== undefined) updateCoinBalanceUI(data.new_coin_balance);
+            } catch (error) {
+                removeLoadingMessage(loadingId);
+                console.error('Error fetching category summary:', error);
+                displayErrorMessageInChat("Terjadi masalah koneksi saat meminta summary kategori.");
+            }
+        }
 
-            if (categoryLabel === 'Bakat & Minat') {
-                summaryText = `<strong>Analisis Rekomendasi Jurusan Berdasarkan Bakat dan Minat</strong><br><br>` +
-                    `<strong>JURUSAN YANG MUNGKIN SESUAI BUAT KAMU:</strong><br><br>` +
-                    `<strong>1. Desain Komunikasi Visual (DKV)</strong><br>` +
-                    `    Alasan Jurusan DKV sangat cocok buat kamu karena menggabungkan elemen visual dari hobi videografi dan fotografi dengan pemahaman konseptual dan estetika yang seringkali dipengaruhi oleh kemampuan Matematika dalam hal komposisi, proporsi, dan ruang. Ketertarikan kamu pada Seni Rupa juga menjadi landasan penting dalam DKV, di mana kreativitas visual, penggunaan warna, tipografi, dan elemen desain lainnya sangat ditekankan. DKV memungkinkan kamu untuk menyalurkan kecintaan kamu pada visual melalui berbagai media seperti desain grafis, ilustrasi, animasi, web desain, hingga produksi video. Semangat dalam videografi dan fotografi kamu akan menjadi modal berharga dalam menciptakan konten visual yang menarik dan efektif. Sementara itu, pemahaman matematika dapat membantu kamu dalam aspek teknis desain dan pemecahan masalah visual yang kompleks. Apresiasi terhadap seni rupa akan memperkaya citra visual dan konsep desain yang dihasilkan.<br><br>` +
-                    `<strong>2. Fotografi</strong><br>` +
-                    `    Alasan Jurusan Fotografi adalah pilihan yang sangat jelas mengingat hobi kamu adalah fotografi. Jurusan ini akan mengembangkan kemampuan teknis dalam pengambilan gambar, pemahaman komposisi, pencahayaan, penggunaan peralatan, hingga proses pasca-produksi. Meskipun tidak secara langsung terkait dengan Matematika, pemahaman tentang rasio, perspektif, dan ruang dalam matematika dapat memberikan landasan yang baik dalam menciptakan komposisi foto yang menarik. Ketertarikan pada Seni Rupa juga sangat relevan karena fotografi adalah bentuk seni visual. Jurusan ini akan memungkinkan kamu untuk mendalami berbagai genre fotografi, mengembangkan gaya pribadinya, dan berpotensi berkarir sebagai fotografer profesional di berbagai bidang. Semangat kamu dalam memotret setiap hari akan menjadi pendorong utama untuk terus belajar dan berkembang dalam jurusan ini.<br><br>` +
-                    `<strong>3. Film dan Televisi</strong><br>` +
-                    `    Alasan Jurusan ini sangat sesuai dengan hobi kamu dalam videografi. Di sini, kamu akan belajar tentang proses produksi film dan televisi secara keseluruhan, mulai dari penulisan naskah, penyutradaraan, pengambilan gambar (sinematografi), penyuntingan video, hingga produksi suara. Meskipun Matematika mungkin tidak menjadi fokus utama, pemahaman tentang waktu, ritme, dan perencanaan yang logis akan berguna dalam proses produksi. Apresiasi terhadap Seni Rupa juga penting dalam aspek visual film dan televisi, seperti tata artistik, desain produksi, dan sinematografi. Semangat dalam membuat video setiap hari akan menjadi motivasi yang kuat untuk mempelajari seluk-beluk industri film dan televisi.<br><br>` +
-                    `<strong>4. Arsitektur</strong><br>` +
-                    `    Alasan Jurusan Arsitektur mungkin tampak kurang langsung terkait, namun ada irisan menarik antara hobi videografi dan fotografi dengan kemampuan visualisasi ruang dan detail dalam arsitektur. Kemampuan mengambil gambar dan video yang baik dapat membantu dalam mendokumentasikan proyek, membuat presentasi visual, dan memahami perspektif ruang. Ketertarikan pada Matematika, terutama geometri, perhitungan ruang, dan struktur, adalah fondasi penting dalam arsitektur. Selain itu, Seni Rupa juga berperan dalam estetika desain bangunan dan perencanaan ruang. Jika kamu memiliki ketertarikan pada desain ruang, visualisasi 3D, dan pemahaman struktural, jurusan ini bisa menjadi pilihan yang menarik yang menggabungkan aspek teknis dan kreatif.<br><br>` +
-                    `<strong>5. Desain Grafis</strong><br>` +
-                    `    Alasan Jurusan Desain Grafis adalah perpaduan yang kuat antara hobi fotografi (dalam hal visual dan komposisi) dan apresiasi terhadap Seni Rupa. Di sini, kamu akan belajar menciptakan karya visual untuk berbagai media, baik cetak maupun digital, menggunakan elemen desain seperti tipografi, warna, ilustrasi, dan fotografi. Pemahaman Matematika dalam hal proporsi, tata letak, dan grid sistem juga relevan dalam desain grafis. Semangat dalam menciptakan visual yang menarik dan efektif, yang mungkin sudah terasah melalui fotografi, akan menjadi aset berharga dalam jurusan ini.<br><br>` +
-                    `<strong>6. Matematika (dengan spesialisasi tertentu, contohnya: Visualisasi Data, Grafika Komputer)</strong><br>` +
-                    `    Alasan Meskipun hobi kamu lebih condong ke visual, ketertarikan yang kuat pada Matematika adalah hal yang signifikan. Jika kamu benar-benar menikmati tantangan logika dan pemecahan masalah dalam matematika, jurusan ini bisa menjadi pilihan yang tepat. Untuk menghubungkannya dengan hobi videografi dan fotografi serta Seni Rupa, kamu bisa mempertimbangkan spesialisasi dalam bidang seperti Visualisasi Data (mengubah data kompleks menjadi representasi visual yang menarik), Grafika Komputer (mempelajari algoritma di balik pembuatan gambar dan animasi komputer), atau bahkan bidang yang menggabungkan matematika dengan pemrosesan citra. Dalam hal ini, semangat dalam matematika akan menjadi fondasi, dan minat pada visual dapat diarahkan ke aplikasi matematika dalam konteks kreatif.`;
-            } else if (categoryLabel === 'Keinginan Orang Tua') {
-                summaryText =
-                    `<strong>Analisis Rekomendasi Jurusan Berdasarkan Keinginan Orang Tua (Fokus Teknologi Informasi)</strong><br><br>` +
-                    `<strong>1. Teknik Informatika</strong><br>` +
-                    `    <strong>Alasan(Fokus Keinginan Orang Tua):</strong> Jurusan ini sangat relevan dengan keinginan orang tua kamu untuk bekerja di bidang Teknologi Informasi. Teknik Informatika akan membekali kamu dengan pengetahuan mendalam tentang pengembangan perangkat lunak, algoritma, struktur data, jaringan komputer, dan berbagai teknologi terkini.<br>` +
-                    `        * Prospek Karir yang Jelas dan Stabil: Industri TI terus berkembang pesat, menciptakan permintaan tinggi untuk lulusan Teknik Informatika di berbagai sektor.<br>` +
-                    `        * Gaji yang Tinggi: Profesi di bidang pengembangan perangkat lunak dan teknologi umumnya menawarkan gaji yang kompetitif.<br>` +
-                    `        * Relevansi dengan Dunia Industri Modern: Ini adalah inti dari bidang TI. Lulusan akan terlibat langsung dalam perkembangan teknologi.<br>` +
-                    `        * Peluang untuk Bekerja di Perusahaan Besar: Banyak perusahaan besar, baik di dalam maupun luar negeri, memiliki departemen TI yang besar dan membutuhkan tenaga ahli.<br><br>` +
-                    `<strong>2. Sistem Informasi</strong><br>` +
-                    `    <strong>Alasan(Fokus Keinginan Orang Tua):</strong> Jurusan ini berfokus pada bagaimana teknologi informasi digunakan untuk memecahkan masalah bisnis dan meningkatkan efisiensi organisasi. Ini adalah perpaduan antara pemahaman teknologi dan bisnis, yang sangat relevan dengan kebutuhan industri saat ini.<br>` +
-                    `        * Prospek Karir yang Jelas dan Stabil: Permintaan akan ahli sistem informasi juga tinggi karena hampir semua organisasi bergantung pada sistem informasi.<br>` +
-                    `        * Gaji yang Tinggi: Profesional di bidang ini umumnya memiliki penghasilan yang menarik.<br>` +
-                    `        * Relevansi dengan Dunia Industri Modern: Sistem informasi adalah tulang punggung operasional banyak perusahaan modern.<br>` +
-                    `        * Peluang untuk Bekerja di Perusahaan Besar: Perusahaan besar sangat membutuhkan ahli sistem informasi untuk mengelola dan mengembangkan infrastruktur TI mereka.<br><br>` +
-                    `<strong>3. Ilmu Komputer</strong><br>` +
-                    `    <strong>Alasan(Fokus Keinginan Orang Tua):</strong> Ilmu Komputer lebih teoritis dan mendasar, mempelajari prinsip-prinsip komputasi yang menjadi fondasi bagi banyak teknologi. Lulusan memiliki peran penting dalam inovasi dan pengembangan teknologi masa depan.<br>` +
-                    `        * Prospek Karir yang Jelas dan Stabil: Lulusan Ilmu Komputer memiliki banyak peluang karir, terutama di bidang penelitian dan pengembangan teknologi baru.<br>` +
-                    `        * Gaji yang Tinggi: Profesi yang membutuhkan pemahaman mendalam tentang teori komputasi seringkali dihargai dengan gaji yang tinggi.<br>` +
-                    `        * Relevansi dengan Dunia Industri Modern: Ilmu Komputer adalah fondasi dari banyak inovasi teknologi saat ini dan di masa depan.<br>` +
-                    `        * Peluang untuk Bekerja di Perusahaan Besar: Perusahaan teknologi besar sangat membutuhkan ahli di bidang ini untuk riset dan pengembangan produk inovatif.<br><br>` +
-                    `<strong>4. Desain Komunikasi Visual (DKV) dengan fokus UI/UX atau Multimedia Interaktif</strong><br>` +
-                    `    <strong>Alasan(Fokus Keinginan Orang Tua):</strong> Dengan fokus pada UI/UX atau Multimedia Interaktif, jurusan ini menggabungkan aspek desain visual dengan pemahaman teknologi digital. Ini adalah area yang sangat dibutuhkan dalam pengembangan produk digital modern.<br>` +
-                    `        * Prospek Karir yang Jelas dan Stabil: Permintaan untuk desainer UI/UX dan multimedia interaktif terus meningkat seiring dengan perkembangan industri digital.<br>` +
-                    `        * Gaji yang Tinggi: Profesional di bidang UI/UX dan multimedia dengan keahlian yang baik dapat memperoleh gaji yang menarik.<br>` +
-                    `        * Relevansi dengan Dunia Industri Modern: Desain yang baik adalah kunci keberhasilan produk digital modern.<br>` +
-                    `        * Peluang untuk Bekerja di Perusahaan Besar: Banyak perusahaan teknologi dan digital membutuhkan desainer UI/UX dan multimedia untuk mengembangkan produk mereka.<br><br>` +
-                    `<strong>5. Manajemen Bisnis dengan fokus pada Teknologi atau E-commerce</strong><br>` +
-                    `    <strong>Alasan(Fokus Keinginan Orang Tua):</strong> Jurusan ini membekali dengan pemahaman tentang bisnis dan bagaimana teknologi diterapkan dalam konteks tersebut, terutama dalam manajemen dan operasional perusahaan modern.<br>` +
-                    `        * Prospek Karir yang Jelas dan Stabil: Lulusan manajemen bisnis dengan pemahaman teknologi memiliki peluang karir yang luas di berbagai industri yang semakin bergantung pada teknologi.<br>` +
-                    `        * Gaji yang Tinggi: Posisi manajerial, terutama yang terkait dengan teknologi, umumnya menawarkan kompensasi yang baik.<br>` +
-                    `        * Relevansi dengan Dunia Industri Modern: Hampir semua bisnis saat ini memanfaatkan teknologi, sehingga pemahaman tentang manajemen dan teknologi sangat relevan.<br>` +
-                    `        * Peluang untuk Bekerja di Perusahaan Besar: Perusahaan besar membutuhkan profesional dengan pemahaman bisnis dan teknologi untuk mengelola operasi dan mengembangkan strategi mereka.<br><br>`;
+        async function requestOverallSummary() {
+            console.log("requestOverallSummary called.");
+            if (Object.keys(allUserAnswers).length < 1) {
+                alert("Selesaikan minimal satu kategori dulu.");
+                return;
+            }
+            const overallSummaryCost = 5;
+            if (currentUserCoins < overallSummaryCost) {
+                alert(`Koin (${currentUserCoins}) tidak cukup. Butuh ${overallSummaryCost} koin.`);
+                return;
+            }
+            if (requestOverallSummaryButton) requestOverallSummaryButton.disabled = true;
+            const overallLoadingSpan = document.createElement('span');
+            overallLoadingSpan.innerHTML =
+                `<i>Sedang memproses rekomendasi final... <span class="spinner" style="border-top-color: var(--primary);"></span></i>`;
+            if (overallSummaryTextElement) {
+                overallSummaryTextElement.innerHTML = '';
+                overallSummaryTextElement.appendChild(overallLoadingSpan);
+            }
+            if (overallSummaryContentElement) overallSummaryContentElement.classList.remove('hidden');
+            try {
+                const response = await fetch("{{ route('ai.mate.overallSummary') }}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken
+                    },
+                    body: JSON.stringify({
+                        allUserAnswers: allUserAnswers
+                    })
+                });
+                overallLoadingSpan.remove();
+                if (requestOverallSummaryButton) requestOverallSummaryButton.disabled = false;
+                const data = await response.json();
+                console.log("Overall summary response data:", data);
+                if (!response.ok) {
+                    if (overallSummaryTextElement) overallSummaryTextElement.innerHTML =
+                        `<p class="text-red-600 font-semibold">Error: ${data.error || `Gagal (Status: ${response.status}).`}</p>`;
+                    if (data.new_coin_balance !== undefined) updateCoinBalanceUI(data.new_coin_balance);
+                    return;
+                }
+                if (data.summary && overallSummaryTextElement) overallSummaryTextElement.innerHTML = data.summary;
+                if (data.new_coin_balance !== undefined) updateCoinBalanceUI(data.new_coin_balance);
+            } catch (error) {
+                overallLoadingSpan.remove();
+                if (requestOverallSummaryButton) requestOverallSummaryButton.disabled = false;
+                console.error('Error fetching overall summary:', error);
+                if (overallSummaryTextElement) overallSummaryTextElement.innerHTML =
+                    `<p class="text-red-600 font-semibold">Masalah koneksi saat meminta rekomendasi final.</p>`;
+            }
+        }
+
+        function hideOverallSummaryContainer() {
+            console.log("hideOverallSummaryContainer called.");
+            if (overallSummaryContentElement) overallSummaryContentElement.classList.add('hidden');
+        }
+
+        // --- DOMContentLoaded HANYA UNTUK INISIALISASI ELEMEN DOM DAN EVENT LISTENER AWAL ---
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log("DOMContentLoaded: Initializing DOM elements and Typed.js");
+
+            coinBalanceElement = document.getElementById('user-coin-balance');
+            categorySelectionModal = document.getElementById('category-selection-modal');
+            selectionTitleElement = document.getElementById('selection-title');
+            questionOptionsContainer = document.getElementById('question-options-container');
+            questionConsoleElement = document.getElementById('question-console');
+            consoleTitleElement = document.getElementById('console-title');
+            chatHistoryElement = document.getElementById('chat-history');
+            userInputElement = document.getElementById('user-input');
+            sendButton = document.getElementById('send-button');
+            overallSummaryContentElement = document.getElementById('overall-summary-content');
+            overallSummaryTextElement = document.getElementById('overall-summary-text');
+            requestOverallSummaryButton = document.getElementById('request-overall-summary-button');
+
+            // Verifikasi apakah semua elemen penting ditemukan
+            if (!categorySelectionModal) console.error("CRITICAL: categorySelectionModal NOT FOUND on DOM load!");
+            if (!questionOptionsContainer) console.error(
+                "CRITICAL: questionOptionsContainer NOT FOUND on DOM load!");
+            if (!selectionTitleElement) console.error("CRITICAL: selectionTitleElement NOT FOUND on DOM load!");
+
+
+            if (userInputElement) {
+                userInputElement.addEventListener('keypress', function(event) {
+                    if (event.key === 'Enter') {
+                        event.preventDefault();
+                        processUserInput(); // Pastikan processUserInput ada di global scope
+                    }
+                });
             } else {
-                summaryText += 'Summary untuk kategori ini belum diimplementasikan secara dinamis.';
+                console.warn("User input element (user-input) not found on DOMContentLoaded");
             }
 
-            const summaryMessage = document.createElement('div');
-            summaryMessage.className =
-                'chatbot-message bot-message self-start mt-2 whitespace-pre-line'; 
-            summaryMessage.innerHTML = summaryText; 
-            chatHistory.appendChild(summaryMessage);
-            chatHistory.scrollTop = chatHistory.scrollHeight;
-            updateOverallSummary();
-        }
-
-        function updateOverallSummary() {
-            const overallSummaryText =
-                `<strong>Baik, setelah mempertimbangkan bakat dan minatmu serta keinginan orang tuamu, berikut adalah rekomendasi summary keseluruhan dengan dua hingga tiga jurusan yang paling sesuai, beserta tingkat kecocokannya:</strong><br><br>` +
-                `<strong>JURUSAN YANG DIREKOMENDASIKAN:</strong><br><br>` +
-                `* <strong>Desain Komunikasi Visual (DKV) dengan fokus UI/UX atau Multimedia Interaktif</strong><br>` +
-                `* <strong>Teknik Informatika</strong><br>` +
-                `* <strong>Sistem Informasi</strong><br><br>` +
-                `<strong>PER JURUSAN:</strong><br><br>` +
-                `<strong>Desain Komunikasi Visual (DKV) dengan fokus UI/UX atau Multimedia Interaktif</strong><br>` +
-                `<strong>ALASAN REASONING:</strong> Jurusan ini memiliki potensi terbesar untuk menggabungkan semangatmu dalam videografi dan fotografi serta apresiasimu terhadap Seni Rupa. Fokus pada UI/UX atau Multimedia Interaktif juga memberikan jembatan yang kuat ke dunia Teknologi Informasi yang diinginkan orang tuamu. Kamu akan belajar bagaimana menciptakan visual yang menarik dan fungsional untuk produk digital, yang saat ini sangat dibutuhkan di industri. Kemampuan Matematika dalam hal komposisi dan tata letak juga akan terpakai.<br>` +
-                `<strong>TINGKAT KECOCOKAN:</strong><br>` +
-                `<strong>Bakat dan Minat:</strong> 85%<br>` +
-                `Alasan: Jurusan ini secara langsung mewadahi hobimu dalam visual dan seni. Kamu akan memiliki kesempatan untuk mengembangkan kreativitasmu dalam konteks digital yang dinamis.<br>` +
-                `<strong>Keinginan Orang Tua:</strong> 70%<br>` +
-                `Alasan: Jurusan ini berada di irisan antara desain dan teknologi, menawarkan prospek karir yang baik di industri digital yang terus berkembang. Meskipun mungkin tidak sepenuhnya "murni" TI seperti yang dibayangkan orang tuamu, permintaan untuk desainer UI/UX dan multimedia interaktif dengan pemahaman teknologi sangat tinggi dan menawarkan gaji yang kompetitif serta peluang di perusahaan besar. Relevansinya dengan dunia industri modern juga sangat kuat.<br><br>` +
-                `<strong>Teknik Informatika</strong><br>` +
-                `<strong>ALASAN REASONING:</strong> Jurusan ini sangat sesuai dengan keinginan orang tuamu untuk berkarir di bidang Teknologi Informasi. Kamu akan mempelajari dasar-dasar pengembangan perangkat lunak, algoritma, dan sistem komputer. Meskipun mungkin tidak secara langsung memanfaatkan hobimu dalam videografi dan fotografi, kemampuan Matematika yang kamu sukai akan menjadi fondasi yang kuat dalam belajar pemrograman dan logika komputasi. Kamu juga berpotensi menemukan cara untuk mengintegrasikan minat visualmu di masa depan, misalnya dalam pengembangan aplikasi dengan elemen visual yang menarik.<br>` +
-                `<strong>TINGKAT KECOCOKAN:</strong><br>` +
-                `<strong>Bakat dan Minat:</strong> 60%<br>` +
-                `Alasan: Ketertarikanmu pada Matematika akan sangat terfasilitasi di jurusan ini. Namun, hobi visualmu mungkin tidak menjadi fokus utama dan perlu dicari cara untuk mengintegrasikannya secara mandiri.<br>` +
-                `<strong>Keinginan Orang Tua:</strong> 90%<br>` +
-                `Alasan: Jurusan ini sangat memenuhi semua kriteria yang diinginkan orang tuamu: prospek karir yang jelas dan stabil di industri TI yang terus berkembang, potensi gaji yang tinggi, relevansi yang sangat kuat dengan dunia industri modern, dan peluang besar untuk bekerja di perusahaan teknologi terkemuka.<br><br>` +
-                `<strong>Sistem Informasi</strong><br>` +
-                `<strong>ALASAN REASONING:</strong> Jurusan ini menawarkan perspektif yang lebih luas tentang bagaimana teknologi informasi diterapkan dalam konteks bisnis. Kamu akan belajar tentang analisis sistem, manajemen basis data, dan bagaimana teknologi dapat memecahkan masalah organisasi. Kemampuan Matematika dalam analisis data akan berguna. Meskipun tidak secara langsung terkait dengan hobi visualmu, pemahaman tentang antarmuka pengguna (UI) bisa menjadi area di mana minatmu bisa diterapkan. Jurusan ini juga sangat relevan dengan dunia Teknologi Informasi dan kebutuhan industri saat ini.<br>` +
-                `<strong>TINGKAT KECOCOKAN:</strong><br>` +
-                `<strong>Bakat dan Minat:</strong> 55%<br>` +
-                `Alasan: Ketertarikanmu pada Matematika dalam hal analisis akan relevan. Namun, seperti Teknik Informatika, hobi visualmu mungkin tidak menjadi fokus utama dan perlu dicari cara untuk mengintegrasikannya dalam konteks bisnis atau desain antarmuka.<br>` +
-                `<strong>Keinginan Orang Tua:</strong> 80%<br>` +
-                `Alasan: Jurusan ini sangat memenuhi sebagian besar kriteria orang tuamu. Prospek karirnya jelas dan stabil di era digital, potensi gajinya menarik, relevansinya dengan industri modern sangat tinggi, dan peluang bekerja di perusahaan besar juga terbuka lebar karena hampir semua organisasi membutuhkan ahli sistem informasi.<br><br>` +
-                `<strong>Kesimpulan:</strong><br>` +
-                `Jika kamu ingin jurusan yang paling kuat mengakomodasi bakat dan minatmu sambil tetap relevan dengan dunia teknologi dan harapan orang tuamu, <strong>Desain Komunikasi Visual (DKV) dengan fokus UI/UX atau Multimedia Interaktif</strong> adalah pilihan yang sangat baik. Jika prioritas utamamu adalah memenuhi keinginan orang tua untuk berkarir di bidang Teknologi Informasi dengan prospek karir yang sangat solid, <strong>Teknik Informatika</strong> dan <strong>Sistem Informasi</strong> adalah pilihan yang tepat, meskipun kamu perlu mencari cara untuk tetap menyalurkan minat visualmu di luar perkuliahan atau dalam proyek-proyek tertentu.<br><br>` +
-                `<strong>Saran saya</strong>, pikirkan baik-baik mana yang lebih penting bagimu saat ini: mengejar passion visualmu dengan tetap memiliki karir yang menjanjikan di dunia digital, atau fokus pada fondasi teknologi yang kuat seperti yang diinginkan orang tuamu sambil mencari cara untuk mengembangkan minat visualmu secara paralel. Diskusikan pilihan-pilihan ini dengan orang tuamu untuk mendapatkan perspektif yang lebih lengkap.`;
-
-            overallSummaryElement.innerHTML = overallSummaryText;
-        }
-
-        function showOverallSummary() {
-            document.getElementById('overall-summary').classList.remove('hidden');
-        }
-
-        function hideOverallSummary() {
-            document.getElementById('overall-summary').classList.add('hidden');
-        }
-    </script>
-    <script src="https://unpkg.com/typed.js@2.1.0/dist/typed.umd.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var typed = new Typed(".auto-type", {
-                strings: [
-                    "Hai! Aku AI MATE yang siap membantu kamu memilih jurusan yang tepat. Yuk pilih kategori yang kamu mau coba dulu!"
-                ],
-                typeSpeed: 50,
-                showCursor: true,
-                cursorChar: '|',
-                loop: false,
-                onComplete: function(self) {
-                    self.cursor.remove();
-                }
-            });
+            const userName = "{{ Auth::user()->name ?? '' }}";
+            const greeting = userName ? `Hai ${userName}!` : "Hai!";
+            try {
+                new Typed("#typed-welcome", {
+                    strings: [
+                        `${greeting} Aku AI MATE yang siap membantu kamu memilih jurusan yang tepat. Yuk, pilih kategori yang ingin kamu coba dulu!`
+                    ],
+                    typeSpeed: 30,
+                    backSpeed: 10,
+                    startDelay: 500,
+                    loop: false,
+                    showCursor: true,
+                    cursorChar: '|',
+                    onComplete: function(self) {
+                        if (self.cursor) self.cursor.style.display = 'none';
+                    }
+                });
+            } catch (e) {
+                console.error("Typed.js initialization failed:", e);
+                const typedWelcomeElement = document.getElementById('typed-welcome');
+                if (typedWelcomeElement) typedWelcomeElement.textContent =
+                    `${greeting} Aku AI MATE yang siap membantu kamu memilih jurusan yang tepat. Yuk, pilih kategori yang ingin kamu coba dulu!`;
+            }
+            console.log("DOMContentLoaded: Setup complete.");
         });
     </script>
 @endsection
