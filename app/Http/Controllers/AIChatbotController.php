@@ -260,13 +260,13 @@ class AIChatbotController extends Controller
 
         $prompt .= "Berdasarkan SEMUA informasi di atas dari berbagai kategori, berikan rekomendasi 2-3 jurusan yang paling sesuai secara keseluruhan.\n";
         $prompt .= "Untuk setiap jurusan yang direkomendasikan, berikan:\n";
-        $prompt .= "1. NAMA JURUSAN (bisa spesifik, misal 'Desain Komunikasi Visual (DKV) dengan fokus UI/UX').\n";
-        $prompt .= "2. ALASAN REASONING: Jelaskan secara komprehensif mengapa jurusan ini cocok, dengan MENGGABUNGKAN dan MENGANALISIS informasi dari berbagai kategori yang telah dijawab siswa.\n";
-        $prompt .= "3. TINGKAT KECOCOKAN (dalam persentase perkiraan, misal 70-90%) dan alasan singkat untuk setiap kategori utama yang relevan (misalnya, Bakat & Minat: X%, Keinginan Orang Tua: Y%).\n";
+        $prompt .= "1. Nama Jurusan (bisa spesifik, misal 'Desain Komunikasi Visual (DKV) dengan fokus UI/UX').\n";
+        $prompt .= "2. Alasan: Jelaskan secara komprehensif mengapa jurusan ini cocok, dengan MENGGABUNGKAN dan MENGANALISIS informasi dari berbagai kategori yang telah dijawab siswa.\n";
+        $prompt .= "3. Tingkat kecocokan (dalam persentase perkiraan, misal 70-90%) dan alasan singkat untuk setiap kategori utama yang relevan (misalnya, Bakat & Minat: X%, Keinginan Orang Tua: Y%).\n";
         $prompt .= "4. Kesimpulan singkat dan saran akhir untuk siswa.\n";
         $prompt .= "Format output harus dalam HTML dasar seperti contoh yang diberikan (lihat contoh di JavaScript `updateOverallSummary` yang diberikan user sebelumnya, AI akan menyesuaikan).\n";
         $prompt .= "Contoh awal format:\n";
-        $prompt .= "<strong>Baik, setelah mempertimbangkan informasi yang kamu berikan...</strong><br><br><strong>JURUSAN YANG DIREKOMENDASIKAN:</strong><br><br>* <strong>[Nama Jurusan 1]</strong><br>* <strong>[Nama Jurusan 2]</strong><br><br><strong>PER JURUSAN:</strong><br><br><strong>[Nama Jurusan 1]</strong><br><strong>ALASAN REASONING:</strong> [Penjelasan gabungan]...<br><strong>TINGKAT KECOCOKAN:</strong><br><strong>Kategori A:</strong> XX%<br>Alasan: ...<br><strong>Kategori B:</strong> YY%<br>Alasan: ...<br><br> (dan seterusnya untuk jurusan lain).";
+        $prompt .= "<strong>Baik, setelah mempertimbangkan informasi yang kamu berikan...</strong><br><br><strong>Jurusan yang direkomendasikan:</strong><br><br> <strong>[Nama Jurusan 1]</strong><br> <strong>[Nama Jurusan 2]</strong><br><br><strong>per jurusan:</strong><br><br><strong>[Nama Jurusan 1]</strong><br><strong>Alasan:</strong> [Penjelasan gabungan]...<br><strong>Tingkat kecocokan:</strong><br><strong>Kategori A:</strong> XX%<br>Alasan: ...<br><strong>Kategori B:</strong> YY%<br>Alasan: ...<br><br> (dan seterusnya untuk jurusan lain).";
 
 
         try {

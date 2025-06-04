@@ -5,7 +5,7 @@
                  class="block h-10 sm:h-12 md:h-12 lg:h-12 w-auto">
         </a>
 
-        <div class="flex items-center space-x-3 md:space-x-5">
+        <div class="flex items-center space-x-3 md:space-x-8">
             <a href="{{ route('homepage') }}"
                class="hidden sm:flex items-center justify-center space-x-1.5 text-sm md:text-base hover:text-[var(--primary)] font-semibold transition-colors duration-200 px-2 py-1">
                 <i class="fa-solid fa-house"></i>
@@ -20,7 +20,7 @@
                     <span>AI Mate</span>
                 </a>
 
-                <div class="relative">
+                <div class="relative ml-4">
                     <button id="profileButton" onclick="toggleProfileDropdown()" class="flex items-center text-sm font-medium hover:text-[var(--primary)] focus:outline-none transition duration-150 ease-in-out">
                         <div class="truncate max-w-[100px] md:max-w-[150px]">{{ Auth::user()->name }}</div>
                         <div class="ml-1">
