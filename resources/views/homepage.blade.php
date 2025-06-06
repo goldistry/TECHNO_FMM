@@ -240,7 +240,7 @@
         </p>
         <div class="mt-10 flex flex-col sm:flex-row gap-4">
             <a href="#daftar"
-                class="w-full sm:w-auto bg-[var(--blue-dark)] text-white px-8 py-4 rounded-full text-lg font-semibold text-center hover:bg-[var(--blue-dark)] transition transform hover:scale-105 shadow-lg">
+                class="!bg-[var(--blue-dark)] w-full sm:w-auto  text-white px-8 py-4 rounded-full text-lg font-semibold text-center hover:bg-[var(--blue)] transition transform hover:scale-105 shadow-lg">
                 Daftar sekarang!
             </a>
             {{-- Tombol "Lihat Cara Kerjanya" di komentar, bisa diaktifkan jika perlu --}}
@@ -412,24 +412,24 @@
             @csrf
             <div class="flex flex-col sm:flex-row gap-4 mb-6 ">
                 {{-- Input Nama --}}
-                <div class="animated-input-border w-full rounded-lg shadow-md"> {{-- Pembungkus animasi border --}}
+                <div class="animated-input-border w-full rounded-lg shadow-md">
                     <input type="text" name="name" placeholder="Nama Lengkap Anda"
                         class="subscribe-input px-5 py-3.5 rounded-lg text-gray-800 placeholder-[var(--blue-dark)] focus:ring-[var(--green)] focus:ring-2 transition"
                         required>
                 </div>
                 {{-- Input Email --}}
-                <div class="animated-input-border w-full rounded-lg shadow-md"> {{-- Pembungkus animasi border --}}
+                <div class="animated-input-border w-full rounded-lg shadow-md">
                     <input type="email" name="email" placeholder="Alamat Email Anda"
                         class="subscribe-input px-5 py-3.5 rounded-lg text-gray-800 placeholder-[var(--blue-dark)] focus:ring-[var(--green)] focus:ring-2 transition"
                         required>
                 </div>
             </div>
             <button type="submit"
-                class="w-full sm:w-auto bg-[var(--blue-dark)] text-white px-8 py-3.5 rounded-full text-lg font-bold uppercase tracking-wide hover:bg-opacity-90 hover:scale-105 transition transform shadow-xl focus:outline-none focus:ring-4 focus:ring-white/50">
+                class="w-full sm:w-auto bg-blue-600 text-white px-8 py-3.5 rounded-full text-lg font-bold uppercase tracking-wide hover:bg-opacity-90 hover:scale-105 transition transform shadow-xl focus:outline-none focus:ring-4 focus:ring-white/50">
                 Daftar Sekarang
             </button>
 
-            {{-- Deskripsi - Kata-kata diubah --}}
+
             <p class="mt-2 text-md italic md:text-lg mb-8 max-w-3xl mx-auto text-white/90 drop-shadow">
                 * Penawaran spesial berlaku terbatas, jangan sampai terlewat!
             </p>
