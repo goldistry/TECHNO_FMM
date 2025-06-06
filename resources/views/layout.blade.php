@@ -77,7 +77,7 @@
     @yield('head_extra') {{-- Untuk tambahan CSS khusus halaman --}}
 </head>
 
-<body class="overflow-x-hidden"> {{-- Hapus bg-neutral text-white dari sini jika tidak global --}}
+<body class="overflow-x-hidden"> 
     @include('loader')
 
     @include('utils.header') {{-- Navbar akan di-include di sini --}}

@@ -7,11 +7,17 @@ use App\Http\Controllers\MajorController;
 use App\Http\Controllers\TestimonialController;
 use App\Http\Controllers\MajorFinderController;
 
-Route::middleware('auth')->group(function () {
-    Route::get('/', function () {
-        return view('homepage');
-    })->name('homepage');
+Route::get('/', function () {
+    return view('homepage');
+})->name('homepage');
 
+Route::get('/chatbot', [MajorFinderController::class, 'index'])->name('chatbot.index');
+Route::get('/majors', [MajorController::class, 'index'])->name('majors.index');
+Route::get('/majors/{id}', [MajorController::class, 'show'])->name('majors.show');
+Route::get('/testimonials', [TestimonialController::class, 'index'])->name('testimonials.index');
+Route::post('/testimonials', [TestimonialController::class, 'store'])->name('testimonials.store');
+
+Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -24,12 +30,6 @@ Route::middleware('auth')->group(function () {
     // Routes untuk Simulasi (jika diimplementasikan)
     Route::post('/simulation/start', [AIChatbotController::class, 'startSimulation'])->name('simulation.start');
     Route::post('/simulation/submit-answer', [AIChatbotController::class, 'submitSimulationAnswer'])->name('simulation.submitAnswer');
-
-    Route::get('/chatbot', [MajorFinderController::class, 'index'])->name('chatbot.index');
-    Route::get('/majors', [MajorController::class, 'index'])->name('majors.index');
-    Route::get('/majors/{id}', [MajorController::class, 'show'])->name('majors.show');
-    Route::get('/testimonials', [TestimonialController::class, 'index'])->name('testimonials.index');   
-    Route::post('/testimonials', [TestimonialController::class, 'store'])->name('testimonials.store');
 });
 
 require __DIR__ . '/auth.php';
