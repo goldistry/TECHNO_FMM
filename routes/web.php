@@ -23,15 +23,22 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     // Tampilkan halaman utama chatbot
-    Route::get('/ai-mate', [AIChatbotController::class, 'index'])->name('ai.mate.index')->middleware('auth'); // Pastikan user login
+    // Route::get('/ai-mate', [AIChatbotController::class, 'index'])->name('ai.mate.index')->middleware('auth'); // Pastikan user login
 
-    // Endpoint untuk mendapatkan summary kategori dari AI
-    Route::post('/ai-mate/category-summary', [AIChatbotController::class, 'getCategorySummary'])->name('ai.mate.categorySummary');
+    // // Endpoint untuk mendapatkan summary kategori dari AI
+    // Route::post('/ai-mate/category-summary', [AIChatbotController::class, 'getCategorySummary'])->name('ai.mate.categorySummary');
 
-    // Endpoint untuk mendapatkan summary keseluruhan dari AI
-    Route::post('/ai-mate/overall-summary', [AIChatbotController::class, 'getOverallSummary'])->name('ai.mate.overallSummary');
+    // // Endpoint untuk mendapatkan summary keseluruhan dari AI
+    // Route::post('/ai-mate/overall-summary', [AIChatbotController::class, 'getOverallSummary'])->name('ai.mate.overallSummary');
 
     // Old simulation routes removed - replaced with direct major selection system
+    Route::get('/ai-career-advisor', [AIChatbotController::class, 'index'])->name('ai.mate.index');
+    Route::post('/ai-career-advisor/category-summary', [AIChatbotController::class, 'getCategorySummary'])->name('ai.mate.categorySummary');
+    Route::post('/ai-career-advisor/overall-summary', [AIChatbotController::class, 'getOverallSummary'])->name('ai.mate.overallSummary');
+
+    // Routes untuk Simulasi (jika diimplementasikan)
+    Route::post('/simulation/start', [AIChatbotController::class, 'startSimulation'])->name('simulation.start');
+    Route::post('/simulation/submit-answer', [AIChatbotController::class, 'submitSimulationAnswer'])->name('simulation.submitAnswer');
 });
 
 require __DIR__ . '/auth.php';

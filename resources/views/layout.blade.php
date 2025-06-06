@@ -125,20 +125,20 @@
             window.addEventListener('resize', adjustMainContentPadding);
 
             // Navbar Scroll Effect
-            window.addEventListener('scroll', function() {
-                if (navbar) {
-                    if (window.scrollY > 20) {
-                        navbar.classList.add('navbar-scrolled');
-                        // Jika navbar awal Anda BUKAN var(--blue-dark) dan ingin kembali ke warna itu
-                        // atau jika var(--blue-dark) tidak ter-override oleh !important
-                        // Anda bisa set style langsung jika perlu:
-                        // navbar.style.backgroundColor = 'var(--green)';
-                    } else {
-                        navbar.classList.remove('navbar-scrolled');
-                        // navbar.style.backgroundColor = 'var(--blue-dark)';
-                    }
-                }
-            });
+            // window.addEventListener('scroll', function() {
+            //     if (navbar) {
+            //         if (window.scrollY > 20) {
+            //             navbar.classList.add('navbar-scrolled');
+            //             // Jika navbar awal Anda BUKAN var(--blue-dark) dan ingin kembali ke warna itu
+            //             // atau jika var(--blue-dark) tidak ter-override oleh !important
+            //             // Anda bisa set style langsung jika perlu:
+            //             // navbar.style.backgroundColor = 'var(--green)';
+            //         } else {
+            //             navbar.classList.remove('navbar-scrolled');
+            //             // navbar.style.backgroundColor = 'var(--blue-dark)';
+            //         }
+            //     }
+            // });
         });
 
         // Profile Dropdown Toggle (jika ada di utils.header)

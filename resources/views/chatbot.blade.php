@@ -454,7 +454,7 @@
             box-shadow: none;
         }
 
-        /* ===== MODERN CATEGORY CARDS (Digunakan juga untuk Enhanced Category Cards) ===== */
+        /* ===== MODERN CATEGORY CARDS ===== */
         .categories-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -463,13 +463,10 @@
         }
 
         .category-card {
-            /* Style utama untuk category card */
             background: var(--surface);
-            /* Menggunakan var(--surface) sebagai pengganti --card-bg */
             border-radius: var(--radius-xl);
             box-shadow: var(--shadow-md);
             border: 1px solid var(--border-light);
-            /* Menggunakan var(--border-light) sebagai pengganti --border-color */
             padding: var(--space-xl);
             cursor: pointer;
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -486,7 +483,6 @@
             right: 0;
             height: 4px;
             background: linear-gradient(90deg, var(--primary), var(--secondary));
-            /* Menggunakan var(--primary) & var(--secondary) */
             transform: scaleX(0);
             transition: transform 0.4s ease;
             transform-origin: left;
@@ -496,7 +492,6 @@
             transform: translateY(-8px) scale(1.02);
             box-shadow: var(--shadow-xl);
             border-color: var(--primary);
-            /* Menggunakan var(--primary) */
         }
 
         .category-card:hover::before {
@@ -528,7 +523,6 @@
         }
 
         .category-title {
-            /* Digunakan oleh .category-card h3 */
             font-family: var(--font-primary);
             font-size: 1.5rem;
             font-weight: 700;
@@ -538,31 +532,12 @@
         }
 
         .category-description {
-            /* Digunakan oleh .category-card p */
             font-family: var(--font-secondary);
             font-size: 0.95rem;
             color: var(--text-secondary);
             line-height: 1.6;
             margin-bottom: var(--space-lg);
-        }
-
-        .category-card h2 {
-            /* Untuk style dari "Enhanced Category Cards" h2 */
-            font-size: 1.25rem;
-            /* text-xl */
-            font-weight: 600;
-            /* semibold */
-            color: var(--primary);
-            /* Menggunakan var(--primary) */
-            margin-bottom: 8px;
-        }
-
-        .category-card p {
-            /* Style p dari "Enhanced Category Cards" - ini akan menimpa .category-description jika berada di dalam .category-card */
-            color: var(--text-secondary);
-            /* Menggunakan var(--text-secondary) */
-            font-size: 0.875rem;
-            /* text-sm */
+            /* Pastikan properti ini ada */
         }
 
         .category-meta {
@@ -587,6 +562,34 @@
             gap: var(--space-xs);
             font-weight: 600;
             color: var(--primary);
+        }
+
+        .category-card.completed {
+            border-color: var(--success);
+            background-color: #f0fff4;
+            opacity: 0.85;
+        }
+
+        .category-card.completed:hover {
+            opacity: 1;
+            transform: translateY(-4px) scale(1.01);
+        }
+
+        .category-card .completion-checkmark {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 2rem;
+            color: var(--success);
+            background-color: white;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-sm);
+            animation: bounce 1s;
         }
 
         /* ===== SIDEBAR COMPONENTS ===== */
@@ -779,8 +782,6 @@
         }
 
         /* ===== MODERN PROGRESS INDICATORS ===== */
-        /* Progress Container di dalam .sidebar-card sudah diatur di sana */
-        /* Style progress bar ini untuk progress-container di dalam .sidebar-content */
         .progress-container {
             background: var(--surface);
             border-radius: var(--radius-xl);
@@ -821,7 +822,6 @@
         }
 
         .progress-bar {
-            /* Ini adalah .progress-bar untuk sidebar */
             height: 100%;
             background: linear-gradient(90deg, var(--primary), var(--secondary));
             border-radius: var(--radius-lg);
@@ -851,29 +851,8 @@
             }
         }
 
-        /* Progress Indicator untuk Konsol Pertanyaan (Legacy/Separate) */
-        #progress-container.progress-bar {
-            /* ID progress-container dengan class .progress-bar */
-            width: 100%;
-            height: 4px;
-            background: var(--border-light);
-            /* Menggunakan var(--border-light) */
-            border-radius: 2px;
-            overflow: hidden;
-            margin: 16px 0;
-        }
 
-        #progress-fill.progress-fill {
-            /* ID progress-fill dengan class .progress-fill */
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-            /* Menggunakan var(--primary) dan var(--secondary) */
-            border-radius: 2px;
-            transition: width 0.3s ease;
-        }
-
-
-        /* ===== MODERN MODAL STYLING (Digunakan oleh JS untuk modal dinamis) ===== */
+        /* ===== MODERN MODAL STYLING ===== */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -883,14 +862,12 @@
             width: 100vw;
             height: 100vh;
             background: rgba(0, 0, 0, 0.85);
-            /* !important dihilangkan, bisa ditambahkan di JS jika perlu override kuat */
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             display: flex;
             align-items: center;
             justify-content: center;
             z-index: 9999;
-            /* !important dihilangkan */
             opacity: 0;
             visibility: hidden;
             transition: all 0.3s ease;
@@ -902,14 +879,10 @@
         }
 
         .modal-content {
-            /* Style utama untuk .modal-content yang dibuat JS */
             background: var(--surface);
-            /* Menggunakan var(--surface) sebagai pengganti --card-bg dan #ffffff */
             border-radius: var(--radius-2xl);
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            /* !important dihilangkan */
             border: 1px solid var(--border-light);
-            /* Menggunakan var(--border-light) sebagai pengganti --border-color dan rgba(255,255,255,0.1) */
             max-width: 600px;
             width: 90%;
             max-height: 90vh;
@@ -973,51 +946,6 @@
             justify-content: flex-end;
         }
 
-        /* Style untuk Modal dari "Enhanced Modal Design" (ID #category-selection-modal, #overall-summary-modal) */
-        #category-selection-modal,
-        #overall-summary-modal {
-            /* Style untuk modal dengan ID spesifik */
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(8px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            padding: 20px;
-            animation: modalFadeIn 0.3s ease-out;
-        }
-
-        #category-selection-modal .modal-content,
-        #overall-summary-modal .modal-content {
-            /* Menargetkan .modal-content di dalam modal spesifik */
-            background: var(--surface);
-            /* Menggunakan var(--surface) */
-            padding: 32px;
-            border-radius: var(--radius-xl);
-            box-shadow: var(--shadow-xl);
-            width: 100%;
-            max-width: 520px;
-            border: 1px solid var(--border-light);
-            /* Menggunakan var(--border-light) */
-            animation: modalSlideIn 0.3s ease-out;
-            position: relative;
-            /* Sudah ada di .modal-content umum */
-        }
-
-        #category-selection-modal .modal-content h2,
-        #overall-summary-modal .modal-content h2 {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 16px;
-        }
-
-
         @keyframes modalFadeIn {
             from {
                 opacity: 0;
@@ -1043,23 +971,16 @@
         }
 
 
-        /* ===== TYPING INDICATOR (Digunakan oleh Modern UI & Enhanced) ===== */
-        /* Style utama untuk .typing-indicator */
+        /* ===== TYPING INDICATOR ===== */
         .typing-indicator {
             display: flex;
             align-items: center;
             gap: var(--space-sm);
-            /* Menggunakan var(--space-sm) dari :root */
             padding: var(--space-md);
-            /* Menggunakan var(--space-md) dari :root */
             background: var(--surface-elevated);
-            /* Menggunakan var(--surface-elevated) */
             border-radius: var(--radius-lg);
             border: 1px solid var(--border-light);
-            /* Menggunakan var(--border-light) */
-            /* margin-bottom: 12px; /* Dihapus karena bisa diatur per instance jika perlu */
             animation: fadeInUp 0.3s ease-out;
-            /* Menggunakan animasi yang sudah ada */
         }
 
         .typing-dots {
@@ -1068,36 +989,28 @@
             align-items: center;
         }
 
-        /* Disesuaikan gap jika perlu */
         .typing-dot {
             width: 8px;
             height: 8px;
             background: var(--primary);
-            /* Menggunakan var(--primary) atau var(--text-secondary) */
             border-radius: 50%;
             animation: typingBounce 1.4s infinite ease-in-out;
-            /* Animasi dari Modern UI */
         }
 
         .typing-dot:nth-child(1) {
             animation-delay: -0.32s;
         }
 
-        /* Dari Modern UI */
         .typing-dot:nth-child(2) {
             animation-delay: -0.16s;
         }
 
-        /* Dari Modern UI */
         .typing-dot:nth-child(3) {
             animation-delay: 0s;
         }
 
-        /* Dari Modern UI */
-
         @keyframes typingBounce {
 
-            /* Dari Modern UI */
             0%,
             80%,
             100% {
@@ -1111,180 +1024,16 @@
             }
         }
 
-        /* @keyframes typingDot { /* Animasi dari "Enhanced", bisa dipilih salah satu atau dikombinasikan */
-        /* 0%, 60%, 100% { transform: scale(1); opacity: 0.5; } */
-        /* 30% { transform: scale(1.2); opacity: 1; } */
-        /* } */
-
         .ai-typing-text {
             color: var(--text-secondary);
             font-style: italic;
             font-size: 0.9rem;
         }
 
-        /* ===== MISC STYLES FROM PROVIDED CODE ===== */
-        .header-ai {
-            position: relative;
-            display: inline-block;
-            margin-bottom: 20px;
-        }
-
-        .header-ai img {
-            display: block;
-        }
-
-        .welcome-bubble {
-            position: absolute;
-            top: 10px;
-            left: calc(100% + 15px);
-            background-color: var(--success-light);
-            min-width: 280px;
-            max-width: 400px;
-            color: white;
-            padding: 10px 15px;
-            border-radius: 15px;
-            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
-            font-size: 0.95rem;
-            line-height: 1.4;
-        }
-
-        .typed-cursor {
-            opacity: 1;
-            animation: blink 0.7s infinite;
-        }
-
-        @keyframes blink {
-
-            0%,
-            100% {
-                opacity: 1;
-            }
-
-            50% {
-                opacity: 0;
-            }
-        }
-
-        /* Enhanced Buttons (Question Option Button) */
-        .question-option-button {
-            background: linear-gradient(135deg, var(--success), #059669);
-            /* Menggunakan var(--success) */
-            color: white;
-            font-weight: 600;
-            padding: 16px 20px;
-            border-radius: var(--radius-lg);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            border: none;
-            cursor: pointer;
-            text-align: center;
-            box-shadow: var(--shadow-sm);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .question-option-button::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: left 0.5s;
-        }
-
-        .question-option-button:hover {
-            background: linear-gradient(135deg, #059669, #047857);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .question-option-button:hover::before {
-            left: 100%;
-        }
-
-        .question-option-button:active {
-            transform: translateY(0);
-        }
-
-        .question-option-button:disabled {
-            background: var(--border-light);
-            color: var(--text-secondary);
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-
-        /* Menggunakan var(--border-light) dan var(--text-secondary) */
-        .question-option-button:disabled::before {
-            display: none;
-        }
-
-        .question-option-button img {
-            width: 20px;
-            height: auto;
-        }
-
-        .modal-close-button {
-            /* Style untuk tombol close modal legacy */
-            background-color: #e2e8f0;
-            /* gray-300 */
-            color: #4a5568;
-            /* gray-700 */
-            font-weight: 600;
-            padding: 8px 16px;
-            border-radius: 6px;
-            margin-top: 20px;
-            border: none;
-            cursor: pointer;
-        }
-
-        .modal-close-button:hover {
-            background-color: #cbd5e0;
-            /* gray-400 */
-        }
-
-        .hidden {
-            display: none !important;
-        }
-
-        /* !important dipertahankan untuk override kuat */
-        .user-info {
-            text-align: right;
-            margin-bottom: 20px;
-            font-size: 1rem;
-            color: #4A5568;
-        }
-
-        .user-info strong {
-            color: #2D3748;
-        }
-
-        .user-info img {
-            width: 20px;
-            height: auto;
-            vertical-align: middle;
-            margin-left: 5px;
-        }
-
-        #overall-summary-content {
-            background-color: white;
-            border-radius: 8px;
-            padding: 20px;
-            margin-top: 10px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-        }
-
         .spinner {
             border: 3px solid var(--border-light);
-            /* Menggunakan var(--border-light) */
             border-radius: 50%;
             border-top-color: var(--primary);
-            /* Menggunakan var(--primary) */
             width: 20px;
             height: 20px;
             animation: spin 1s linear infinite;
@@ -1298,78 +1047,13 @@
             }
         }
 
-        .typewriter {
-            overflow: hidden;
-            white-space: nowrap;
-            animation: typewriter 2s steps(40, end);
-        }
-
-        @keyframes typewriter {
-            from {
-                width: 0;
-            }
-
-            to {
-                width: 100%;
-            }
-        }
-
-        @keyframes fadeInScale {
-            0% {
-                opacity: 0;
-                transform: scale(0.9) translateY(20px);
-            }
-
-            100% {
-                opacity: 1;
-                transform: scale(1) translateY(0);
-            }
-        }
-
-        @keyframes fadeOut {
-            0% {
-                opacity: 1;
-                transform: scale(1);
-            }
-
-            100% {
-                opacity: 0;
-                transform: scale(0.9);
-            }
-        }
-
-
-        /* Loading States */
-        .loading {
-            opacity: 0.7;
-            pointer-events: none;
-            position: relative;
-        }
-
-        .loading::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 20px;
-            height: 20px;
-            margin: -10px 0 0 -10px;
-            border: 2px solid var(--border-light);
-            /* Menggunakan var(--border-light) */
-            border-top-color: var(--primary);
-            /* Menggunakan var(--primary) */
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
+        .hidden {
+            display: none !important;
         }
 
 
         /* ===== RESPONSIVE DESIGN ===== */
         @media (max-width: 768px) {
-            body {
-                padding: 10px;
-                /* Ditambahkan dari bagian responsive bawah */
-            }
-
             .chatbot-container {
                 padding: var(--space-md);
                 gap: var(--space-lg);
@@ -1384,122 +1068,23 @@
                 gap: var(--space-md);
             }
 
-            .category-card {
-                padding: var(--space-lg);
-            }
-
             .category-card:hover {
                 transform: translateY(-4px) scale(1.01);
-                /* Disesuaikan dari responsive bawah */
-            }
-
-            .category-icon {
-                width: 48px;
-                height: 48px;
-                font-size: 20px;
-            }
-
-            .category-title {
-                font-size: 1.25rem;
             }
 
             .chat-container {
                 height: 500px;
             }
 
-            .chat-header {
-                padding: var(--space-md);
-            }
-
-            .ai-avatar {
-                width: 40px;
-                height: 40px;
-                font-size: 20px;
-            }
-
-            .chat-info h3 {
-                font-size: 1.125rem;
-            }
-
             .message {
                 max-width: 95%;
-            }
-
-            .message-avatar {
-                width: 32px;
-                height: 32px;
-                font-size: 14px;
-            }
-
-            .coin-amount {
-                font-size: 1.5rem;
-            }
-
-            .btn {
-                padding: var(--space-sm) var(--space-md);
-                font-size: 0.875rem;
-            }
-
-            /* Modal responsive dari bagian bawah */
-            #category-selection-modal .modal-content,
-            /* Menargetkan modal spesifik */
-            #overall-summary-modal .modal-content,
-            .modal-overlay .modal-content {
-                /* Menargetkan modal dinamis juga */
-                padding: 24px;
-                margin: 10px;
-            }
-
-            /* Input area responsive dari bagian bawah */
-            .input-area {
-                /* Class dari konsol legacy, mungkin perlu disesuaikan jika digunakan di modern UI */
-                flex-direction: column;
-                gap: 8px;
-            }
-
-            .input-area button {
-                width: 100%;
-                padding: 12px;
-            }
-
-            .question-option-button {
-                padding: 14px 16px;
-                font-size: 0.9rem;
-            }
-
-            #legacy-question-console {
-                max-height: 400px;
-                /* Target ID yang sudah diubah */
-            }
-
-            .welcome-bubble {
-                position: static;
-                margin-top: 15px;
-                margin-left: 0;
-                max-width: 100%;
-            }
-
-            .header-ai {
-                text-align: center;
             }
         }
 
         @media (max-width: 480px) {
-            .chatbot-container {
-                padding: var(--space-sm);
-            }
 
             .chatbot-header {
                 padding: var(--space-lg) var(--space-md);
-            }
-
-            .category-card {
-                padding: var(--space-md);
-            }
-
-            .category-card h2 {
-                font-size: 1.1rem;
-                /* Dari responsive bawah */
             }
 
             .chat-container {
@@ -1513,23 +1098,292 @@
             .chat-input-container {
                 padding: var(--space-md);
             }
+        }
 
-            /* Modal content responsive dari bagian bawah */
-            #category-selection-modal .modal-content,
-            #overall-summary-modal .modal-content,
-            .modal-overlay .modal-content {
-                padding: 20px;
-            }
+        .recommendation-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: var(--space-xl);
+            row-gap: 2rem;
+            margin-top: var(--space-lg);
+        }
 
-            .chatbot-message {
-                /* Ini class dari mana? Jika message di modern UI, selectornya .message .message-content */
-                max-width: 95%;
-                padding: 10px 14px;
-            }
+        .recommendation-card {
+            background: var(--surface);
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--border-light);
+            box-shadow: var(--shadow-md);
+            padding: var(--space-xl);
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s ease;
+            animation: fadeInUp 0.5s ease-out;
+        }
 
-            .typing-indicator {
-                padding: 10px 14px;
-            }
+        .recommendation-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary);
+        }
+
+        .recommendation-card h4 {
+            font-family: var(--font-primary);
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+            margin-bottom: var(--space-md);
+            line-height: 1.3;
+        }
+
+        .recommendation-card .card-section {
+            margin-bottom: var(--space-lg);
+        }
+
+        .recommendation-card .card-section-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: var(--space-sm);
+            font-size: 1rem;
+        }
+
+        .recommendation-card p,
+        .recommendation-card ul {
+            font-family: var(--font-secondary);
+            color: var(--text-secondary);
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        .recommendation-card ul {
+            list-style-position: inside;
+            padding-left: 5px;
+        }
+
+        .recommendation-card li {
+            margin-bottom: var(--space-xs);
+        }
+
+        /* ... CSS Anda yang sudah ada ... */
+
+
+        /* ===== SIMULATION MODAL CONTENT STYLING ===== */
+
+        /* Memberi padding dan scrollbar jika kontennya panjang */
+        /* ... CSS Anda yang sudah ada ... */
+
+        /* ========================================================== */
+        /* ===== PERBAIKAN: MODAL SIMULASI RESPONSIVE & SCROLLABLE ===== */
+        /* ========================================================== */
+
+        /* Overlay untuk modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(18, 25, 38, 0.8);
+            /* Warna lebih gelap untuk kontras lebih baik */
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            padding: var(--space-md);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Konten utama modal */
+        .modal-content {
+            background: var(--surface);
+            border-radius: var(--radius-2xl);
+            box-shadow: var(--shadow-xl);
+            border: 1px solid var(--border-light);
+            max-width: 700px;
+            /* Sedikit lebih lebar untuk konten yang panjang */
+            width: 100%;
+            max-height: 90vh;
+            /* Menggunakan 90% dari tinggi viewport */
+            display: flex;
+            /* Menggunakan flexbox untuk layout header-body-footer */
+            flex-direction: column;
+            overflow: hidden;
+            /* Mencegah konten keluar dari radius sudut */
+            transform: scale(0.95) translateY(20px);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: scale(1) translateY(0);
+        }
+
+        /* Header Modal */
+        .modal-header {
+            background: linear-gradient(135deg, var(--secondary), var(--secondary-dark));
+            color: var(--text-inverse);
+            padding: var(--space-lg) var(--space-xl);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            flex-shrink: 0;
+            /* Mencegah header menyusut */
+        }
+
+        .modal-title {
+            font-family: var(--font-primary);
+            font-size: 1.35rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .modal-close {
+            background: transparent;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            color: var(--text-inverse);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            line-height: 1;
+            transition: all 0.2s ease;
+        }
+
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: rotate(90deg);
+        }
+
+        /* Body Modal (Area yang bisa di-scroll) */
+        .modal-body {
+            padding: var(--space-xl);
+            overflow-y: auto;
+            /* INI KUNCINYA: scroll hanya di bagian body */
+            flex: 1;
+            /* Membuat body mengisi ruang yang tersisa */
+            -webkit-overflow-scrolling: touch;
+            /* Scroll lebih mulus di mobile */
+        }
+
+        /* Styling untuk #simulation-content dan elemen di dalamnya */
+        #simulation-content {
+            animation: fadeInUp 0.5s ease-out;
+        }
+
+        /* Styling untuk blok skenario/pertanyaan */
+        .simulation-scenario-block {
+            background-color: var(--surface-elevated);
+            padding: var(--space-lg);
+            border-radius: var(--radius-lg);
+            margin-bottom: var(--space-lg);
+            border-left: 4px solid var(--primary);
+        }
+
+        .simulation-step-info {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            margin-bottom: var(--space-sm);
+            text-transform: uppercase;
+        }
+
+        .simulation-scenario-text {
+            font-size: 1.1rem;
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        /* Styling untuk grup tombol pilihan */
+        .simulation-options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: var(--space-sm);
+            margin-top: var(--space-lg);
+        }
+
+        /* Tombol pilihan di dalam simulasi */
+        .simulation-options .btn {
+            width: 100%;
+            justify-content: flex-start;
+            text-align: left;
+            background: var(--surface);
+            color: var(--secondary);
+            border: 2px solid var(--border-medium);
+            font-weight: 500;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .simulation-options .btn:hover {
+            background: var(--secondary-light);
+            color: var(--text-inverse);
+            border-color: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* ===== STYLING KHUSUS UNTUK KESIMPULAN AKHIR ===== */
+        .simulation-final-summary {
+            /* overflow-y tidak diperlukan lagi di sini, karena parent (.modal-body) sudah handle */
+            padding: var(--space-lg);
+            border: 2px dashed var(--success);
+            border-radius: var(--radius-xl);
+            background: linear-gradient(135deg, #f0fff4, #e6f7ff);
+        }
+
+        .simulation-final-summary h4 {
+            font-family: var(--font-primary);
+            font-size: 1.75rem;
+            color: var(--success);
+            text-align: center;
+            margin-bottom: var(--space-lg);
+        }
+
+        .simulation-final-summary p,
+        .simulation-final-summary li {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            /* Sedikit lebih besar agar mudah dibaca */
+            line-height: 1.7;
+            word-wrap: break-word;
+            /* Mencegah teks panjang merusak layout */
+        }
+
+        .simulation-final-summary strong {
+            color: var(--text-primary);
+            display: block;
+            margin-top: var(--space-lg);
+            margin-bottom: var(--space-xs);
+            font-size: 1.1rem;
+        }
+
+        .simulation-final-summary ul {
+            list-style-type: '✓ ';
+            list-style-position: outside;
+            padding-left: 20px;
+        }
+
+        .simulation-final-summary ul li {
+            padding-left: 10px;
+            margin-bottom: var(--space-sm);
+        }
+
+        .simulation-final-summary .btn-container {
+            text-align: center;
+            margin-top: var(--space-xl);
         }
     </style>
 
@@ -1545,7 +1399,8 @@
                     </h1>
                     <p
                         style="font-family: var(--font-secondary); color: var(--text-secondary); margin: 0; font-size: 1.125rem;">
-                        Halo, <strong>{{ Auth::user()->name ?? 'Pengguna' }}</strong>! Temukan jurusan yang tepat untuk masa
+                        Halo, <strong>{{ Auth::user()->name ?? 'Pengguna' }}</strong>! Temukan jurusan yang tepat untuk
+                        masa
                         depanmu
                     </p>
                 </div>
@@ -1571,8 +1426,6 @@
 
                     <div class="categories-grid" id="categories-container">
                         {{-- Categories will be loaded here dynamically by JavaScript --}}
-                        {{-- Server-side categories loop is commented out as per original logic --}}
-                        {{-- @forelse ($categories as $categoryId => $category) ... @empty ... @endforelse --}}
                     </div>
                 </section>
 
@@ -1624,14 +1477,13 @@
                         Progress Assessment
                     </div>
                     <div class="sidebar-content">
-                        <div class="progress-container"> {{-- Ini adalah .progress-container untuk sidebar --}}
+                        <div class="progress-container">
                             <div class="progress-header">
                                 <div class="progress-title" id="progress-category">Kategori</div>
-                                <div class="progress-stats" id="progress-text-sidebar">0/0</div> {{-- ID diubah agar unik jika ada progress-text lain --}}
+                                <div class="progress-stats" id="progress-text-sidebar">0/0</div>
                             </div>
                             <div class="progress-bar-container">
                                 <div class="progress-bar" id="progress-bar-sidebar" style="width: 0%"></div>
-                                {{-- ID diubah --}}
                             </div>
                         </div>
                     </div>
@@ -1659,46 +1511,7 @@
         </main>
     </div>
 
-    {{-- LEGACY Modal Pemilihan Jumlah Pertanyaan - DISABLED to prevent double modal --}}
-    {{-- This modal is replaced by the modern modal system in selectCategory() -> showQuestionSelectionModal() --}}
-    {{--
-<div id="category-selection-modal" class="hidden">
-    <div class="modal-content">
-        <h2 id="selection-title">Pilih Jumlah Pertanyaan</h2>
-        <div id="question-options-container" class="grid gap-3 grid-cols-2 md:grid-cols-2">
-        </div>
-        <button class="modal-close-button" data-action="close-category-modal">Kembali</button>
-    </div>
-</div>
---}}
-
-    {{-- Konsol Pertanyaan (Chatbox) - LEGACY / SEPARATE - ID diubah --}}
-    <div id="legacy-question-console" class="bg-[#f0f4f8] p-4 rounded-lg mb-6 shadow-inner hidden">
-        <h2 id="legacy-console-title" class="text-2xl font-semibold text-[#2d3748] mb-4 text-center"></h2>
-
-        {{-- Progress Indicator untuk konsol legacy --}}
-        <div id="legacy-progress-container" class="progress-bar hidden"> {{-- ID diubah --}}
-            <div id="legacy-progress-fill" class="progress-fill" style="width: 0%"></div> {{-- ID diubah --}}
-        </div>
-        <div id="legacy-progress-text" class="text-center text-sm text-gray-600 mb-4 hidden"> {{-- ID diubah --}}
-            Pertanyaan <span id="legacy-current-question">1</span> dari <span id="legacy-total-questions">5</span>
-            {{-- ID diubah --}}
-        </div>
-
-        <div id="legacy-chat-history" class="flex-grow overflow-y-auto mb-4 p-2 space-y-3"> {{-- ID diubah --}}
-            {{-- Riwayat chat akan muncul di sini --}}
-        </div>
-        <div class="input-area"> {{-- Jika ini class spesifik untuk legacy, biarkan --}}
-            <input type="text" id="legacy-user-input" placeholder="Ketik jawabanmu di sini..." autocomplete="off">
-            {{-- ID diubah --}}
-            <button id="legacy-send-button" onclick="processUserInputLegacy()">Kirim</button> {{-- ID diubah, onclick mungkin perlu fungsi baru --}}
-        </div>
-        <button onclick="hideLegacyQuestionConsole()" class="modal-close-button w-full mt-4">Tutup Konsol Kategori</button>
-        {{-- onclick mungkin perlu fungsi baru --}}
-    </div>
-
-    {{-- Area Summary Keseluruhan (Bagian dari UI Modern, muncul di bawah sidebar atau di tempat lain) --}}
-    {{-- Strukturnya mungkin perlu diintegrasikan lebih baik dengan .chatbot-main jika ini adalah target utama --}}
+    {{-- Overall Summary Area (Akan muncul di bawah kategori) --}}
     <div id="overall-summary-container" class="hidden"
         style="margin-top: var(--space-xl); padding: var(--space-lg); background: var(--surface); border-radius: var(--radius-xl); box-shadow: var(--shadow-md);">
         <h2
@@ -1708,7 +1521,6 @@
         <div id="overall-summary-text" style="color: var(--text-secondary); line-height: 1.6;">
             {{-- Summary keseluruhan akan muncul di sini --}}
         </div>
-        {{-- Container untuk tombol pilihan jurusan dari AI akan ditambahkan oleh JS di dalam overall-summary-text atau setelahnya --}}
         <button onclick="hideOverallSummaryContainer()" class="btn btn-outline"
             style="display: block; margin: var(--space-lg) auto 0;">
             Tutup Rekomendasi Final
@@ -1717,28 +1529,32 @@
 
 
     {{-- Simulation Modal --}}
-    <div id="simulation-modal"
-        class="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center z-50 hidden">
-        <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
-            <div class="p-6">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 id="simulation-title" class="text-2xl font-bold text-gray-800">🎯 Simulasi Interaktif</h2>
-                    <button onclick="closeSimulation()"
-                        class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
-                </div>
-                <div id="simulation-progress" class="mb-6 hidden">
-                    <div class="flex justify-between text-sm text-gray-600 mb-2">
-                        <span>Progress Simulasi</span>
-                        <span id="progress-text-sim">0%</span>
+    {{-- GANTI SELURUH BLOK INI --}}
+    {{-- Simulation Modal --}}
+    <div id="simulation-modal" class="modal-overlay">
+        <div class="modal-content" id="simulation-modal-content">
+            {{-- Modal Header --}}
+            <div class="modal-header">
+                <h2 id="simulation-title" class="modal-title">🎯 Simulasi Interaktif</h2>
+                <button onclick="closeSimulation()" class="modal-close" aria-label="Tutup Modal">&times;</button>
+            </div>
+
+            {{-- Modal Body (Bagian ini yang akan scroll) --}}
+            <div class="modal-body" id="simulation-modal-body">
+                {{-- Progress Bar --}}
+                <div id="simulation-progress" class="progress-container" style="display: none;">
+                    <div class="progress-header">
+                        <div class="progress-title">Progress Simulasi</div>
+                        <div class="progress-stats" id="progress-text-sim">0/0</div>
                     </div>
-                    <div class="w-full bg-gray-200 rounded-full h-2">
-                        <div id="progress-bar-sim"
-                            class="bg-gradient-to-r from-blue-500 to-purple-600 h-2 rounded-full transition-all duration-300"
-                            style="width: 0%"></div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" id="progress-bar-sim" style="width: 0%;"></div>
                     </div>
                 </div>
+
+                {{-- Dynamic Content (Skenario, Pilihan, atau Kesimpulan) --}}
                 <div id="simulation-content">
-                    {{-- Content will be dynamically loaded here --}}
+                    {{-- Konten akan dimuat di sini oleh JavaScript --}}
                 </div>
             </div>
         </div>
@@ -1747,519 +1563,140 @@
 
 @section('scripts')
     <script src="https://unpkg.com/typed.js@2.1.0/dist/typed.umd.js"></script>
+    {{-- AOS Fallback script --}}
     <script>
-        // Fallback untuk AOS jika tidak ada
         window.addEventListener('error', function(e) {
             if (e.message && e.message.includes('AOS')) {
                 console.log('🔧 AOS library not found, creating fallback');
                 window.AOS = {
-                    init: function() {
-                        console.log('🔧 AOS fallback initialized');
-                    },
-                    refresh: function() {
-                        console.log('🔧 AOS fallback refresh');
-                    }
+                    init: function() {},
+                    refresh: function() {}
                 };
             }
         });
         if (typeof AOS === 'undefined') {
             window.AOS = {
-                init: function() {
-                    console.log('🔧 AOS fallback initialized');
-                },
-                refresh: function() {
-                    console.log('🔧 AOS fallback refresh');
-                }
+                init: function() {},
+                refresh: function() {}
             };
         }
     </script>
     <script>
-        // Data dari Backend (Global)
-        const categoriesData =
-        @json($categories); // Pastikan $categories selalu dikirim dari controller jika ini sumber utama
+        // =================================================================
+        // BAGIAN 1: SETUP & INISIALISASI VARIABEL GLOBAL
+        // =================================================================
+
+        const categoriesData = @json($categories);
+        const userProgressData = @json($userProgress ?? []);
         let currentUserCoins = {{ $userCoins ?? 0 }};
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-        console.log('🔍 Categories data received from server:', categoriesData);
+        console.log('🔍 Categories data received:', categoriesData);
+        console.log('📊 User progress received:', userProgressData);
 
-        // State Aplikasi (Global)
-        let currentCategoryId = null;
+        // State Aplikasi
+        let currentCategorySlug = null;
         let currentCategoryLabel = '';
-        let currentCategoryQuestions = []; // Pertanyaan asli dari kategori yang dipilih
-        let questionsToAsk = []; // Pertanyaan yang akan ditanyakan (subset dari currentCategoryQuestions)
+        let currentCategoryQuestions = [];
+        let questionsToAsk = [];
         let currentQuestionIndex = 0;
         let userAnswersForCurrentCategory = [];
-        let allUserAnswers = {}; // Menyimpan semua jawaban dari semua kategori yang diselesaikan
+        let allUserAnswers = userProgressData;
+        let currentSimulationSession = null;
+        let simulationData = null;
 
-        // DOM elements (diinisialisasi di DOMContentLoaded)
+        // DOM Elements
         let categoriesContainer, categoriesSection, chatSection, chatHistoryElement, userInputElement, sendButton;
-        let progressCardSidebar, progressCategorySidebar, progressBarSidebar, progressTextSidebar; // Untuk sidebar
-        let overallSummaryContainer, overallSummaryTextElement; // Untuk summary final
+        let progressCardSidebar, progressCategorySidebar, progressBarSidebar, progressTextSidebar;
+        let overallSummaryContainer, overallSummaryTextElement;
 
-        // Variabel untuk legacy console (jika masih akan digunakan)
-        let legacyQuestionConsole, legacyConsoleTitle, legacyChatHistory, legacyUserInput, legacySendButton;
-        let legacyProgressContainer, legacyProgressFill, legacyProgressText, legacyCurrentQuestionSpan,
-            legacyTotalQuestionsSpan;
-
+        // =================================================================
+        // BAGIAN 2: FUNGSI UTAMA YANG DIJALANKAN SAAT HALAMAN DIMUAT
+        // =================================================================
 
         document.addEventListener('DOMContentLoaded', function() {
             console.log('🚀 DOMContentLoaded - Starting initialization');
 
-            // Initialize Modern UI DOM elements
+            // Inisialisasi semua elemen dari DOM
             categoriesContainer = document.getElementById('categories-container');
             categoriesSection = document.getElementById('categories-section');
             chatSection = document.getElementById('chat-section');
-            chatHistoryElement = document.getElementById('chat-history'); // Target modern chat history
-            userInputElement = document.getElementById('user-input'); // Target modern user input
-            sendButton = document.getElementById('send-button'); // Target modern send button
-
+            chatHistoryElement = document.getElementById('chat-history');
+            userInputElement = document.getElementById('user-input');
+            sendButton = document.getElementById('send-button');
             progressCardSidebar = document.getElementById('progress-card');
             progressCategorySidebar = document.getElementById('progress-category');
             progressBarSidebar = document.getElementById('progress-bar-sidebar');
             progressTextSidebar = document.getElementById('progress-text-sidebar');
-
             overallSummaryContainer = document.getElementById('overall-summary-container');
             overallSummaryTextElement = document.getElementById('overall-summary-text');
-            // requestOverallSummaryButton sudah ada di HTML dengan onclick
 
-            // Initialize Legacy Console DOM elements (jika diperlukan)
-            legacyQuestionConsole = document.getElementById('legacy-question-console');
-            legacyConsoleTitle = document.getElementById('legacy-console-title');
-            legacyChatHistory = document.getElementById('legacy-chat-history');
-            legacyUserInput = document.getElementById('legacy-user-input');
-            legacySendButton = document.getElementById('legacy-send-button');
-            legacyProgressContainer = document.getElementById('legacy-progress-container');
-            legacyProgressFill = document.getElementById('legacy-progress-fill');
-            legacyProgressText = document.getElementById('legacy-progress-text');
-            legacyCurrentQuestionSpan = document.getElementById('legacy-current-question');
-            legacyTotalQuestionsSpan = document.getElementById('legacy-total-questions');
-
-
-            // Hapus inisialisasi duplikat dari sini, karena sudah di atas.
-            // Cukup panggil fungsi yang dibutuhkan.
             if (categoriesContainer) {
                 loadCategories();
-                updateCategoryCardVisuals();
             } else {
-                console.error("categoriesContainer not found during DOMContentLoaded!");
+                console.error("categoriesContainer not found!");
             }
-            updateCoinDisplay(); // Nama fungsi diubah agar lebih jelas
-            initializeModernChatEventListeners(); // Nama fungsi diubah
-
-            // Initialize Typed.js
-            const userName = "{{ Auth::user()->name ?? '' }}";
-            const greeting = userName ? `Hai ${userName}!` : "Hai!";
-            const typedWelcomeElement = document.getElementById('typed-welcome');
-            if (typedWelcomeElement && typeof Typed !== 'undefined') {
-                try {
-                    new Typed("#typed-welcome", {
-                        strings: [
-                            `${greeting} Aku AI MATE yang siap membantu kamu memilih jurusan yang tepat. Yuk, pilih kategori yang ingin kamu coba dulu!`
-                        ],
-                        typeSpeed: 30,
-                        backSpeed: 10,
-                        startDelay: 500,
-                        loop: false,
-                        showCursor: true,
-                        cursorChar: '|',
-                        onComplete: function(self) {
-                            if (self.cursor) self.cursor.style.display = 'none';
-                        }
-                    });
-                } catch (e) {
-                    console.error("Typed.js initialization failed:", e);
-                    typedWelcomeElement.textContent =
-                        `${greeting} Aku AI MATE yang siap membantu kamu memilih jurusan yang tepat. Yuk, pilih kategori yang ingin kamu coba dulu!`;
-                }
-            } else if (typedWelcomeElement) {
-                typedWelcomeElement.textContent =
-                    `${greeting} Aku AI MATE yang siap membantu kamu memilih jurusan yang tepat. Yuk, pilih kategori yang ingin kamu coba dulu!`;
-            }
-
-
-            // Pastikan modal legacy (jika ada HTMLnya) tersembunyi
-            const legacyModal = document.getElementById('category-selection-modal'); // ID modal legacy
-            if (legacyModal) {
-                legacyModal.classList.add('hidden');
-            }
+            updateCoinDisplay();
+            initializeModernChatEventListeners();
+            initializeTypedWelcome();
 
             console.log('✅ Modern UI initialization complete');
         });
 
-        function updateCategoryCardVisuals() {
-            if (!categoriesContainer || !allUserAnswers) return;
-            console.log("Updating card visuals based on allUserAnswers:", allUserAnswers);
+        // =================================================================
+        // BAGIAN 3: FUNGSI PEMBANTU & TAMPILAN (UTILITY & UI HELPERS)
+        // =================================================================
 
-            const categoryCards = categoriesContainer.querySelectorAll('.category-card');
-            categoryCards.forEach(card => {
-                const categoryIdFromCard = card.dataset.categoryId; // Ambil dari data-category-id
-                const categoryLabelFromCard = card.querySelector('.category-title')?.textContent.trim() || '';
-
-                // Cek apakah kategori ini ada di allUserAnswers
-                // Kita bisa mengecek berdasarkan label atau categoryIdKey jika sudah disimpan di allUserAnswers
-                let isCompleted = false;
-                if (allUserAnswers[categoryLabelFromCard]) { // Cek berdasarkan label dulu
-                    isCompleted = true;
-                } else if (categoryIdFromCard) { // Jika tidak ada berdasarkan label, coba cek berdasarkan ID
-                    for (const key in allUserAnswers) {
-                        if (allUserAnswers[key].categoryIdKey === categoryIdFromCard) {
-                            isCompleted = true;
-                            break;
-                        }
-                    }
-                }
-
-
-                if (isCompleted) {
-                    card.classList.add('completed');
-                    let checkmark = card.querySelector('.completion-checkmark');
-                    if (!checkmark) {
-                        checkmark = document.createElement('span');
-                        checkmark.className = 'completion-checkmark';
-                        checkmark.innerHTML = '✓';
-                        const titleElement = card.querySelector('.category-title');
-                        if (titleElement && titleElement.parentNode) {
-                            titleElement.parentNode.insertBefore(checkmark, titleElement.nextSibling);
-                        } else {
-                            card.appendChild(checkmark);
-                        }
-                    }
-                    console.log(`Card ${categoryLabelFromCard || categoryIdFromCard} marked as completed.`);
-                } else {
-                    card.classList.remove('completed');
-                    const checkmark = card.querySelector('.completion-checkmark');
-                    if (checkmark) checkmark.remove();
-                }
-            });
-        }
-
-        function loadCategories() {
-            console.log('🔄 Loading categories...');
-            if (!categoriesContainer) {
-                console.error('❌ Categories container not found!');
-                return;
+        function updateCoinDisplay(newBalance) {
+            if (newBalance !== undefined) {
+                currentUserCoins = newBalance;
             }
-            categoriesContainer.innerHTML = `
-            <div id="categories-loading" style="grid-column: 1 / -1; text-align: center; padding: var(--space-xl); color: var(--text-secondary);">
-                <div style="font-size: 3rem; margin-bottom: 1rem;">📋</div>
-                <h3 style="margin-bottom: 0.5rem; color: var(--text-primary);">Memuat Kategori...</h3>
-                <p>Kategori assessment sedang dimuat. Mohon tunggu sebentar.</p>
-            </div>`;
-
-            if (!categoriesData || Object.keys(categoriesData).length === 0) {
-                console.warn('⚠️ No categories data available from server - showing fallback/error message.');
-                categoriesContainer.innerHTML = `
-                <div style="grid-column: 1 / -1; text-align: center; padding: var(--space-xl); color: var(--text-secondary);">
-                    <div style="font-size: 3rem; margin-bottom: 1rem;">⚠️</div>
-                    <h3 style="margin-bottom: 0.5rem; color: var(--text-primary);">Data kategori tidak ditemukan</h3>
-                    <p>Menggunakan kategori fallback. Silakan refresh halaman untuk data terbaru atau coba gunakan kategori fallback.</p>
-                    <button onclick="location.reload()" class="btn btn-primary" style="margin-top: 1rem;">🔄 Refresh Halaman</button>
-                    <button onclick="loadFallbackCategoriesJs()" class="btn btn-secondary" style="margin-top: 1rem; margin-left: 1rem;">📋 Gunakan Kategori Fallback</button>
-                </div>`;
-                // Definisikan fallbackCategories di JS jika akan digunakan oleh loadFallbackCategoriesJs()
-                window.fallbackCategoriesData = {
-                    'bakat_minat': {
-                        label: 'Bakat & Minat Fallback',
-                        questions: Array(5).fill().map((_, i) => `Pertanyaan Fallback Bakat ${i + 1}`),
-                        cost_per_question: 10
-                    },
-                    'kepribadian': {
-                        label: 'Kepribadian Fallback',
-                        questions: Array(5).fill().map((_, i) => `Pertanyaan Fallback Kepribadian ${i + 1}`),
-                        cost_per_question: 10
-                    },
-                };
-                return;
-            }
-
-            categoriesContainer.innerHTML = ''; // Clear loading
-            Object.entries(categoriesData).forEach(([categoryId, category]) => {
-                const categoryCard = createCategoryCard(categoryId, category);
-                categoriesContainer.appendChild(categoryCard);
-            });
-            console.log('✅ Categories loaded successfully from server data');
-        }
-
-        // Fungsi untuk memuat fallback kategori jika dipanggil dari tombol
-        function loadFallbackCategoriesJs() {
-            console.log('🔧 Loading fallback categories from JS function...');
-            if (!window.fallbackCategoriesData || Object.keys(window.fallbackCategoriesData).length === 0) {
-                alert("Data kategori fallback tidak tersedia.");
-                return;
-            }
-            if (!categoriesContainer) return;
-            categoriesContainer.innerHTML = '';
-            Object.entries(window.fallbackCategoriesData).forEach(([categoryId, category]) => {
-                const categoryCard = createCategoryCard(categoryId, category);
-                categoriesContainer.appendChild(categoryCard);
-            });
-            console.log('✅ Fallback categories loaded via JS function.');
-        }
-
-
-        function createCategoryCard(categoryId, category) {
-            const card = document.createElement('div');
-            card.className = 'category-card';
-            card.style.animationDelay = `${Math.random() * 0.3}s`;
-
-            const iconMap = {
-                'bakat_minat': '🎯',
-                'kepribadian': '🧠',
-                'nilai_kehidupan': '💎',
-                'gaya_belajar': '📚',
-                'lingkungan_kerja': '🏢',
-                'kemampuan_akademik': '🎓'
-            };
-            const icon = iconMap[categoryId] || '📋';
-            const questionCount = Array.isArray(category.questions) ? category.questions.length : 0;
-            const costPerQuestion = category.cost_per_question || 15;
-            const categoryLabel = category.label || 'Kategori Tanpa Nama';
-
-            card.innerHTML = `
-            <div class="category-icon">${icon}</div>
-            <h3 class="category-title">${categoryLabel}</h3>
-            <p class="category-description">Eksplorasi ${categoryLabel.toLowerCase()} untuk menentukan jurusan yang tepat</p>
-            <div class="category-meta">
-                <div class="category-questions"><span>📝</span> <span>${questionCount} soal</span></div>
-                <div class="category-cost"><span>🪙</span> <span>${costPerQuestion} koin/soal</span></div>
-            </div>`;
-            card.addEventListener('click', () => {
-                console.log(`🖱️ Category clicked: ${categoryId}`);
-                selectCategory(categoryId, categoryLabel, questionCount, costPerQuestion);
-            });
-            return card;
-        }
-
-        function initializeModernChatEventListeners() {
-            if (userInputElement) {
-                userInputElement.addEventListener('input', function() {
-                    this.style.height = 'auto';
-                    this.style.height = Math.min(this.scrollHeight, 120) + 'px';
-                });
-                userInputElement.addEventListener('keydown', function(e) {
-                    if (e.key === 'Enter' && !e.shiftKey) {
-                        e.preventDefault();
-                        processModernUserInput(); // Panggil fungsi spesifik untuk modern UI
-                    }
-                });
-            }
-            if (sendButton) {
-                sendButton.addEventListener('click', processModernUserInput); // Panggil fungsi spesifik
-            }
-        }
-
-        function updateCoinDisplay() {
-            const coinElements = document.querySelectorAll('#user-coin-balance'); // Hanya target elemen modern UI
+            const coinElements = document.querySelectorAll('#user-coin-balance');
             coinElements.forEach(element => {
                 if (element) element.textContent = currentUserCoins;
             });
         }
 
-        function showChatInterface() {
-            if (categoriesSection) categoriesSection.style.display = 'none';
-            if (chatSection) chatSection.style.display = 'block';
-            if (progressCardSidebar) progressCardSidebar.style.display = 'block';
-            if (userInputElement) userInputElement.focus();
-        }
-
-        function hideChatInterface() { // Digunakan oleh tombol "Kembali" di chat modern
-            if (categoriesSection) categoriesSection.style.display = 'block';
-            if (chatSection) chatSection.style.display = 'none';
-            if (progressCardSidebar) progressCardSidebar.style.display = 'none';
-            if (chatHistoryElement) chatHistoryElement.innerHTML = ''; // Bersihkan chat history modern
-            resetCategoryState();
-        }
-
-        function resetCategoryState() {
-            currentCategoryId = null;
-            currentCategoryLabel = '';
-            currentCategoryQuestions = [];
-            questionsToAsk = [];
-            currentQuestionIndex = 0;
-            userAnswersForCurrentCategory = [];
-        }
-
-        // Fungsi global untuk onclick dari category card
-        window.selectCategory = function(categoryId, categoryLabel, totalQuestionsInCat, costPerQuestion) {
-            console.log(`🎯 Selecting category: ${categoryId} (${categoryLabel})`);
-            currentCategoryId = categoryId; // Set state global
-            currentCategoryLabel = categoryLabel;
-
-            // Ambil pertanyaan asli untuk kategori ini
-            if (categoriesData && categoriesData[categoryId] && Array.isArray(categoriesData[categoryId].questions)) {
-                currentCategoryQuestions = categoriesData[categoryId].questions;
-            } else if (window.fallbackCategoriesData && window.fallbackCategoriesData[categoryId] && Array.isArray(
-                    window.fallbackCategoriesData[categoryId].questions)) {
-                // Jika menggunakan fallback data dari JS
-                currentCategoryQuestions = window.fallbackCategoriesData[categoryId].questions;
-            } else {
-                console.error(`Tidak ada data pertanyaan untuk kategori ${categoryId}`);
-                alert(`Tidak ada pertanyaan yang tersedia untuk kategori ${categoryLabel}.`);
-                currentCategoryQuestions = []; // Kosongkan jika tidak ada
-                // Fallback jika totalQuestionsInCat dari card tidak sesuai
-                totalQuestionsInCat = 0;
-                // return; // Jangan tampilkan modal jika tidak ada pertanyaan
-            }
-            // Pastikan totalQuestionsInCat sesuai dengan jumlah pertanyaan yang ada
-            totalQuestionsInCat = currentCategoryQuestions.length;
-
-
-            if (totalQuestionsInCat > 0) {
-                showModernQuestionSelectionModal(categoryId, categoryLabel, totalQuestionsInCat, costPerQuestion);
-            } else {
-                alert(`Kategori "${categoryLabel}" belum memiliki pertanyaan. Silakan pilih kategori lain.`);
-            }
-        };
-
-        function showModernQuestionSelectionModal(categoryId, categoryLabel, totalQuestions, costPerQuestion) {
-            console.log(`📋 Showing modern question selection for: ${categoryLabel}`);
-            const existingModal = document.getElementById('question-selection-overlay');
-            if (existingModal) existingModal.remove(); // Hapus modal lama jika ada
-
-            const modalOverlay = document.createElement('div');
-            modalOverlay.className = 'modal-overlay'; // Class ini sudah di-style di CSS
-            modalOverlay.id = 'question-selection-overlay';
-
-            const modalContent = document.createElement('div');
-            modalContent.className = 'modal-content'; // Class ini sudah di-style di CSS
-
-            modalContent.innerHTML = `
-            <div class="modal-header">
-                <h3 class="modal-title">📋 ${categoryLabel}</h3>
-                <button class="modal-close" onclick="closeModernQuestionSelectionModal()">×</button>
-            </div>
-            <div class="modal-body">
-                <div style="text-align: center; margin-bottom: var(--space-lg);">
-                    <div style="font-size: 4rem; margin-bottom: var(--space-md);">🎯</div>
-                    <p style="font-size: 1.125rem; color: var(--text-secondary); line-height: 1.6;">
-                        Pilih berapa banyak soal yang ingin Anda jawab untuk kategori <strong>${categoryLabel}</strong> (Total: ${totalQuestions} soal)
-                    </p>
-                </div>
-                <div style="display: flex; flex-direction: column; gap: var(--space-sm); max-width: 400px; margin: 0 auto; max-height: 300px; overflow-y: auto;">
-                    ${generateModernQuestionOptions(totalQuestions, costPerQuestion)}
-                </div>
-                <div style="margin-top: var(--space-lg); padding: var(--space-md); background: var(--surface-elevated); border-radius: var(--radius-md); text-align: center;">
-                    <p style="font-size: 0.875rem; color: var(--text-muted); margin: 0;">
-                        💰 Biaya: ${costPerQuestion} koin per soal<br>
-                        🪙 Koin Anda: <span id="modal-coin-display">${currentUserCoins}</span>
-                    </p>
-                </div>
-            </div>`;
-            modalOverlay.appendChild(modalContent);
-            document.body.appendChild(modalOverlay);
-            setTimeout(() => modalOverlay.classList.add('active'), 10);
-        }
-
-        function generateModernQuestionOptions(totalQuestions, costPerQuestion) {
-            const options = [];
-            // Opsi jumlah pertanyaan yang lebih fleksibel
-            let questionCounts = [];
-            if (totalQuestions <= 5) {
-                for (let i = 1; i <= totalQuestions; i++) questionCounts.push(i);
-            } else if (totalQuestions <= 10) {
-                questionCounts = [1, 3, 5, Math.min(7, totalQuestions), totalQuestions];
-            } else { // Lebih dari 10
-                questionCounts = [1, 3, 5, 7, 10, totalQuestions];
-            }
-            questionCounts = [...new Set(questionCounts)].sort((a, b) => a - b); // Unik dan urutkan
-
-            questionCounts.forEach(count => {
-                if (count > totalQuestions) return; // Jangan tawarkan lebih dari yang tersedia
-                const cost = count * costPerQuestion;
-                const canAfford = currentUserCoins >= cost;
-                options.push(`
-                <button onclick="startModernCategoryQuestions(${count})" class="btn ${canAfford ? 'btn-primary' : 'btn-outline'}" ${!canAfford ? 'disabled' : ''}
-                    style="padding: var(--space-lg); text-align: left; display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-sm);">
-                    <div>
-                        <div style="font-weight: 600; margin-bottom: 4px;">${count} Soal</div>
-                        <div style="font-size: 0.875rem; opacity: 0.8;">Biaya: ${cost} koin</div>
-                    </div>
-                    <div style="font-size: 1.5rem;">${canAfford ? '✅' : '❌'}</div>
-                </button>`);
-            });
-            return options.join('');
-        }
-
-        // Fungsi global untuk onclick tombol close modal
-        window.closeModernQuestionSelectionModal = function() {
-            const modalOverlay = document.getElementById('question-selection-overlay');
-            if (modalOverlay) {
-                modalOverlay.classList.remove('active');
-                setTimeout(() => modalOverlay.remove(), 300);
-            }
-        };
-
-        // Fungsi global untuk onclick tombol pilihan jumlah soal
-        window.startModernCategoryQuestions = function(numQuestions) {
-            console.log(`🚀 Starting ${numQuestions} questions for ${currentCategoryLabel}`);
-            closeModernQuestionSelectionModal();
-
-            if (!currentCategoryQuestions || currentCategoryQuestions.length === 0) {
-                alert("Tidak ada pertanyaan yang bisa ditampilkan untuk kategori ini.");
-                return;
-            }
-            // Ambil subset pertanyaan
-            questionsToAsk = currentCategoryQuestions.slice(0, numQuestions);
-            currentQuestionIndex = 0;
-            userAnswersForCurrentCategory = [];
-            if (userInputElement) {
-                userInputElement.disabled = false;
-                userInputElement.value = ''; // Opsional: bersihkan input sebelumnya
-                userInputElement.style.height = 'auto'; // Reset tinggi textarea
-            }
-            if (sendButton) {
-                sendButton.disabled = false;
-            }
-            showChatInterface();
-            updateModernProgress();
-            displayNextModernQuestion();
-        };
-
-        function updateModernProgress() {
-            if (progressBarSidebar && progressTextSidebar && progressCategorySidebar) {
-                const progress = questionsToAsk.length > 0 ? (currentQuestionIndex / questionsToAsk.length) * 100 : 0;
-                progressBarSidebar.style.width = `${progress}%`;
-                progressTextSidebar.textContent = `${currentQuestionIndex}/${questionsToAsk.length}`;
-                progressCategorySidebar.textContent = currentCategoryLabel;
-            }
-        }
-
         function displayMessageInModernChat(message, type, isHTML = false) {
-            if (!chatHistoryElement) return;
+            if (!chatHistoryElement) return null;
             const messageWrapper = document.createElement('div');
-            messageWrapper.className = `message ${type}`; // user or bot
+            messageWrapper.className = `message ${type}`;
             const avatar = document.createElement('div');
             avatar.className = 'message-avatar';
             avatar.textContent = type === 'user' ? '👤' : '🤖';
             const content = document.createElement('div');
             content.className = 'message-content';
-            if (type === 'bot' && (message.includes('🎉') || message.includes('Semua pertanyaan'))) content.classList.add(
-                'summary-title');
-            if (type === 'bot' && message.toLowerCase().includes('error')) content.classList.add('error-message');
-            if (isHTML) content.innerHTML = message;
-            else content.textContent = message;
+            if (type === 'bot' && message.toLowerCase().includes('error')) {
+                content.classList.add('error-message');
+            }
+            if (isHTML) {
+                content.innerHTML = message;
+            } else {
+                content.textContent = message;
+            }
             messageWrapper.appendChild(avatar);
             messageWrapper.appendChild(content);
             chatHistoryElement.appendChild(messageWrapper);
             chatHistoryElement.scrollTop = chatHistoryElement.scrollHeight;
+            return messageWrapper;
         }
 
         let currentTypingIndicatorId = null;
 
         function showModernTypingIndicator(text = "AI sedang mengetik...") {
-            if (currentTypingIndicatorId) removeModernTypingIndicator(); // Hapus yang lama jika ada
+            if (currentTypingIndicatorId) removeModernTypingIndicator();
             const typingId = 'typing-' + Date.now();
             currentTypingIndicatorId = typingId;
             const typingHTML = `
-            <div id="${typingId}" class="message bot typing-indicator" style="max-width: fit-content;">
-                 <div class="message-avatar">🤖</div>
-                 <div class="message-content" style="background: var(--surface-elevated);">
-                    <span class="ai-typing-text">${text}</span>
-                    <div class="typing-dots">
-                        <div class="typing-dot"></div> <div class="typing-dot"></div> <div class="typing-dot"></div>
+                <div id="${typingId}" class="message bot typing-indicator" style="max-width: fit-content;">
+                    <div class="message-avatar">🤖</div>
+                    <div class="message-content" style="background: var(--surface-elevated);">
+                        <span class="ai-typing-text">${text}</span>
+                        <div class="typing-dots">
+                            <div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>
+                        </div>
                     </div>
-                </div>
-            </div>`;
+                </div>`;
             if (chatHistoryElement) {
                 chatHistoryElement.insertAdjacentHTML('beforeend', typingHTML);
                 chatHistoryElement.scrollTop = chatHistoryElement.scrollHeight;
@@ -2273,122 +1710,302 @@
             currentTypingIndicatorId = null;
         }
 
-
-        async function simpleHTMLTypewriterEffect(element, htmlContent, speed = 15) {
-            return new Promise(async (resolve) => {
-                // Render HTML sementara untuk mendapatkan teks bersih & struktur dasar
-                const tempDiv = document.createElement('div');
-                tempDiv.innerHTML = htmlContent;
-                const allTextNodes = [];
-
-                function getTextNodes(node) {
-                    if (node.nodeType === Node.TEXT_NODE && node.textContent.trim() !== '') {
-                        allTextNodes.push(node);
-                    } else {
-                        node.childNodes.forEach(getTextNodes);
+        function extractMajorsFromAIResponse(aiResponseText) {
+            const majors = new Set();
+            const cleanedText = aiResponseText.replace(/<[^>]*>/g, '\n');
+            const patterns = [
+                /(?:^|\n)\s*(?:\d+\.|-|\*)\s*([A-Za-zÀ-ú\s,&/-]+?)(?=\s*:(?:\s+Alasan|\s+Penjelasan|$)|(?:\s*\n\s*(?:Alasan|Penjelasan|$))|\s*\n\s*(?:\d+\.|-|\*)|$)/gim,
+                /(?:(?:Jurusan yang direkomendasikan|Pilihan teratas)\s*:\s*)([A-Za-zÀ-ú\s,&/-]+)/gim
+            ];
+            for (const pattern of patterns) {
+                let match;
+                while ((match = pattern.exec(cleanedText)) !== null) {
+                    let major = match[1].trim().replace(/\s*:\s*$/, '').replace(/\s*-\s*$/, '').trim();
+                    if (major.length > 3 && major.length < 70) {
+                        majors.add(major);
                     }
                 }
-                getTextNodes(tempDiv);
+            }
+            console.log('🔍 Extracted majors:', Array.from(majors));
+            return Array.from(majors).slice(0, 5);
+        }
 
-                element.innerHTML = ''; // Kosongkan elemen target
+        function initializeModernChatEventListeners() {
+            if (userInputElement) {
+                userInputElement.addEventListener('input', function() {
+                    this.style.height = 'auto';
+                    this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+                });
+                userInputElement.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        processModernUserInput();
+                    }
+                });
+            }
+            if (sendButton) {
+                sendButton.addEventListener('click', processModernUserInput);
+            }
+        }
 
-                // Fungsi untuk mengetik per karakter dengan delay
-                async function typeChar(textNode, charIndex = 0) {
-                    if (charIndex < textNode.textContent.length) {
-                        // Tambahkan karakter ke node teks yang sesuai di DOM nyata
-                        // Ini adalah bagian yang disederhanakan; idealnya kita merekonstruksi HTML
-                        // Untuk sekarang, kita akan buat elemen baru untuk setiap text node
-                        if (charIndex === 0) {
-                            const parentTag = textNode.parentNode.tagName.toLowerCase();
-                            let wrapper;
-                            if (parentTag !==
-                                'div') { // Hindari div di dalam div jika textNode langsung di element
-                                wrapper = document.createElement(parentTag);
-                                element.appendChild(wrapper);
-                            } else {
-                                wrapper = element; // Atau tambahkan langsung jika parentnya div
-                            }
-                            wrapper.setAttribute('data-text-node-id', allTextNodes.indexOf(
-                            textNode)); // Tandai
+        // =================================================================
+        // BAGIAN 4: ALUR APLIKASI UTAMA (CORE APPLICATION FLOW)
+        // =================================================================
+
+        function initializeTypedWelcome() {
+            const userName = "{{ Auth::user()->name ?? '' }}";
+            const greeting = userName ? `Hai ${userName}!` : "Hai!";
+            const typedWelcomeElement = document.getElementById('typed-welcome');
+            if (typedWelcomeElement && typeof Typed !== 'undefined') {
+                try {
+                    new Typed("#typed-welcome", {
+                        strings: [
+                            `${greeting} Aku AI MATE yang siap membantu kamu memilih jurusan yang tepat. Yuk, pilih kategori yang ingin kamu coba dulu!`
+                        ],
+                        typeSpeed: 30,
+                        startDelay: 500,
+                        loop: false,
+                        showCursor: true,
+                        cursorChar: '|',
+                        onComplete: (self) => {
+                            if (self.cursor) self.cursor.style.display = 'none';
                         }
-                        const currentWrapper = Array.from(element.childNodes).find(el => el.dataset &&
-                            el.dataset.textNodeId == allTextNodes.indexOf(textNode)) || element;
-                        currentWrapper.textContent += textNode.textContent[charIndex];
-
-                        await new Promise(r => setTimeout(r, speed));
-                        await typeChar(textNode, charIndex + 1);
-                    }
+                    });
+                } catch (e) {
+                    console.error("Typed.js initialization failed:", e);
+                    typedWelcomeElement.textContent = `${greeting} Aku AI MATE...`;
                 }
+            } else if (typedWelcomeElement) {
+                typedWelcomeElement.textContent = `${greeting} Aku AI MATE...`;
+            }
+        }
 
-                // Iterasi melalui semua text node dan ketik mereka
-                // Sederhana: kita akan gabungkan semua teks dan ketik sekali, lalu set HTML penuh
-                let fullText = "";
-                allTextNodes.forEach(node => fullText += node.textContent + (node.parentNode.tagName ===
-                    'P' || node.parentNode.tagName === 'DIV' ? '\n' : ' '));
-                fullText = fullText.replace(/\s+/g, ' ').trim(); // Normalisasi spasi
+        function loadCategories() {
+            console.log('🔄 Loading categories...');
+            if (!categoriesContainer) return;
+            categoriesContainer.innerHTML = '';
+            if (!categoriesData || Object.keys(categoriesData).length === 0) {
+                categoriesContainer.innerHTML = `<p>Gagal memuat kategori. Silakan refresh halaman.</p>`;
+                return;
+            }
+            Object.entries(categoriesData).forEach(([slug, category]) => {
+                const categoryCard = createCategoryCard(slug, category);
+                categoriesContainer.appendChild(categoryCard);
+            });
+            console.log('✅ Categories loaded and rendered.');
+            updateCategoryCardVisuals();
+        }
 
-                let i = 0;
+        function createCategoryCard(slug, category) {
+            const card = document.createElement('div');
+            card.className = 'category-card';
+            card.dataset.categorySlug = slug;
+            card.style.animationDelay = `${Math.random() * 0.3}s`;
+            const icon = category.icon_identifier || '📋';
+            const questionCount = Array.isArray(category.questions) ? category.questions.length : 0;
+            card.innerHTML = `
+                <div class="category-icon">${icon}</div>
+                <h3 class="category-title">${category.label}</h3>
+                <p class="category-description">${category.description || `Eksplorasi ${category.label.toLowerCase()} untuk menentukan jurusan.`}</p>
+                <div class="category-meta">
+                    <div class="category-questions"><span>📝</span> <span>${questionCount} soal</span></div>
+                    <div class="category-cost"><span>🪙</span> <span>${category.cost_per_question} koin/soal</span></div>
+                </div>`;
+            card.addEventListener('click', () => {
+                console.log(`🖱️ Category clicked: ${slug}`);
+                selectCategory(slug, category.label, questionCount, category.cost_per_question);
+            });
+            return card;
+        }
 
-                function type() {
-                    if (i < fullText.length) {
-                        element.innerHTML = fullText.substring(0, i + 1)
-                            .replace(/\n/g, '<br>') // Ganti newline dengan <br> untuk tampilan
-                            .replace(/<br><br>/g, '<br>'); // Hindari <br> ganda
-                        i++;
-                        setTimeout(type, speed);
-                    } else {
-                        element.innerHTML = htmlContent; // Set HTML penuh setelah selesai
-                        resolve();
+        function updateCategoryCardVisuals() {
+            if (!categoriesContainer || !allUserAnswers) return;
+            const completedSlugs = Object.values(allUserAnswers).map(item => item.categoryIdKey);
+            const categoryCards = categoriesContainer.querySelectorAll('.category-card');
+            categoryCards.forEach(card => {
+                const slug = card.dataset.categorySlug;
+                if (completedSlugs.includes(slug)) {
+                    card.classList.add('completed');
+                    if (!card.querySelector('.completion-checkmark')) {
+                        const checkmark = document.createElement('span');
+                        checkmark.className = 'completion-checkmark';
+                        checkmark.innerHTML = '✓';
+                        card.appendChild(checkmark);
                     }
+                } else {
+                    card.classList.remove('completed');
+                    const checkmark = card.querySelector('.completion-checkmark');
+                    if (checkmark) checkmark.remove();
                 }
-                type();
             });
         }
 
+        function selectCategory(slug, categoryLabel, totalQuestions, costPerQuestion) {
+            currentCategorySlug = slug;
+            currentCategoryLabel = categoryLabel;
+            if (categoriesData && categoriesData[slug] && Array.isArray(categoriesData[slug].questions)) {
+                currentCategoryQuestions = categoriesData[slug].questions;
+                totalQuestions = currentCategoryQuestions.length;
+                if (totalQuestions > 0) {
+                    showModernQuestionSelectionModal(slug, categoryLabel, totalQuestions, costPerQuestion);
+                }
+            } else {
+                alert(`Tidak ada pertanyaan yang tersedia untuk kategori ${categoryLabel}.`);
+            }
+        }
+
+        function showModernQuestionSelectionModal(slug, categoryLabel, totalQuestions, costPerQuestion) {
+            const existingModal = document.getElementById('question-selection-overlay');
+            if (existingModal) existingModal.remove();
+
+            const modalOverlay = document.createElement('div');
+            modalOverlay.className = 'modal-overlay';
+            modalOverlay.id = 'question-selection-overlay';
+            const modalContent = document.createElement('div');
+            modalContent.className = 'modal-content';
+
+            modalContent.innerHTML = `
+                <div class="modal-header">
+                    <h3 class="modal-title">📋 ${categoryLabel}</h3>
+                    <button class="modal-close" onclick="closeModernQuestionSelectionModal()">×</button>
+                </div>
+                <div class="modal-body">
+                    <div style="text-align: center; margin-bottom: var(--space-lg);">
+                        <div style="font-size: 4rem; margin-bottom: var(--space-md);">🎯</div>
+                        <p style="font-size: 1.125rem; color: var(--text-secondary); line-height: 1.6;">
+                            Pilih berapa banyak soal yang ingin Anda jawab untuk kategori <strong>${categoryLabel}</strong> (Total: ${totalQuestions} soal)
+                        </p>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: var(--space-sm); max-width: 400px; margin: 0 auto; max-height: 300px; overflow-y: auto;">
+                        ${generateModernQuestionOptions(totalQuestions, costPerQuestion)}
+                    </div>
+                    <div style="margin-top: var(--space-lg); padding: var(--space-md); background: var(--surface-elevated); border-radius: var(--radius-md); text-align: center;">
+                        <p style="font-size: 0.875rem; color: var(--text-muted); margin: 0;">
+                            💰 Biaya: ${costPerQuestion} koin per soal<br>
+                            🪙 Koin Anda: <span id="modal-coin-display">${currentUserCoins}</span>
+                        </p>
+                    </div>
+                </div>`;
+            modalOverlay.appendChild(modalContent);
+            document.body.appendChild(modalOverlay);
+            setTimeout(() => modalOverlay.classList.add('active'), 10);
+        }
+
+        function generateModernQuestionOptions(totalQuestions, costPerQuestion) {
+            let questionCounts = (totalQuestions <= 5) ? Array.from({
+                length: totalQuestions
+            }, (_, i) => i + 1) : [3, 5, totalQuestions];
+            questionCounts = [...new Set(questionCounts)].sort((a, b) => a - b);
+            return questionCounts.map(count => {
+                const cost = count * costPerQuestion;
+                const canAfford = currentUserCoins >= cost;
+                return `
+                <button onclick="startModernCategoryQuestions(${count})" class="btn ${canAfford ? 'btn-primary' : 'btn-outline'}" ${!canAfford ? 'disabled' : ''} style="padding: var(--space-lg); text-align: left; display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-sm);">
+                    <div>
+                        <div style="font-weight: 600; margin-bottom: 4px;">${count} Soal</div>
+                        <div style="font-size: 0.875rem; opacity: 0.8;">Biaya: ${cost} koin</div>
+                    </div>
+                    <div style="font-size: 1.5rem;">${canAfford ? '✅' : '❌'}</div>
+                </button>`;
+            }).join('');
+        }
+
+        function closeModernQuestionSelectionModal() {
+            const modalOverlay = document.getElementById('question-selection-overlay');
+            if (modalOverlay) {
+                modalOverlay.classList.remove('active');
+                setTimeout(() => modalOverlay.remove(), 300);
+            }
+        }
+
+        function showChatInterface() {
+            categoriesSection.style.display = 'none';
+            overallSummaryContainer.classList.add('hidden');
+            chatSection.style.display = 'block';
+            progressCardSidebar.style.display = 'block';
+            userInputElement.focus();
+        }
+
+        function hideChatInterface() {
+            categoriesSection.style.display = 'block';
+            chatSection.style.display = 'none';
+            progressCardSidebar.style.display = 'none';
+            chatHistoryElement.innerHTML = '';
+            resetCategoryState();
+        }
+
+        function resetCategoryState() {
+            currentCategorySlug = null;
+            currentCategoryLabel = '';
+            currentCategoryQuestions = [];
+            questionsToAsk = [];
+            currentQuestionIndex = 0;
+            userAnswersForCurrentCategory = [];
+        }
+
+        function startModernCategoryQuestions(numQuestions) {
+            closeModernQuestionSelectionModal();
+            questionsToAsk = currentCategoryQuestions.slice(0, numQuestions);
+            currentQuestionIndex = 0;
+            userAnswersForCurrentCategory = [];
+            userInputElement.disabled = false;
+            userInputElement.value = '';
+            userInputElement.style.height = 'auto';
+            sendButton.disabled = false;
+            showChatInterface();
+            updateModernProgress();
+            displayNextModernQuestion();
+        }
+
+        function updateModernProgress() {
+            const progress = questionsToAsk.length > 0 ? (currentQuestionIndex / questionsToAsk.length) * 100 : 0;
+            progressBarSidebar.style.width = `${progress}%`;
+            progressTextSidebar.textContent = `${currentQuestionIndex}/${questionsToAsk.length}`;
+            progressCategorySidebar.textContent = currentCategoryLabel;
+        }
 
         function displayNextModernQuestion() {
             updateModernProgress();
             if (currentQuestionIndex < questionsToAsk.length) {
                 displayMessageInModernChat(questionsToAsk[currentQuestionIndex], 'bot');
-                if (userInputElement) userInputElement.focus();
+                userInputElement.focus();
             } else {
-                if (userInputElement) userInputElement.disabled = true;
-                if (sendButton) sendButton.disabled = true;
+                userInputElement.disabled = true;
+                sendButton.disabled = true;
                 displayMessageInModernChat(
                     "🎉 Semua pertanyaan untuk kategori ini telah selesai! Klik tombol di bawah untuk mendapatkan analisis AI.",
                     'bot', true);
-
                 const aiRecButtonContainer = document.createElement('div');
                 aiRecButtonContainer.style.textAlign = 'center';
                 aiRecButtonContainer.style.padding = 'var(--space-md) 0';
-
                 const aiRecButton = document.createElement('button');
                 aiRecButton.innerHTML = '<span>🤖</span> Berikan Rekomendasi';
-                aiRecButton.className = 'btn btn-primary'; // Gunakan class .btn yang sudah ada
+                aiRecButton.className = 'btn btn-primary';
                 aiRecButton.onclick = () => {
                     requestModernCategorySummary();
-                    aiRecButtonContainer.remove(); // Hapus tombol setelah diklik
+                    aiRecButtonContainer.remove();
                 };
                 aiRecButtonContainer.appendChild(aiRecButton);
-                if (chatHistoryElement) {
-                    chatHistoryElement.appendChild(aiRecButtonContainer);
-                    chatHistoryElement.scrollTop = chatHistoryElement.scrollHeight;
-                }
+                chatHistoryElement.appendChild(aiRecButtonContainer);
+                chatHistoryElement.scrollTop = chatHistoryElement.scrollHeight;
             }
         }
 
         function processModernUserInput() {
-            if (!userInputElement || userInputElement.disabled) return;
             const answer = userInputElement.value.trim();
-            if (answer) {
+            if (answer && !userInputElement.disabled) {
                 displayMessageInModernChat(answer, 'user');
                 userAnswersForCurrentCategory.push(answer);
                 userInputElement.value = '';
-                userInputElement.style.height = 'auto'; // Reset tinggi textarea
+                userInputElement.style.height = 'auto';
                 currentQuestionIndex++;
                 displayNextModernQuestion();
             }
         }
+
+        // =================================================================
+        // BAGIAN 5: KOMUNIKASI DENGAN BACKEND (AJAX REQUESTS)
+        // =================================================================
 
         async function requestModernCategorySummary() {
             showModernTypingIndicator(`AI sedang menganalisis jawaban Anda untuk ${currentCategoryLabel}...`);
@@ -2400,41 +2017,35 @@
                         'X-CSRF-TOKEN': csrfToken
                     },
                     body: JSON.stringify({
-                        categoryId: currentCategoryId,
-                        numQuestions: userAnswersForCurrentCategory
-                        .length, // Jumlah pertanyaan yang dijawab
+                        categoryId: currentCategorySlug,
+                        numQuestions: userAnswersForCurrentCategory.length,
                         answers: userAnswersForCurrentCategory
                     })
                 });
                 removeModernTypingIndicator();
                 const data = await response.json();
-                if (!response.ok) {
-                    displayMessageInModernChat(data.error || `Gagal mendapatkan summary (Error: ${response.status})`,
-                        'bot', true);
-                    if (data.new_coin_balance !== undefined) updateCoinBalanceUI(data
-                    .new_coin_balance); // updateCoinBalanceUI perlu didefinisikan
-                    return;
-                }
+                if (!response.ok) throw new Error(data.error || `HTTP error! status: ${response.status}`);
+
                 if (data.summary) {
-                    const summaryMessageDiv = document.createElement('div'); // Kontainer untuk summary
-                    displayMessageInModernChat('', 'bot', true); // Buat bubble message bot dulu
-                    const botMessages = chatHistoryElement.querySelectorAll('.message.bot .message-content');
-                    const lastBotMessageContent = botMessages[botMessages.length - 1];
-                    if (lastBotMessageContent) {
-                        await simpleHTMLTypewriterEffect(lastBotMessageContent, data.summary, 10);
-                    }
-
-
+                    const messageContainer = displayMessageInModernChat('', 'bot', true);
+                    const contentElement = messageContainer.querySelector('.message-content');
+                    new Typed(contentElement, {
+                        strings: [data.summary],
+                        typeSpeed: 10,
+                        showCursor: false,
+                        onComplete: () => {
+                            const suggestionHTML = `...`; // suggestion HTML here
+                            displayMessageInModernChat(suggestionHTML, 'bot', true);
+                        }
+                    });
                     allUserAnswers[currentCategoryLabel] = {
-                        categoryIdKey: currentCategoryId,
+                        categoryIdKey: currentCategorySlug,
                         questions: questionsToAsk,
                         answers: userAnswersForCurrentCategory,
                         summary: data.summary
                     };
-                    console.log("Updated allUserAnswers:", allUserAnswers);
-
                     updateCategoryCardVisuals();
-                    // Suggestion message
+
                     setTimeout(() => {
                         const suggestionHTML = `
                         <p class="text-blue-800 mb-3" style="font-size: 0.9em;">
@@ -2447,31 +2058,24 @@
                         displayMessageInModernChat(suggestionHTML, 'bot', true);
                     }, 500);
                 }
-                if (data.new_coin_balance !== undefined) {
-                    currentUserCoins = data.new_coin_balance; // Update state JS
-                    updateCoinDisplay(); // Update UI
-                }
+                if (data.new_coin_balance !== undefined) updateCoinDisplay(data.new_coin_balance);
             } catch (error) {
                 removeModernTypingIndicator();
-                console.error('Error fetching category summary:', error);
-                displayMessageInModernChat("Terjadi masalah koneksi saat meminta summary kategori.", 'bot', true);
+                displayMessageInModernChat(`Terjadi masalah saat meminta summary: ${error.message}`, 'bot', true);
             }
-        }
-
-        function updateCoinBalanceUI(newBalance) { // Fungsi ini ditambahkan dari analisis
-            currentUserCoins = newBalance;
-            updateCoinDisplay(); // Panggil fungsi yang sudah ada untuk update UI
         }
 
         async function requestOverallSummary() {
-            if (Object.keys(allUserAnswers).length < 1) {
-                alert("Selesaikan minimal satu kategori dulu untuk mendapatkan rekomendasi final.");
+            // PERBAIKAN: Ubah syarat minimal dari 1 menjadi 2
+            if (Object.keys(allUserAnswers).length < 2) {
+                console.log('count all user answers:', allUserAnswers);
+
+                alert("Selesaikan minimal DUA kategori dulu untuk mendapatkan rekomendasi final.");
                 return;
             }
-            const overallSummaryCost = 5; // Asumsi biaya
+            const overallSummaryCost = 5;
             if (currentUserCoins < overallSummaryCost) {
-                alert(
-                    `Koin Anda (${currentUserCoins}) tidak cukup. Butuh ${overallSummaryCost} koin untuk rekomendasi final.`);
+                alert(`Koin Anda (${currentUserCoins}) tidak cukup. Butuh ${overallSummaryCost} koin.`);
                 return;
             }
 
@@ -2480,7 +2084,7 @@
 
             if (overallSummaryContainer && overallSummaryTextElement) {
                 overallSummaryTextElement.innerHTML =
-                    `<div style="text-align:center; padding: 20px;"><i>Sedang memproses rekomendasi final... <span class="spinner"></span></i></div>`;
+                    `<div style="text-align:center; padding: 20px;"><div class="spinner"></div><i> Sedang memproses rekomendasi final...</i></div>`;
                 overallSummaryContainer.classList.remove('hidden');
                 overallSummaryContainer.scrollIntoView({
                     behavior: 'smooth'
@@ -2508,152 +2112,181 @@
                     if (data.new_coin_balance !== undefined) updateCoinBalanceUI(data.new_coin_balance);
                     return;
                 }
-                if (data.summary && overallSummaryTextElement) {
-                    await simpleHTMLTypewriterEffect(overallSummaryTextElement, data.summary, 10);
-                    if (data.user_answers_summary) { // Jika ada summary jawaban pengguna
-                        // Anda bisa menambahkan ini ke overallSummaryTextElement juga
-                    }
-                    // Tampilkan pilihan jurusan setelah summary
-                    setTimeout(() => {
-                        showDirectMajorSelectionButtons(data.summary,
-                        allUserAnswers); // Mengirim allUserAnswers
-                    }, 300);
-                }
-                if (data.new_coin_balance !== undefined) updateCoinBalanceUI(data.new_coin_balance);
 
+                // Cek jika ada rekomendasi
+                if (data.recommendations && data.recommendations.length > 0) {
+                    overallSummaryTextElement.innerHTML = '';
+                    overallSummaryTextElement.className = 'recommendation-grid';
+                    // Loop melalui setiap rekomendasi dan buat kartunya
+                    data.recommendations.forEach((rec, index) => {
+                        // Buat elemen div untuk kartu
+                        const card = document.createElement('div');
+                        card.className = 'recommendation-card';
+                        // Tambahkan delay animasi agar muncul satu per satu
+                        card.style.animationDelay = `${index * 0.15}s`;
+
+                        // Buat HTML untuk daftar tingkat kecocokan
+                        let compatibilityHtml = rec.tingkat_kecocokan.map(item => `
+                <li>
+                    <strong>${item.kategori} (${item.persentase}):</strong> ${item.detail_alasan}
+                </li>
+            `).join('');
+
+                        // Isi konten kartu dengan data dari JSON
+                        card.innerHTML = `
+                <h4>${rec.nama_jurusan}</h4>
+                
+                <div class="card-section">
+                    <div class="card-section-title">Alasan Rekomendasi</div>
+                    <p>${rec.alasan}</p>
+                </div>
+
+                <div class="card-section">
+                    <div class="card-section-title">Analisis Tingkat Kecocokan</div>
+                    <ul>${compatibilityHtml}</ul>
+                </div>
+            `;
+
+                        // Tambahkan kartu ke dalam container
+                        overallSummaryTextElement.appendChild(card);
+                    });
+
+                    // Tampilkan tombol untuk simulasi setelah kartu dibuat
+                    if (data.overall_summary_id) {
+                        // Kita perlu cara baru untuk mengekstrak nama jurusan karena tidak ada teks HTML lagi
+                        const majorsForSimulation = data.recommendations.map(r => r.nama_jurusan);
+                        showDirectMajorSelectionButtons(majorsForSimulation, data.overall_summary_id);
+                    }
+
+                } else {
+                    overallSummaryTextElement.innerHTML =
+                        '<p style="text-align:center;">Maaf, kami tidak dapat menghasilkan rekomendasi saat ini. Coba lagi nanti.</p>';
+                }
+
+                if (data.new_coin_balance !== undefined) updateCoinDisplay(data.new_coin_balance);
             } catch (error) {
-                if (overallSummaryButton) overallSummaryButton.disabled = false;
                 console.error('Error fetching overall summary:', error);
-                if (overallSummaryTextElement) overallSummaryTextElement.innerHTML =
-                    `<p style="color: red; text-align:center;">Masalah koneksi saat meminta rekomendasi final.</p>`;
+                overallSummaryTextElement.innerHTML =
+                    `<p style="color: red; text-align:center;">Gagal mendapatkan rekomendasi: ${error.message}</p>`;
+            } finally {
+                overallSummaryButton.disabled = false;
             }
         }
 
         function hideOverallSummaryContainer() {
-            if (overallSummaryContainer) overallSummaryContainer.classList.add('hidden');
+            overallSummaryContainer.classList.add('hidden');
             const majorSelectionSection = document.getElementById('major-selection-section');
             if (majorSelectionSection) majorSelectionSection.remove();
-            const simulationPromptSection = document.getElementById('simulation-prompt-section');
-            if (simulationPromptSection) simulationPromptSection.remove();
-
         }
+        // =================================================================
+        // SIMULATION FLOW
+        // =================================================================
 
-
-        // ===== DIRECT MAJOR SELECTION SYSTEM (setelah Overall Summary) =====
-        function extractMajorsFromAIResponse(aiResponseText) {
-            const majors = new Set(); // Gunakan Set untuk menghindari duplikat
-            // Pattern: "1. [Nama Jurusan]" atau "- [Nama Jurusan]" atau "* [Nama Jurusan]"
-            // Diikuti oleh baris baru atau penjelasan seperti "Alasan:", "Penjelasan:"
-            const patterns = [
-                /(?:^|\n)\s*(?:\d+\.|-|\*)\s*([A-Za-zÀ-ú\s,&/-]+?)(?=\s*:(?:\s+Alasan|\s+Penjelasan|$)|(?:\s*\n\s*(?:Alasan|Penjelasan|$))|\s*\n\s*(?:\d+\.|-|\*)|$)/gim, // Lebih robust
-                /(?:(?:Jurusan yang direkomendasikan|Pilihan teratas)\s*:\s*)([A-Za-zÀ-ú\s,&/-]+)/gim // Mencari setelah keyword
-            ];
-
-            for (const pattern of patterns) {
-                let match;
-                while ((match = pattern.exec(aiResponseText)) !== null) {
-                    let major = match[1].trim();
-                    // Bersihkan dari sisa numbering atau karakter tidak penting di akhir
-                    major = major.replace(/\s*:\s*$/, '').replace(/\s*-\s*$/, '').trim();
-                    if (major.length > 3 && major.length < 70) { // Batasan panjang wajar
-                        majors.add(major);
-                    }
-                }
-            }
-            console.log('🔍 Extracted majors:', Array.from(majors));
-            return Array.from(majors).slice(0, 5); // Ambil maks 5
-        }
-
-        function showDirectMajorSelectionButtons(aiSummaryHtml, userAnswersContext) { // Terima userAnswers
-            const majors = extractMajorsFromAIResponse(
-            aiSummaryHtml); // Ekstrak dari HTML summary, mungkin perlu dari teks bersih
-            if (majors.length === 0) {
-                console.log('❌ No majors found in AI summary for direct selection.');
+        function showDirectMajorSelectionButtons(majors, overallSummaryId) {
+            if (!majors || majors.length === 0) {
+                console.log("Tidak ada jurusan yang bisa disimulasikan.");
                 return;
             }
 
-            // Hapus section pilihan sebelumnya jika ada
             const existingSelection = document.getElementById('major-selection-section');
             if (existingSelection) existingSelection.remove();
 
             const majorSelectionDiv = document.createElement('div');
             majorSelectionDiv.id = 'major-selection-section';
             majorSelectionDiv.className =
-                'mt-6 p-6 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg border-2 border-blue-300 shadow-lg';
+                'mt-6 p-6 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg border-2 border-blue-200 shadow-lg';
             majorSelectionDiv.style.animation = 'fadeInUp 0.5s ease-out';
 
+            // Loop dari array 'majors' yang diterima langsung
             let buttonsHtml = majors.map(major => `
-            <button onclick="handleDirectMajorSelection('${major.replace(/'/g, "\\'")}', '${btoa(encodeURIComponent(aiSummaryHtml))}', '${btoa(encodeURIComponent(JSON.stringify(userAnswersContext)))}')"
-                class="w-full p-4 mb-3 bg-white border-2 border-green-200 rounded-lg hover:border-green-500 hover:bg-green-50 transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg text-left">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <div class="font-bold text-gray-800 text-lg">${major}</div>
-                        <div class="text-sm text-gray-600">Klik untuk analisis & simulasi mendalam</div>
-                    </div>
-                    <div class="text-3xl">🎯</div>
-                </div>
-            </button>`).join('');
+        <button 
+            onclick="handleDirectMajorSelection('${major.replace(/'/g, "\\'")}', ${overallSummaryId})"
+            class="btn w-full p-4 mb-3" 
+            style="justify-content: space-between; background: white; color: var(--text-primary); border: 1px solid var(--border-light); transition: all 0.2s ease;">
+            <span class="font-bold text-left">${major}</span>
+            <span class="text-2xl">🎓</span>
+        </button>`).join('');
 
             majorSelectionDiv.innerHTML = `
-            <div class="text-center">
-                <div class="text-4xl mb-4">🎓</div>
-                <h3 class="text-xl font-bold text-gray-800 mb-4">Pilih Jurusan untuk Analisis & Simulasi</h3>
-                <p class="text-gray-600 mb-6">AI merekomendasikan beberapa jurusan. Pilih salah satu untuk eksplorasi lebih lanjut:</p>
-                <div class="grid gap-3 max-w-2xl mx-auto">${buttonsHtml}</div>
-                <div class="mt-6 text-sm text-gray-500">💡 Tip: Memilih jurusan akan membuka opsi simulasi interaktif.</div>
-            </div>`;
+        <div class="text-center">
+            <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text-primary); margin-bottom: var(--space-sm);">Pilih Jurusan untuk Simulasi</h3>
+            <p style="color: var(--text-secondary); margin-bottom: var(--space-lg);">AI merekomendasikan beberapa jurusan. Pilih satu untuk merasakan pengalaman singkat di jurusan tersebut.</p>
+            <div class="grid gap-3 max-w-2xl mx-auto">${buttonsHtml}</div>
+        </div>`;
 
-            if (overallSummaryTextElement) { // Tambahkan setelah teks summary
-                overallSummaryTextElement.insertAdjacentElement('afterend', majorSelectionDiv);
-                majorSelectionDiv.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'center'
-                });
-            } else if (overallSummaryContainer) { // Atau di dalam container summary jika teks tidak ada
-                overallSummaryContainer.appendChild(majorSelectionDiv);
+            overallSummaryContainer.appendChild(majorSelectionDiv);
+            majorSelectionDiv.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center'
+            });
+        }
+
+        function showDirectMajorSelectionButtons(majors, overallSummaryId) {
+            if (!majors || majors.length === 0) {
+                console.log("Tidak ada jurusan yang bisa disimulasikan.");
+                return;
             }
-            console.log('✅ Major selection buttons created and displayed');
+
+            const existingSelection = document.getElementById('major-selection-section');
+            if (existingSelection) existingSelection.remove();
+
+            const majorSelectionDiv = document.createElement('div');
+            majorSelectionDiv.id = 'major-selection-section';
+            majorSelectionDiv.className =
+                'mt-6 p-6 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg border-2 border-blue-200 shadow-lg';
+            majorSelectionDiv.style.animation = 'fadeInUp 0.5s ease-out';
+
+            // Loop dari array 'majors' yang diterima langsung
+            let buttonsHtml = majors.map(major => `
+        <button 
+            onclick="handleDirectMajorSelection('${major.replace(/'/g, "\\'")}', ${overallSummaryId})"
+            class="btn w-full p-4 mb-3" 
+            style="justify-content: space-between; background: white; color: var(--text-primary); border: 1px solid var(--border-light); transition: all 0.2s ease;">
+            <span class="font-bold text-left">${major}</span>
+            <span class="text-2xl">🎓</span>
+        </button>`).join('');
+
+            majorSelectionDiv.innerHTML = `
+        <div class="text-center">
+            <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text-primary); margin-bottom: var(--space-sm);">Pilih Jurusan untuk Simulasi</h3>
+            <p style="color: var(--text-secondary); margin-bottom: var(--space-lg);">AI merekomendasikan beberapa jurusan. Pilih satu untuk merasakan pengalaman singkat di jurusan tersebut.</p>
+            <div class="grid gap-3 max-w-2xl mx-auto">${buttonsHtml}</div>
+        </div>`;
+
+            overallSummaryContainer.appendChild(majorSelectionDiv);
+            majorSelectionDiv.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center'
+            });
         }
-        // Fungsi global untuk onclick tombol pilihan jurusan
-        window.handleDirectMajorSelection = function(selectedMajor, encodedAiSummary, encodedUserAnswers) {
-            console.log('🎯 User selected major for simulation:', selectedMajor);
-            // Sembunyikan tombol pilihan jurusan
+
+        function handleDirectMajorSelection(selectedMajor, overallSummaryId) {
+            console.log(`🎯 User selected major: ${selectedMajor}, using summary ID: ${overallSummaryId}`);
             const majorSelectionSection = document.getElementById('major-selection-section');
-            if (majorSelectionSection) majorSelectionSection.style.display = 'none'; // Sembunyikan, jangan remove dulu
-
-            // Mulai simulasi (buka modal simulasi)
-            startSimulation(selectedMajor, encodedAiSummary, encodedUserAnswers);
+            if (majorSelectionSection) {
+                // Sembunyikan tombol pilihan agar tidak bisa diklik lagi
+                majorSelectionSection.style.display = 'none';
+            }
+            startSimulation(selectedMajor, overallSummaryId);
         }
 
-        // ===== SIMULATION SYSTEM (Placeholder, perlu implementasi backend) =====
-        let currentSimulationSession = null;
-        let simulationData = null; // Untuk menyimpan data/state simulasi
-
-        // Dipanggil dari tombol "Ya, saya ingin mencoba simulasi" atau handleDirectMajorSelection
-        async function startSimulation(selectedMajor, encodedAiResponse, encodedUserAnswers) {
+        async function startSimulation(selectedMajor, overallSummaryId) {
             const simulationModal = document.getElementById('simulation-modal');
             const simulationTitle = document.getElementById('simulation-title');
             const simulationContent = document.getElementById('simulation-content');
             const simulationProgress = document.getElementById('simulation-progress');
 
-            if (!simulationModal || !simulationTitle || !simulationContent || !simulationProgress) {
-                console.error("Elemen modal simulasi tidak ditemukan!");
-                return;
-            }
-
-            simulationTitle.textContent = `🎯 Simulasi Interaktif: ${selectedMajor}`;
-            simulationProgress.classList.add('hidden'); // Sembunyikan progress bar awal
+            simulationTitle.textContent = `🎯 Simulasi: ${selectedMajor}`;
+            simulationProgress.style.display = 'none';
             simulationModal.classList.remove('hidden');
+            // Tambahkan class 'active' untuk memicu animasi fade-in
+            setTimeout(() => simulationModal.classList.add('active'), 10);
+
             simulationContent.innerHTML =
-                `<div style="text-align:center; padding:20px;"><div class="spinner"></div> Mempersiapkan simulasi untuk <strong>${selectedMajor}</strong>...</div>`;
+                `<div style="text-align:center; padding:20px;"><div class="spinner"></div><p style="margin-top:1rem; font-style:italic; color:var(--text-secondary);">AI sedang merancang cerita simulasimu...</p></div>`;
 
             try {
-                // Decode data yang mungkin di-encode URI componentnya
-                const aiResponse = decodeURIComponent(atob(encodedAiResponse));
-                const userAnswers = JSON.parse(decodeURIComponent(atob(encodedUserAnswers)));
-
-                // Panggil API untuk memulai sesi simulasi di backend
-                const response = await fetch('/simulation/start', { // Ganti dengan URL API Anda
+                const response = await fetch("{{ route('simulation.start') }}", {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -2661,127 +2294,166 @@
                     },
                     body: JSON.stringify({
                         selected_major: selectedMajor,
-                        ai_summary_context: aiResponse, // Konteks dari summary AI sebelumnya
-                        user_answers_context: userAnswers // Konteks dari jawaban pengguna
+                        overall_summary_id: overallSummaryId
                     })
                 });
+
                 const data = await response.json();
+                if (!response.ok) {
+                    throw new Error(data.error || 'Gagal memulai sesi simulasi.');
+                }
 
-                if (!response.ok) throw new Error(data.error || 'Gagal memulai sesi simulasi.');
-
+                // Simpan ID sesi dan data langkah pertama
                 currentSimulationSession = data.session_id;
-                simulationData = data; // Simpan data sesi awal (misal, pertanyaan pertama)
+                simulationData = data; // simpan seluruh respons awal
 
-                console.log("Simulasi dimulai, sesi:", currentSimulationSession, "Data awal:", simulationData);
-                // Tampilkan pertanyaan pertama atau langkah simulasi awal
                 displaySimulationStep(simulationData.current_step);
 
             } catch (error) {
                 console.error('Error starting simulation:', error);
                 simulationContent.innerHTML =
-                    `<div class="text-red-500 p-4 text-center">Gagal memulai simulasi: ${error.message}. Silakan coba lagi.</div>
-            <div class="text-center mt-4"><button onclick="closeSimulation()" class="btn btn-secondary btn-sm">Tutup</button></div>`;
+                    `<div class="p-4 text-center" style="color:red;">Gagal memulai simulasi: ${error.message}. Coba tutup dan ulangi.</div>`;
             }
         }
 
+        async function submitSimulationAnswer(answerValue) {
+            const simulationContent = document.getElementById('simulation-content');
+            // Tampilkan spinner di dalam modal
+            simulationContent.innerHTML =
+                `<div style="text-align:center; padding:20px;"><div class="spinner"></div><p style="margin-top:1rem; font-style:italic; color:var(--text-secondary);">Memproses pilihanmu...</p></div>`;
+
+            try {
+                const response = await fetch("{{ route('simulation.submitAnswer') }}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken
+                    },
+                    // Di dalam fungsi async function submitSimulationAnswer(answerValue)
+
+                    // ...
+                    body: JSON.stringify({
+                        session_id: currentSimulationSession,
+                        answer: answerValue,
+                        current_step_id: simulationData.current_step.id,
+                        options: simulationData.current_step.options
+                    })
+                });
+
+                const data = await response.json();
+                if (!response.ok) {
+                    throw new Error(data.error || 'Gagal mengirim jawaban simulasi.');
+                }
+
+                // Update state simulasi dengan data langkah berikutnya
+                simulationData = data;
+                displaySimulationStep(simulationData.current_step);
+
+            } catch (error) {
+                console.error('Error submitting simulation answer:', error);
+                simulationContent.innerHTML =
+                    `<div class="p-4 text-center" style="color:red;">Gagal memproses jawaban: ${error.message}.</div>`;
+            }
+        }
+
+        // GANTI SELURUH FUNGSI INI
         function displaySimulationStep(stepData) {
             const simulationContent = document.getElementById('simulation-content');
             const simulationProgress = document.getElementById('simulation-progress');
             const progressBarSim = document.getElementById('progress-bar-sim');
             const progressTextSim = document.getElementById('progress-text-sim');
 
+            // Selalu hapus konten lama untuk menghindari penumpukan
+            simulationContent.innerHTML = '';
+
             if (!stepData) {
                 simulationContent.innerHTML =
-                    `<div class="p-4 text-center">Simulasi telah selesai atau terjadi kesalahan.</div>
-            <div class="text-center mt-4"><button onclick="closeSimulation()" class="btn btn-secondary btn-sm">Tutup</button></div>`;
-                simulationProgress.classList.add('hidden');
+                    `<div class="p-4 text-center">Simulasi telah selesai atau terjadi kesalahan.</div>`;
+                simulationProgress.style.display = 'none';
                 return;
             }
 
-            simulationProgress.classList.remove('hidden');
-            const progressPercentage = stepData.total_steps > 0 ? (stepData.current_step_number / stepData.total_steps) *
-                100 : 0;
-            if (progressBarSim) progressBarSim.style.width = `${progressPercentage}%`;
-            if (progressTextSim) progressTextSim.textContent =
-                `${Math.round(progressPercentage)}% (Langkah ${stepData.current_step_number}/${stepData.total_steps})`;
+            // ==========================================================
+            // ===== INI ADALAH BAGIAN YANG DIPERBAIKI (KODE DIGABUNG) =====
+            // ==========================================================
+            if (stepData.is_final_step) {
+                // --- A. JIKA INI LANGKAH TERAKHIR (KESIMPULAN) ---
 
-            let optionsHtml = '';
-            if (stepData.options && stepData.options.length > 0) {
-                optionsHtml = stepData.options.map(opt =>
-                    `<button onclick="submitSimulationAnswer('${opt.value}')" class="w-full text-left p-4 my-2 border border-gray-300 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors">
-                    ${opt.text}
-                 </button>`
-                ).join('');
-            } else if (stepData.is_final_step) {
-                optionsHtml =
-                    `<div class="text-center mt-6"><button onclick="closeSimulation()" class="btn btn-success">Selesai Simulasi</button></div>`;
+                // 1. Sembunyikan progress bar
+                simulationProgress.style.display = 'none';
+
+                // 2. Buat elemen untuk menampung kesimpulan
+                const summaryDiv = document.createElement('div');
+                summaryDiv.className = 'simulation-final-summary'; // Terapkan style kesimpulan
+
+                // 3. Masukkan HTML kesimpulan dari AI (scenario_text sudah berisi HTML)
+                summaryDiv.innerHTML = stepData.scenario_text;
+
+                // 4. Buat tombol "Selesai & Tutup"
+                const buttonContainer = document.createElement('div');
+                buttonContainer.className = 'btn-container';
+                buttonContainer.innerHTML =
+                    `<button onclick="closeSimulation()" class="btn btn-success">Selesai & Tutup</button>`;
+
+                // 5. Gabungkan tombol ke dalam div kesimpulan
+                summaryDiv.appendChild(buttonContainer);
+
+                // 6. Tampilkan kesimpulan di modal
+                simulationContent.appendChild(summaryDiv);
+
+            } else {
+                // --- B. JIKA INI LANGKAH SIMULASI BIASA ---
+
+                // 1. Tampilkan dan update progress bar
+                simulationProgress.style.display = 'block';
+                const progressPercentage = (stepData.total_steps > 0 && stepData.current_step_number <= stepData
+                        .total_steps) ?
+                    ((stepData.current_step_number - 1) / stepData.total_steps) * 100 :
+                    0;
+                progressBarSim.style.width = `${progressPercentage}%`;
+                progressTextSim.textContent = `Langkah ${stepData.current_step_number || ''} dari ${stepData.total_steps}`;
+
+                // 2. Tampilkan skenario/pertanyaan
+                const scenarioBlock = document.createElement('div');
+                scenarioBlock.className = 'simulation-scenario-block';
+                scenarioBlock.innerHTML = `<div class="simulation-scenario-text">${stepData.scenario_text || "..."}</div>`;
+
+                // 3. Tampilkan tombol pilihan jawaban
+                const optionsDiv = document.createElement('div');
+                optionsDiv.className = 'simulation-options';
+                if (stepData.options && stepData.options.length > 0) {
+                    stepData.options.forEach(opt => {
+                        const button = document.createElement('button');
+                        button.className = 'btn';
+                        button.innerHTML = opt.text;
+                        button.onclick = () => submitSimulationAnswer(opt.value);
+                        optionsDiv.appendChild(button);
+                    });
+                }
+
+                // 4. Tampilkan semua elemen ke dalam modal
+                simulationContent.appendChild(scenarioBlock);
+                simulationContent.appendChild(optionsDiv);
             }
-
-
-            simulationContent.innerHTML = `
-            <div class="mb-4 p-4 bg-gray-50 rounded-lg">
-                <p class="text-sm text-gray-500 mb-1">Langkah ${stepData.current_step_number} dari ${stepData.total_steps}</p>
-                <h4 class="text-lg font-semibold text-gray-800">${stepData.question_text || stepData.scenario_text || "Analisis..."}</h4>
-                ${stepData.details ? `<p class="text-sm text-gray-600 mt-2">${stepData.details}</p>` : ''}
-            </div>
-            <div class="simulation-options">${optionsHtml}</div>
-        `;
         }
 
-        // Fungsi global untuk submit jawaban simulasi
-        window.submitSimulationAnswer = async function(answerValue) {
-            const simulationContent = document.getElementById('simulation-content');
-            simulationContent.innerHTML =
-                `<div style="text-align:center; padding:20px;"><div class="spinner"></div> Memproses jawaban Anda...</div>`;
-
-            try {
-                const response = await fetch('/simulation/submit-answer', { // Ganti dengan URL API Anda
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': csrfToken
-                    },
-                    body: JSON.stringify({
-                        session_id: currentSimulationSession,
-                        answer: answerValue,
-                        current_step_id: simulationData.current_step.id // Kirim ID langkah saat ini
-                    })
-                });
-                const data = await response.json();
-                if (!response.ok) throw new Error(data.error || 'Gagal mengirim jawaban simulasi.');
-
-                simulationData = data; // Update data sesi dengan langkah berikutnya
-                displaySimulationStep(simulationData.current_step);
-
-            } catch (error) {
-                console.error('Error submitting simulation answer:', error);
-                simulationContent.innerHTML =
-                    `<div class="text-red-500 p-4 text-center">Gagal memproses jawaban: ${error.message}.</div>
-             <div class="text-center mt-4"><button onclick="displaySimulationStep(simulationData.current_step)" class="btn btn-secondary btn-sm">Coba Lagi</button> <button onclick="closeSimulation()" class="btn btn-outline btn-sm">Tutup</button></div>`;
-            }
-        }
-
-        // Fungsi global untuk menutup modal simulasi
-        window.closeSimulation = function() {
+        function closeSimulation() {
             const simulationModal = document.getElementById('simulation-modal');
-            if (simulationModal) simulationModal.classList.add('hidden');
+            if (simulationModal) {
+                simulationModal.classList.remove('active');
+                // Tunggu animasi selesai sebelum menyembunyikan
+                setTimeout(() => simulationModal.classList.add('hidden'), 300);
+            }
+
+            // Reset state
             currentSimulationSession = null;
             simulationData = null;
-            // Kembalikan tampilan tombol pilihan jurusan jika sebelumnya disembunyikan
+
+            // Tampilkan kembali tombol pilihan jurusan
             const majorSelectionSection = document.getElementById('major-selection-section');
-            if (majorSelectionSection) majorSelectionSection.style.display = 'block';
-        }
-
-
-        // Fungsi-fungsi untuk legacy console (jika masih mau dipertahankan)
-        // Perlu disesuaikan untuk menggunakan ID legacy
-        function processUserInputLegacy() {
-            /* ... implementasi untuk legacy console ... */
-            console.log("Legacy user input processed");
-        }
-
-        function hideLegacyQuestionConsole() {
-            if (legacyQuestionConsole) legacyQuestionConsole.classList.add('hidden');
+            if (majorSelectionSection) {
+                majorSelectionSection.style.display = 'block';
+            }
         }
     </script>
 @endsection

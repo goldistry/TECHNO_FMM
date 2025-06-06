@@ -2,21 +2,22 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category; // Gunakan Model Category
+use App\Models\UserCategoryAssessment;
+use App\Models\UserOverallSummary;
+use App\Models\SimulationSession; // Opsional
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Schema;
-use OpenAI; // OpenAI client factory
+use OpenAI;
+use Illuminate\Support\Str;
 
 class AIChatbotController extends Controller
 {
     protected $openaiClient;
-    protected $categoriesData; // Data kategori dan pertanyaan
 
     public function __construct()
     {
-        // Inisialisasi OpenAI Client dengan OpenRouter
-        // Bisa switch antara OpenAI dan OpenRouter
         $useOpenRouter = config('services.openrouter.enabled', false);
 
         if ($useOpenRouter) {
@@ -29,164 +30,167 @@ class AIChatbotController extends Controller
         } else {
             $this->openaiClient = OpenAI::client(config('services.openai.api_key'));
         }
-
-        // Data kategori dan pertanyaan (bisa dari config, database, atau hardcode)
-        // Saya akan menggunakan contoh struktur seperti yang Anda berikan
-        $this->categoriesData = [
-            'bakat_minat' => [
-                'id' => 'bakat_minat', // ID unik untuk referensi
-                'label' => 'Bakat & Minat',
-                'questions' => [
-                    "Hobi / aktivitas apa yang bikin kamu semangat melakukannya setiap hari?",
-                    "Pelajaran sekolah apa yang paling kamu tunggu-tunggu di sekolah?",
-                    "Soft skill apa yang kamu miliki?",
-                    "Hard skill apa yang kamu miliki?"
-                ],
-                'cost_per_question' => 15,
-            ],
-            'keinginan_ortu' => [
-                'id' => 'keinginan_ortu',
-                'label' => 'Keinginan Orang Tua',
-                'questions' => [
-                    "Orang tua ingin kamu bekerja di bidang apa?",
-                    "Aspek apa dari jurusan yang orang tuamu harapkan bisa ditemukan di jurusan pilihan?",
-                    "Apakah ada kriteria minimum yang orang tua harapkan jika kamu memilih jurusan di luar harapan mereka? Misalnya: akreditasi, reputasi universitas, prospek kerja"
-                ],
-                'cost_per_question' => 15,
-            ],
-            'financial' => [
-                'id' => 'financial',
-                'label' => 'FINANCIAL',
-                'questions' => [
-                    "Bagaimana Anda merencanakan pengelolaan keuangan Anda dalam jangka panjang setelah lulus kuliah?",
-                    "Sejauh mana Anda memahami konsep keuangan pribadi dan investasi dalam menentukan pilihan jurusan Anda?",
-                    "Kamu berencana kuliah di kota besar atau dekat rumah?",
-                    "Apakah orang tuamu sudah menyiapkan dana kuliah atau kamu harus mandiri?"
-                ],
-                'cost_per_question' => 15, // Atau sesuaikan biayanya
-            ],
-            'prospek_karir' => [
-                'id' => 'prospek_karir',
-                'label' => 'PROSPEK KARIR',
-                'questions' => [
-                    "Apa tantangan terbesar dalam mengembangkan karir profesional Anda?",
-                    "Menurut Anda lebih penting dalam memilih karir yg memiliki potensi penghasilan besar atau peluang untuk berkembang dalam bidang yang diminati?",
-                    "Bagaimana Anda melihat prospek karir di bidang yang Anda pilih dalam lima tahun ke depan?"
-                ],
-                'cost_per_question' => 15,
-            ],
-            // Tambahkan kategori lain di sini (Nilai dan Prinsip Hidup, Gaya Belajar, Tipe Kecerdasan, Kepribadian)
-            // Pastikan 'id' unik dan 'label' sesuai dengan yang digunakan di frontend
-        ];
     }
+    // ... setelah fungsi public function submitSimulationAnswer(Request $request) { ... }
+
+    /**
+     * Memanggil API OpenAI/OpenRouter dengan prompt yang diberikan.
+     *
+     * @param string $prompt
+     * @param string $systemMessage
+     * @return string
+     */
+    protected function callOpenAI(string $prompt, string $systemMessage = 'Anda adalah AI yang sangat membantu.'): string
+    {
+        $model = config('services.openrouter.enabled')
+            ? config('services.openrouter.model')
+            : 'gpt-4o'; // Atau model default lainnya
+
+        $chatResponse = $this->openaiClient->chat()->create([
+            'model' => $model,
+            'messages' => [
+                ['role' => 'system', 'content' => $systemMessage],
+                ['role' => 'user', 'content' => $prompt],
+            ],
+            'temperature' => 0.5, // Temperature lebih rendah untuk output yang lebih terstruktur
+            'max_tokens' => 2048,
+        ]);
+
+        return $chatResponse->choices[0]->message->content;
+    }
+
+    /**
+     * Mengekstrak blok JSON dari string teks mentah.
+     *
+     * @param string $rawText
+     * @return string|null
+     */
+    protected function extractJson(string $rawText): ?string
+    {
+        if (preg_match('/\{[\s\S]*\}/', $rawText, $matches)) {
+            return $matches[0];
+        }
+        return null;
+    }
+
 
     public function index()
     {
         $user = Auth::user();
+        $userCoins = $user->coins ?? 100; // Ambil dari kolom 'coins'
 
-        // Handle jika kolom coins belum ada di database
-        $userCoins = 100; // Default coins
-        try {
-            // Coba akses coins, jika kolom ada
-            $userCoins = $user->coins ?? 100;
-        } catch (\Exception $e) {
-            // Jika kolom belum ada, gunakan default
-            $userCoins = 100;
+        // Ambil kategori dari database beserta pertanyaan terkait
+        $categoriesFromDB = Category::with('questions')->get();
+
+        $categoriesForView = $categoriesFromDB->mapWithKeys(function ($category) {
+            return [$category->slug => [ // Gunakan slug sebagai key
+                'id' => $category->id, // ID database asli
+                'slug' => $category->slug,
+                'label' => $category->label,
+                'description' => $category->description,
+                'icon_identifier' => $category->icon_identifier,
+                'questions' => $category->questions->pluck('text')->all(), // Hanya text pertanyaan
+                'question_objects' => $category->questions, // Seluruh objek pertanyaan jika dibutuhkan
+                'cost_per_question' => $category->cost_per_question,
+            ]];
+        })->all();
+
+        $completedAssessments = UserCategoryAssessment::where('user_id', $user->id)
+            ->with('category:id,slug,label') // Ambil juga data kategori terkait
+            ->get();
+
+        // Ubah formatnya agar mudah digunakan oleh JavaScript
+        $userProgress = [];
+        foreach ($completedAssessments as $assessment) {
+            if ($assessment->category) { // Pastikan relasi kategori ada
+                $userProgress[$assessment->category->label] = [
+                    'categoryIdKey' => $assessment->category->slug,
+                    'questions' => collect($assessment->questions_data)->pluck('question_text')->all(),
+                    'answers' => collect($assessment->questions_data)->pluck('answer_text')->all(),
+                    'summary' => $assessment->summary_text,
+                ];
+            }
         }
-
         return view('chatbot', [
-            'categories' => $this->categoriesData,
+            'categories' => $categoriesForView,
             'userCoins' => (int) $userCoins,
+            'userProgress' => $userProgress,
         ]);
     }
 
-    /**
-     * Helper method untuk mendapatkan coins user dengan aman
-     */
+    // Helper methods getUserCoins, decrementUserCoins, incrementUserCoins
+    // bisa tetap ada atau langsung menggunakan $user->coins, $user->decrement('coins', $amount), $user->increment('coins', $amount)
+    // Pastikan $user->save() dipanggil jika tidak menggunakan metode increment/decrement Eloquent.
+
     private function getUserCoins($user)
     {
-        try {
-            return $user->coins ?? 100;
-        } catch (\Exception $e) {
-            return 100; // Default coins
-        }
+        return $user->coins ?? 0; // Default ke 0 jika null
     }
 
-    /**
-     * Helper method untuk mengurangi coins user dengan aman
-     */
     private function decrementUserCoins($user, $amount)
     {
-        try {
-            if (method_exists($user, 'decrement') && \Schema::hasColumn('users', 'coins')) {
-                $user->decrement('coins', $amount);
-            }
-            // Jika kolom belum ada, tidak melakukan apa-apa
-        } catch (\Exception $e) {
-            // Ignore error jika kolom belum ada
+        if ($user->coins >= $amount) {
+            $user->decrement('coins', $amount); // Eloquent akan otomatis save
+            return true;
         }
+        return false;
     }
 
-    /**
-     * Helper method untuk menambah coins user dengan aman
-     */
     private function incrementUserCoins($user, $amount)
     {
-        try {
-            if (method_exists($user, 'increment') && \Schema::hasColumn('users', 'coins')) {
-                $user->increment('coins', $amount);
-            }
-            // Jika kolom belum ada, tidak melakukan apa-apa
-        } catch (\Exception $e) {
-            // Ignore error jika kolom belum ada
-        }
+        $user->increment('coins', $amount); // Eloquent akan otomatis save
     }
+
 
     public function getCategorySummary(Request $request)
     {
         $user = Auth::user();
-        $categoryId = $request->input('categoryId'); // Misal: 'bakat_minat'
-        $numQuestionsSelected = (int)$request->input('numQuestions'); // Jumlah pertanyaan yang dipilih user
-        $answers = $request->input('answers'); // Array jawaban dari user
+        $categorySlug = $request->input('categoryId'); // Frontend sekarang mengirim slug
+        $numQuestionsSelected = (int)$request->input('numQuestions');
+        $answers = $request->input('answers');
 
-        if (!isset($this->categoriesData[$categoryId])) {
+        $category = Category::with('questions')->where('slug', $categorySlug)->first();
+
+        if (!$category) {
             return response()->json(['error' => 'Kategori tidak valid.'], 400);
         }
 
-        $categoryDetails = $this->categoriesData[$categoryId];
-        $costPerQuestion = $categoryDetails['cost_per_question'] ?? 15; // Default cost
+        $costPerQuestion = $category->cost_per_question ?? 15;
         $totalCost = $numQuestionsSelected * $costPerQuestion;
 
         if ($this->getUserCoins($user) < $totalCost) {
-            return response()->json(['error' => 'Koin tidak cukup untuk ' . $numQuestionsSelected . ' pertanyaan di kategori ini.'], 402); // Payment Required
+            return response()->json(['error' => 'Koin tidak cukup untuk ' . $numQuestionsSelected . ' pertanyaan di kategori ini.'], 402);
         }
 
-        // Potong koin
-        $this->decrementUserCoins($user, $totalCost);
-        // session()->put("userAnswers.{$categoryDetails['label']}", $answers); // Simpan jawaban di session jika perlu
+        // Ambil pertanyaan yang sesuai (objek pertanyaan, bukan hanya teks)
+        $questionsAskedObjects = $category->questions->slice(0, $numQuestionsSelected);
+        $questionsForPromptText = $questionsAskedObjects->pluck('text')->all();
 
-        // Ambil pertanyaan yang sesuai dengan jumlah yang dipilih
-        $questionsForPrompt = array_slice($categoryDetails['questions'], 0, $numQuestionsSelected);
+        // Membuat data pertanyaan dan jawaban untuk disimpan
+        $questionsDataForStorage = [];
+        foreach ($questionsAskedObjects as $index => $questionObj) {
+            $questionsDataForStorage[] = [
+                'question_id' => $questionObj->id,
+                'question_text' => $questionObj->text,
+                'answer_text' => $answers[$index] ?? 'Tidak dijawab',
+            ];
+        }
 
-        // Membuat Prompt untuk OpenAI
         $prompt = "Anda adalah seorang AI konselor karir yang membantu siswa menemukan rekomendasi jurusan kuliah.\n";
-        $prompt .= "Kategori saat ini adalah: \"{$categoryDetails['label']}\".\n";
+        $prompt .= "Kategori saat ini adalah: \"{$category->label}\".\n";
         $prompt .= "Siswa telah menjawab {$numQuestionsSelected} pertanyaan berikut:\n";
-        foreach ($questionsForPrompt as $index => $questionText) {
+        foreach ($questionsForPromptText as $index => $questionText) {
             $prompt .= ($index + 1) . ". Pertanyaan: {$questionText}\n";
-            $prompt .= "   Jawaban: " . ($answers[$index] ?? "Tidak dijawab") . "\n";
+            $prompt .= "   Jawaban: " . ($answers[$index] ?? "Tidak dijawab") . "\n";
         }
-        $prompt .= "\nBerdasarkan jawaban di atas untuk kategori \"{$categoryDetails['label']}\", berikan analisis dan rekomendasi 3-5 jurusan yang relevan.\n";
-        $prompt .= "Untuk setiap jurusan, berikan nama jurusan dan alasan mengapa itu cocok.\n";
+        $prompt .= "\nBerdasarkan jawaban di atas untuk kategori \"{$category->label}\", berikan analisis dan rekomendasi 2-3 jurusan yang paling relevan.\n";
+        $prompt .= "Untuk setiap jurusan, berikan nama jurusan dan alasan mengapa cocok dengan singkat dan jelas.\n";
         $prompt .= "Format output harus dalam HTML dasar seperti contoh ini (fokus pada konten, AI akan menyesuaikan detail HTML):\n";
-        $prompt .= "<strong>Analisis Rekomendasi Jurusan Berdasarkan {$categoryDetails['label']}</strong><br><br>\n";
-        $prompt .= "<strong>JURUSAN YANG MUNGKIN SESUAI BUAT KAMU:</strong><br><br>\n";
+        $prompt .= "<strong>Analisis Rekomendasi Jurusan Berdasarkan {$category->label}</strong><br><br>\n";
         $prompt .= "<strong>1. [Nama Jurusan 1]</strong><br> &nbsp; &nbsp;Alasan: [Alasan yang detail dan relevan dengan jawaban siswa untuk kategori ini].<br><br>\n";
         $prompt .= "<strong>2. [Nama Jurusan 2]</strong><br> &nbsp; &nbsp;Alasan: [Alasan yang detail dan relevan].<br><br>\n";
-        // Anda bisa menambahkan lebih banyak contoh format jika perlu
 
         try {
-            // Tentukan model berdasarkan provider
             $model = config('services.openrouter.enabled')
                 ? config('services.openrouter.model')
                 : 'gpt-3.5-turbo';
@@ -197,106 +201,458 @@ class AIChatbotController extends Controller
                     ['role' => 'system', 'content' => 'Anda adalah konselor karir AI. Berikan jawaban dalam format HTML dasar yang diminta.'],
                     ['role' => 'user', 'content' => $prompt],
                 ],
-                'temperature' => 0.7, // Sesuaikan untuk keseimbangan kreativitas dan presisi
-                'max_tokens' => 1000, // Perkirakan panjang output
+                'temperature' => 0.7,
+                'max_tokens' => 1000,
             ]);
 
             $summaryHtml = $chatResponse->choices[0]->message->content;
 
+            // Potong koin SETELAH berhasil mendapatkan respons AI
+            $this->decrementUserCoins($user, $totalCost);
+
+            // Simpan assessment ke database
+            UserCategoryAssessment::create([
+                'user_id' => $user->id,
+                'category_id' => $category->id,
+                'questions_data' => $questionsDataForStorage,
+                'summary_text' => $summaryHtml,
+                'cost_incurred' => $totalCost,
+                'completed_at' => now(),
+            ]);
+
             return response()->json([
                 'summary' => $summaryHtml,
-                'new_coin_balance' => $this->getUserCoins($user) // Ambil saldo koin terbaru
+                'new_coin_balance' => $this->getUserCoins($user)
             ]);
         } catch (\Exception $e) {
             Log::error("OpenAI API Error (Category Summary): " . $e->getMessage());
-            // Kembalikan koin jika ada error dari API
-            $this->incrementUserCoins($user, $totalCost);
+            // Jangan decrement koin jika error
             return response()->json(['error' => 'Gagal menghasilkan summary dari AI. Silakan coba lagi nanti.', 'details' => $e->getMessage()], 500);
         }
     }
+
     public function getOverallSummary(Request $request)
     {
+        $logIdentifier = (string) Str::uuid();
         $user = Auth::user();
-        // $allUserAnswers adalah array asosiatif: ['Nama Kategori 1' => ['jawaban1', 'jawaban2'], 'Nama Kategori 2' => [...]]
-        $allUserAnswers = $request->input('allUserAnswers'); // Dapatkan semua jawaban dari frontend
+        Log::info("[OverallSummary:START] [$logIdentifier] Request received from User ID: {$user->id}.");
+
+        $allUserAnswersFromRequest = $request->input('allUserAnswers'); // Format: ['Category Label' => ['categoryIdKey' => 'slug', 'answers' => [...], 'questions' => [...]], ...]
+
+        Log::debug("[OverallSummary:DATA_IN] [$logIdentifier] Raw 'allUserAnswers' data received:", [
+            'data' => json_encode($allUserAnswersFromRequest, JSON_PRETTY_PRINT)
+        ]);
 
         $overallSummaryCost = 5; // Biaya untuk summary keseluruhan
+        $categoryCount = is_array($allUserAnswersFromRequest) ? count($allUserAnswersFromRequest) : 0;
 
-        if (count($allUserAnswers) < 2) { // Pastikan minimal ada 2 kategori yang dijawab
+        Log::info("[OverallSummary:VALIDATE_COUNT] [$logIdentifier] Validating category count. Found: {$categoryCount}, Required: >= 2.");
+
+        if ($categoryCount < 2) {
+            Log::warning("[OverallSummary:FAIL_COUNT] [$logIdentifier] Validation failed. User only completed {$categoryCount} categories. Aborting.");
             return response()->json(['error' => 'Anda perlu menjawab minimal dua kategori untuk mendapatkan summary keseluruhan.'], 400);
         }
 
-        if ($this->getUserCoins($user) < $overallSummaryCost) {
+
+        // Validasi 2: Koin pengguna
+        $userCoins = $this->getUserCoins($user);
+        Log::info("[OverallSummary:VALIDATE_COINS] [$logIdentifier] Validating user coins. Has: {$userCoins}, Required: {$overallSummaryCost}.");
+
+        if ($userCoins < $overallSummaryCost) {
+            Log::warning("[OverallSummary:FAIL_COINS] [$logIdentifier] Validation failed. Insufficient coins. Aborting.");
             return response()->json(['error' => 'Koin tidak cukup untuk summary keseluruhan.'], 402);
         }
 
-        // Potong koin
-        $this->decrementUserCoins($user, $overallSummaryCost);
+        Log::info("[OverallSummary:BUILD_PROMPT] [$logIdentifier] All validations passed. Starting to build the prompt for AI.");
 
-        // Membuat Prompt untuk OpenAI (ini akan lebih kompleks)
-        $prompt = "Anda adalah AI konselor karir ahli yang memberikan rekomendasi jurusan kuliah terpadu.\n";
-        $prompt .= "Berikut adalah jawaban siswa dari berbagai kategori yang telah diisi:\n\n";
+        $prompt = "Anda adalah AI konselor karir ahli. Berdasarkan data jawaban siswa berikut, berikan 2-3 rekomendasi jurusan.
+JAWABAN ANDA HARUS BERUPA FORMAT JSON YANG VALID, BUKAN TEKS BIASA ATAU HTML.
 
-        foreach ($allUserAnswers as $categoryLabel => $answersData) {
-            // Cari detail kategori (termasuk pertanyaan asli) berdasarkan label
-            $categoryKeyFound = null;
-            foreach ($this->categoriesData as $key => $catDetails) {
-                if ($catDetails['label'] === $categoryLabel) {
-                    $categoryKeyFound = $key;
-                    break;
-                }
+Struktur JSON harus seperti ini:
+{
+  \"rekomendasi\": [
+    {
+      \"nama_jurusan\": \"(Nama Jurusan yang Direkomendasikan)\",
+      \"alasan\": \"(Jelaskan secara komprehensif mengapa jurusan ini cocok, dengan menggabungkan analisis dari semua kategori. Gunakan tag <br> untuk baris baru jika perlu.)\",
+      \"tingkat_kecocokan\": [
+        {
+          \"kategori\": \"(Nama Kategori 1, misal: Keinginan Orang Tua)\",
+          \"persentase\": \"(Persentase, misal: 90%)\",
+          \"detail_alasan\": \"(Alasan singkat untuk persentase di kategori ini.)\"
+        },
+        {
+          \"kategori\": \"(Nama Kategori 2, misal: FINANCIAL)\",
+          \"persentase\": \"(Persentase, misal: 80%)\",
+          \"detail_alasan\": \"(Alasan singkat untuk persentase di kategori ini.)\"
+        }
+      ]
+    }
+  ]
+}
+
+Pastikan untuk mengisi semua field sesuai format. Berikut adalah data jawaban siswa:
+\n";
+
+        $contextDataForStorage = [];
+        $processedCategoriesCount = 0;
+
+        foreach ($allUserAnswersFromRequest as $categoryLabel => $answersData) {
+            // Pastikan data yang masuk memiliki struktur yang diharapkan
+            $slug = $answersData['categoryIdKey'] ?? null;
+            if (!$slug) {
+                Log::warning("[OverallSummary:PROCESS_LOOP] [$logIdentifier] Skipping an item because 'categoryIdKey' is missing.", ['item_label' => $categoryLabel]);
+                continue;
             }
 
-            if ($categoryKeyFound && !empty($answersData['answers'])) {
-                $prompt .= "Kategori: \"{$categoryLabel}\"\n";
-                $questionsForThisCategory = array_slice($this->categoriesData[$categoryKeyFound]['questions'], 0, count($answersData['answers']));
+            $category = Category::where('slug', $slug)->first();
+
+            if ($category && !empty($answersData['answers'])) {
+                Log::info("[OverallSummary:PROCESS_LOOP] [$logIdentifier] Processing category: '{$category->label}' (Slug: {$slug}).");
+                $processedCategoriesCount++;
+
+                $prompt .= "Kategori: \"{$category->label}\"\n";
+                $questionsForThisCategory = $answersData['questions'];
                 foreach ($questionsForThisCategory as $index => $questionText) {
                     $prompt .= "- Pertanyaan: {$questionText}\n";
                     $prompt .= "  Jawaban: " . ($answersData['answers'][$index] ?? "Tidak dijawab") . "\n";
                 }
                 $prompt .= "\n";
+
+                $contextDataForStorage[$category->slug] = [
+                    'label' => $category->label,
+                    'questions' => $questionsForThisCategory,
+                    'answers' => $answersData['answers'],
+                    'summary_from_category' => $answersData['summary'] ?? null
+                ];
+            } else {
+                Log::warning("[OverallSummary:PROCESS_LOOP] [$logIdentifier] Could not find category for slug '{$slug}' or answers were empty. Skipping.");
             }
         }
 
-        $prompt .= "Berdasarkan SEMUA informasi di atas dari berbagai kategori, berikan rekomendasi 2-3 jurusan yang paling sesuai secara keseluruhan.\n";
-        $prompt .= "Untuk setiap jurusan yang direkomendasikan, berikan:\n";
-        $prompt .= "1. Nama Jurusan (bisa spesifik, misal 'Desain Komunikasi Visual (DKV) dengan fokus UI/UX').\n";
-        $prompt .= "2. Alasan: Jelaskan secara komprehensif mengapa jurusan ini cocok, dengan MENGGABUNGKAN dan MENGANALISIS informasi dari berbagai kategori yang telah dijawab siswa.\n";
-        $prompt .= "3. Tingkat kecocokan (dalam persentase perkiraan, misal 70-90%) dan alasan singkat untuk setiap kategori utama yang relevan (misalnya, Bakat & Minat: X%, Keinginan Orang Tua: Y%).\n";
-        $prompt .= "4. Kesimpulan singkat dan saran akhir untuk siswa.\n";
-        $prompt .= "Format output harus dalam HTML dasar seperti contoh yang diberikan (lihat contoh di JavaScript `updateOverallSummary` yang diberikan user sebelumnya, AI akan menyesuaikan).\n";
-        $prompt .= "Contoh awal format:\n";
-        $prompt .= "<strong>Baik, setelah mempertimbangkan informasi yang kamu berikan...</strong><br><br><strong>Jurusan yang direkomendasikan:</strong><br><br> <strong>[Nama Jurusan 1]</strong><br> <strong>[Nama Jurusan 2]</strong><br><br><strong>per jurusan:</strong><br><br><strong>[Nama Jurusan 1]</strong><br><strong>Alasan:</strong> [Penjelasan gabungan]...<br><strong>Tingkat kecocokan:</strong><br><strong>Kategori A:</strong> XX%<br>Alasan: ...<br><strong>Kategori B:</strong> YY%<br>Alasan: ...<br><br> (dan seterusnya untuk jurusan lain).";
+        if ($processedCategoriesCount < 2) {
+            Log::error("[OverallSummary:FAIL_PROCESS] [$logIdentifier] After processing, valid categories count ({$processedCategoriesCount}) is less than 2. Aborting.");
+            return response()->json(['error' => 'Terjadi masalah saat memproses data kategori Anda. Pastikan data valid.'], 400);
+        }
 
+        $prompt .= "\nSekarang, hasilkan output JSON berdasarkan analisis data di atas. Pastikan JSON valid.";
+
+
+
+        Log::debug("[OverallSummary:FINAL_PROMPT] [$logIdentifier] The final prompt is ready to be sent to AI.", ['prompt' => $prompt]);
 
         try {
-            // Tentukan model berdasarkan provider
             $model = config('services.openrouter.enabled')
                 ? config('services.openrouter.model')
-                : 'gpt-4o'; // Gunakan gpt-4o untuk overall summary yang lebih kompleks
+                : 'gpt-4o';
+
+            Log::info("[OverallSummary:API_CALL] [$logIdentifier] Sending request to AI model: {$model}.");
 
             $chatResponse = $this->openaiClient->chat()->create([
                 'model' => $model,
                 'messages' => [
-                    ['role' => 'system', 'content' => 'Anda adalah konselor karir AI ahli. Berikan rekomendasi jurusan terpadu dalam format HTML dasar yang diminta.'],
+                    ['role' => 'system', 'content' => 'Anda adalah konselor karir AI yang menghasilkan output HANYA dalam format JSON yang diminta.'],
                     ['role' => 'user', 'content' => $prompt],
                 ],
                 'temperature' => 0.7,
-                'max_tokens' => 2000, // Summary keseluruhan mungkin lebih panjang
+                'max_tokens' => 2000,
             ]);
+            $rawResponse = $chatResponse->choices[0]->message->content;
+            Log::debug("[OverallSummary:API_RESPONSE] AI Raw Response:", ['raw' => $rawResponse]);
 
-            $overallSummaryHtml = $chatResponse->choices[0]->message->content;
+            // EKSTRAK BLOK JSON DARI RESPONS MENTAH MENGGUNAKAN REGEX
+            $jsonString = null;
+            if (preg_match('/\{[\s\S]*\}/', $rawResponse, $matches)) {
+                $jsonString = $matches[0];
+            }
 
-            return response()->json([
-                'summary' => $overallSummaryHtml,
-                'new_coin_balance' => $this->getUserCoins($user),
-                'show_simulation_prompt' => true, // Trigger simulation prompt
-                'user_answers' => $allUserAnswers // Pass user answers for simulation
+            // JIKA TIDAK ADA BLOK JSON YANG DITEMUKAN, KEMBALIKAN ERROR
+            if (!$jsonString) {
+                Log::error("[OverallSummary:JSON_EXTRACTION_ERROR] Could not find a JSON block in the AI response.");
+                return response()->json(['error' => 'Gagal mengekstrak data dari respons AI.'], 500);
+            }
+
+            // DECODE STRING JSON YANG SUDAH BERSIH
+            $summaryData = json_decode($jsonString, true);
+
+            // VALIDASI JIKA JSON DARI AI TIDAK VALID
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                Log::error("[OverallSummary:JSON_ERROR] Failed to decode JSON from AI.", ['error' => json_last_error_msg()]);
+                // Berikan respons error atau coba parsing manual sebagai fallback
+                return response()->json(['error' => 'Gagal memproses respons dari AI. Format tidak valid.'], 500);
+            }
+
+            Log::info("[OverallSummary:DECREMENT_COINS] ... ");
+            $this->decrementUserCoins($user, $overallSummaryCost);
+
+            Log::info("[OverallSummary:DB_SAVE] ... ");
+            $overallSummary = UserOverallSummary::create([
+                'user_id' => $user->id,
+                // Simpan respons JSON mentah atau hasil yang sudah di-decode
+                'summary_text' => json_encode($summaryData), // Simpan sebagai JSON di DB
+                'context_data' => $contextDataForStorage,
+                'cost_incurred' => $overallSummaryCost,
+                'completed_at' => now(),
             ]);
+            Log::info("[OverallSummary:DB_SUCCESS] Summary saved with ID: {$overallSummary->id}.");
+
+            // KIRIM DATA TERSTRUKTUR KE FRONTEND
+            $finalResponseData = [
+                // 'summary' tidak lagi digunakan, ganti dengan 'recommendations'
+                'recommendations' => $summaryData['rekomendasi'] ?? [], // Kirim array rekomendasi
+                'overall_summary_id' => $overallSummary->id,
+                'new_coin_balance' => $this->getUserCoins($user)
+            ];
+
+            Log::info("[OverallSummary:SUCCESS] Process completed successfully. Sending JSON response to frontend.");
+            return response()->json($finalResponseData);
         } catch (\Exception $e) {
-            Log::error("OpenAI API Error (Overall Summary): " . $e->getMessage());
-            $this->incrementUserCoins($user, $overallSummaryCost); // Kembalikan koin
+            // Log error dengan detail dan stack trace
+            Log::error("[OverallSummary:EXCEPTION] [$logIdentifier] An exception occurred during AI API call or processing.", [
+                'error_message' => $e->getMessage(),
+                'exception' => $e // Ini akan mencetak stack trace lengkap di log
+            ]);
+
             return response()->json(['error' => 'Gagal menghasilkan summary keseluruhan dari AI. Silakan coba lagi nanti.', 'details' => $e->getMessage()], 500);
         }
+    }
+
+    // GANTI FUNGSI LAMA DENGAN YANG INI
+    public function startSimulation(Request $request)
+    {
+        $logIdentifier = (string) Str::uuid();
+        $user = Auth::user();
+        $selectedMajor = $request->input('selected_major');
+        $overallSummaryId = $request->input('overall_summary_id');
+
+        Log::info("[Simulation:START] [$logIdentifier] User ID: {$user->id}, Major: {$selectedMajor}");
+
+        try {
+            $overallSummary = UserOverallSummary::findOrFail($overallSummaryId);
+            // Ambil ringkasan profil siswa dari summary sebelumnya sebagai konteks utama
+            $userContext = json_encode($overallSummary->context_data);
+
+            // =========================================================================
+            // BARU: PROMPT YANG LEBIH KOMPREHENSIF UNTUK MERANCANG SELURUH CERITA
+            // =========================================================================
+            $prompt = "Anda adalah Perancang Skenario Interaktif dan Konselor Karir. Tugas Anda adalah membuat cerita simulasi singkat (3 langkah) yang relevan dan mendalam untuk seorang siswa yang mempertimbangkan jurusan '{$selectedMajor}'.
+
+        PROFIL SISWA (berdasarkan jawaban assessment mereka sebelumnya):
+        {$userContext}
+
+        INSTRUKSI UTAMA:
+        1.  **Buat Cerita Koheren:** Rancang sebuah narasi 3 langkah yang memiliki awal, tantangan inti di tengah, dan sebuah resolusi di akhir. Cerita harus mencerminkan satu aspek kunci atau proyek realistis yang mungkin dihadapi mahasiswa di jurusan '{$selectedMajor}'.
+        2.  **Personalisasi Konten:** Gunakan 'PROFIL SISWA' di atas untuk membuat skenario yang relevan. Contoh: jika siswa menunjukkan minat pada 'analisis data', tantangan bisa berupa studi kasus. Jika minat pada 'kreativitas', tantangan bisa berupa tugas desain.
+        3.  **Pilihan yang Bermakna:** Setiap pilihan yang Anda berikan harus merefleksikan pendekatan yang berbeda (misalnya: pendekatan analitis vs. kreatif, kolaboratif vs. individual).
+        4.  **Format Output (WAJIB JSON):** Jawaban Anda HARUS berupa satu blok JSON tunggal yang berisi array dari 3 langkah. JANGAN memberikan teks pembuka atau penutup di luar JSON.
+
+        Contoh Struktur JSON yang Diinginkan:
+        ```json
+        {
+          \"title\": \"(Judul Singkat Simulasi, misal: 'Proyek Analisis Sentimen')\",
+          \"story_arc\": [
+            {
+              \"step\": 1,
+              \"scenario\": \"(Teks skenario awal yang menarik dan relevan dengan profil siswa dan jurusan. Ini adalah pengenalan masalah.)\",
+              \"options\": [
+                { \"value\": \"opsi_a\", \"text\": \"(Teks pilihan A yang jelas dan berbeda)\" },
+                { \"value\": \"opsi_b\", \"text\": \"(Teks pilihan B yang jelas dan berbeda)\" }
+              ]
+            },
+            {
+              \"step\": 2,
+              \"scenario\": \"(Teks skenario kedua yang merupakan pengembangan dari langkah 1. Ini adalah inti tantangan.)\",
+              \"options\": [
+                { \"value\": \"opsi_c\", \"text\": \"(Teks pilihan C)\" },
+                { \"value\": \"opsi_d\", \"text\": \"(Teks pilihan D)\" }
+              ]
+            },
+            {
+              \"step\": 3,
+              \"scenario\": \"(Teks skenario ketiga yang merupakan hasil atau konsekuensi dari pilihan di langkah 2. Ini adalah penutup cerita sebelum analisis akhir.)\",
+              \"options\": [
+                { \"value\": \"opsi_e\", \"text\": \"(Teks pilihan E)\" },
+                { \"value\": \"opsi_f\", \"text\": \"(Teks pilihan F)\" }
+              ]
+            }
+          ]
+        }
+        ```
+        Pastikan untuk mengisi semua field sesuai format di atas.";
+
+            // Panggil AI dengan prompt baru yang lebih canggih
+            $rawResponse = $this->callOpenAI($prompt, 'Anda adalah AI yang menghasilkan output HANYA dalam format JSON yang diminta.');
+            $jsonString = $this->extractJson($rawResponse);
+            $simulationStory = json_decode($jsonString, true);
+
+            // Validasi respons dari AI
+            if (json_last_error() !== JSON_ERROR_NONE || !isset($simulationStory['story_arc']) || count($simulationStory['story_arc']) < 3) {
+                Log::error("[Simulation:START_INVALID_STORY]", ['raw_response' => $rawResponse]);
+                throw new \Exception('AI gagal merancang alur cerita yang valid.');
+            }
+
+            // Buat sesi baru dan SIMPAN SELURUH CERITA
+            $session = SimulationSession::create([
+                'user_id' => $user->id,
+                'overall_summary_id' => $overallSummaryId,
+                'selected_major' => $selectedMajor,
+                'status' => 'started',
+                'simulation_data' => $simulationStory['story_arc'] // DIUBAH: Simpan seluruh cerita
+            ]);
+
+            // Ambil langkah pertama dari cerita yang sudah disimpan
+            $firstStep = $session->simulation_data[0];
+
+            // Simpan skenario pertama ke histori
+            $session->responses()->create([
+                'step_number' => 1,
+                'scenario_text' => $firstStep['scenario'],
+                'user_choice_value' => 'start',
+            ]);
+
+            // Kirim hanya langkah pertama ke frontend
+            return response()->json([
+                'session_id' => $session->id,
+                'current_step' => [
+                    'id' => 'step_1',
+                    'current_step_number' => 1,
+                    'total_steps' => count($session->simulation_data),
+                    'scenario_text' => $firstStep['scenario'],
+                    'options' => $firstStep['options'],
+                ]
+            ]);
+        } catch (\Exception $e) {
+            Log::error("[Simulation:START_FAILED] [$logIdentifier]", ['error' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
+            return response()->json(['error' => 'Gagal mempersiapkan simulasi yang komprehensif. Silakan coba lagi.'], 500);
+        }
+    }
+
+    // GANTI FUNGSI LAMA DENGAN YANG INI
+    public function submitSimulationAnswer(Request $request)
+    {
+        $user = Auth::user();
+        $sessionId = $request->input('session_id');
+        $answerValue = $request->input('answer');
+
+        try {
+            $session = SimulationSession::where('id', $sessionId)->where('user_id', $user->id)->firstOrFail();
+            if ($session->status === 'completed') {
+                return response()->json(['error' => 'Sesi simulasi ini sudah selesai.'], 400);
+            }
+
+            // Ambil histori untuk mengetahui kita ada di langkah ke berapa
+            $historyCount = $session->responses()->count();
+            $currentStepNumber = $historyCount;
+
+            // Update jawaban dari langkah sebelumnya
+            $lastResponse = $session->responses()->where('step_number', $currentStepNumber)->first();
+            if ($lastResponse) {
+                $storyData = collect($session->simulation_data);
+                $currentStepData = $storyData->firstWhere('step', $currentStepNumber);
+                $chosenOptionText = collect($currentStepData['options'] ?? [])->firstWhere('value', $answerValue)['text'] ?? $answerValue;
+
+                $lastResponse->update([
+                    'user_choice_text' => $chosenOptionText,
+                    'user_choice_value' => $answerValue
+                ]);
+            }
+
+            // Cek apakah ini adalah langkah terakhir
+            $totalSteps = count($session->simulation_data);
+            if ($currentStepNumber >= $totalSteps) {
+                // Jika ya, panggil fungsi untuk menyelesaikan simulasi dan berikan analisis akhir
+                return $this->endSimulation($session);
+            }
+
+            // Jika bukan langkah terakhir, ambil langkah berikutnya dari data yang tersimpan
+            $nextStepData = $session->simulation_data[$currentStepNumber]; // Array index starts from 0
+
+            // Simpan skenario baru ke histori
+            $session->responses()->create([
+                'step_number' => $currentStepNumber + 1,
+                'scenario_text' => $nextStepData['scenario'],
+            ]);
+
+            return response()->json([
+                'session_id' => $sessionId,
+                'current_step' => [
+                    'id' => 'step_' . ($currentStepNumber + 1),
+                    'current_step_number' => $currentStepNumber + 1,
+                    'total_steps' => $totalSteps,
+                    'scenario_text' => $nextStepData['scenario'],
+                    'options' => $nextStepData['options'],
+                ],
+            ]);
+        } catch (\Exception $e) {
+            Log::error("[Simulation:SUBMIT_FAILED]", ['error' => $e->getMessage(), 'session_id' => $sessionId]);
+            return response()->json(['error' => 'Gagal melanjutkan simulasi.'], 500);
+        }
+    }
+
+    // Ganti fungsi endSimulation lama Anda dengan yang ini
+    // GANTI FUNGSI LAMA DENGAN YANG INI
+    protected function endSimulation(SimulationSession $session)
+    {
+        // Ambil profil awal pengguna dari summary yang terkait
+        $overallSummary = UserOverallSummary::find($session->overall_summary_id);
+        $userContext = $overallSummary ? json_encode($overallSummary->context_data) : 'Profil awal tidak tersedia.';
+
+        // Ambil semua jejak jawaban dari DB untuk membangun histori
+        $history = $session->responses()->orderBy('step_number')->get()->map(function ($resp) {
+            if (!empty($resp->user_choice_text)) {
+                return "Langkah {$resp->step_number}: Pada skenario '{$resp->scenario_text}', pengguna memilih '{$resp->user_choice_text}'.";
+            }
+            return null;
+        })->filter()->implode("\n");
+
+        // =========================================================================
+        // BARU: PROMPT ANALISIS AKHIR YANG LEBIH HOLISTIK
+        // =========================================================================
+        $finalPrompt = "Anda adalah seorang konselor karir AI yang sangat bijaksana. Berikan analisis akhir yang mendalam dari simulasi jurusan yang telah diselesaikan siswa.
+
+    Jurusan yang disimulasikan: '{$session->selected_major}'.
+
+    KONTEKS 1: PROFIL AWAL SISWA (dari assessment)
+    {$userContext}
+
+    KONTEKS 2: JEJAK PILIHAN SISWA SELAMA SIMULASI
+    {$history}
+
+    INSTRUKSI ANALISIS:
+    1.  **Hubungkan Dua Konteks:** Berikan analisis yang menghubungkan profil awal siswa dengan pilihan yang mereka buat selama simulasi.
+    2.  **Struktur Jelas:** Gunakan struktur HTML yang diminta di bawah ini. JANGAN gunakan Markdown (seperti `**` atau `*`).
+    3.  **Nada Positif dan Membangun:** Berikan feedback yang memberdayakan dan fokus pada pengembangan diri.
+
+    Gunakan struktur HTML berikut:
+    <h4>Analisis Akhir Simulasi</h4>
+    <p>Berikut adalah analisis berdasarkan profil dan pilihan-pilihan yang kamu buat selama simulasi jurusan <strong>{$session->selected_major}</strong>.</p>
+    
+    <strong>Kekuatan yang Terkonfirmasi:</strong>
+    <p>(Jelaskan kekuatan yang ditunjukkan siswa. Hubungkan dengan profil awal. Contoh: 'Profil awalmu menunjukkan ketertarikan pada pemecahan masalah, dan pilihanmu untuk [pilihan di simulasi] mengkonfirmasi kemampuanmu dalam menganalisis situasi secara logis.')</p>
+    
+    <strong>Potensi Area untuk Dikembangkan:</strong>
+    <p>(Jelaskan potensi tantangan atau area pengembangan. Contoh: 'Kecenderunganmu untuk memilih [pilihan di simulasi] menunjukkan kamu lebih nyaman bekerja sendiri. Di dunia [nama jurusan], kemampuan kolaborasi sangat penting. Ini bisa menjadi area yang perlu kamu latih.')</p>
+    
+    <strong>Saran Pengembangan Lanjutan:</strong>
+    <ul>
+      <li>(Berikan saran pertama yang konkret dan relevan. Contoh: 'Cobalah untuk mengikuti proyek kelompok kecil pada semester awal untuk melatih kemampuan komunikasimu.')</li>
+      <li>(Berikan saran kedua yang konkret dan relevan. Contoh: 'Untuk memperdalam pemahamanmu tentang [topik], kami sarankan membaca buku [judul buku] atau mengikuti kursus online di [platform].')</li>
+    </ul>
+    ";
+
+        $finalOutcomeHtml = $this->callOpenAI($finalPrompt, "Anda adalah seorang konselor karir yang memberikan feedback akhir dalam format HTML.");
+
+        $session->status = 'completed';
+        $session->final_outcome = $finalOutcomeHtml;
+        $session->save();
+
+        return response()->json([
+            'session_id' => $session->id,
+            'current_step' => [
+                'id' => 'final_summary',
+                'is_final_step' => true,
+                'scenario_text' => $finalOutcomeHtml,
+                'options' => [],
+            ]
+        ]);
     }
 }
