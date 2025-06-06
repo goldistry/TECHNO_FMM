@@ -31,7 +31,6 @@ class AIChatbotController extends Controller
             $this->openaiClient = OpenAI::client(config('services.openai.api_key'));
         }
     }
-    // ... setelah fungsi public function submitSimulationAnswer(Request $request) { ... }
 
     /**
      * Memanggil API OpenAI/OpenRouter dengan prompt yang diberikan.
@@ -59,6 +58,29 @@ class AIChatbotController extends Controller
         return $chatResponse->choices[0]->message->content;
     }
 
+    /**
+     * Membersihkan string JSON dari karakter kontrol yang tidak valid.
+     *
+     * @param string $jsonString
+     * @return string
+     */
+    private function sanitizeJsonString(string $jsonString): string
+    {
+        // 1. Hapus karakter kontrol kecuali tab, newline, dan carriage return.
+        // Ini adalah perbaikan utama untuk error "Control character error".
+        $cleaned = preg_replace('/[[:cntrl:]&&[^\t\n\r]]/', '', $jsonString);
+
+        // 2. Terkadang AI menggunakan non-breaking space (U+00A0) yang perlu diganti.
+        // str_replace lebih cepat untuk penggantian karakter tunggal yang spesifik.
+        $cleaned = str_replace("\u{00a0}", " ", $cleaned);
+
+        // 3. Pastikan tidak ada Byte Order Mark (BOM) di awal string.
+        if (substr($cleaned, 0, 3) === "\xEF\xBB\xBF") {
+            $cleaned = substr($cleaned, 3);
+        }
+
+        return $cleaned;
+    }
     /**
      * Mengekstrak blok JSON dari string teks mentah.
      *
@@ -374,8 +396,10 @@ Pastikan untuk mengisi semua field sesuai format. Berikut adalah data jawaban si
                 return response()->json(['error' => 'Gagal mengekstrak data dari respons AI.'], 500);
             }
 
+            $cleanJsonString = $this->sanitizeJsonString($jsonString);
+
             // DECODE STRING JSON YANG SUDAH BERSIH
-            $summaryData = json_decode($jsonString, true);
+            $summaryData = json_decode($cleanJsonString, true);
 
             // VALIDASI JIKA JSON DARI AI TIDAK VALID
             if (json_last_error() !== JSON_ERROR_NONE) {
