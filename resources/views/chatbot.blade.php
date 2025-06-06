@@ -14,12 +14,10 @@
             --secondary-dark: #0056c9;
             --secondary-light: #3d8bff;
             --success: #7f9c53;
-            /* Digunakan juga sebagai --success-color */
             --success-light: #a8c778;
             --background: #f8f1e5;
             --background-light: #fffdf9;
             --surface: #ffffff;
-            /* Digunakan juga sebagai --card-bg */
             --surface-elevated: #fafafa;
 
             /* Text Colors */
@@ -28,9 +26,7 @@
             --text-muted: #94a3b8;
             --text-inverse: #ffffff;
 
-            /* Border & Shadow */
             --border-light: #e2e8f0;
-            /* Digunakan juga sebagai --border-color */
             --border-medium: #cbd5e1;
             --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.05);
             --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
@@ -159,27 +155,20 @@
         }
 
         @keyframes pulse {
-
-            /* Digunakan oleh .category-card dan #simulation-prompt-section */
             0%,
             100% {
                 transform: scale(1);
                 box-shadow: 0 0 0 0 rgba(253, 114, 5, 0.4);
-                /* Default untuk .category-card */
             }
 
             50% {
                 transform: scale(1.05);
                 box-shadow: 0 0 0 10px rgba(253, 114, 5, 0);
-                /* Default untuk .category-card */
             }
         }
 
-        /* Pulse animation for simulation prompt (override) */
         #simulation-prompt-section {
-            /* Selector lebih spesifik */
             animation: pulse-simulation 2s infinite;
-            /* Nama animasi berbeda untuk menghindari konflik */
         }
 
         @keyframes pulse-simulation {
@@ -219,7 +208,6 @@
             }
         }
 
-        /* ===== ENHANCED CHAT INTERFACE ===== */
         .chat-container {
             background: var(--surface);
             border-radius: var(--radius-2xl);
@@ -279,7 +267,6 @@
         }
 
         .chat-messages {
-            /* ID unik: chat-history */
             flex: 1;
             padding: var(--space-lg);
             overflow-y: auto;
@@ -395,7 +382,6 @@
         }
 
         .chat-input {
-            /* ID unik: user-input */
             flex: 1;
             padding: var(--space-md) var(--space-lg);
             border: 2px solid var(--border-light);
@@ -424,7 +410,6 @@
         }
 
         .chat-send-button {
-            /* ID unik: send-button */
             padding: var(--space-md);
             background: linear-gradient(135deg, var(--primary), var(--primary-dark));
             color: var(--text-inverse);
@@ -537,7 +522,6 @@
             color: var(--text-secondary);
             line-height: 1.6;
             margin-bottom: var(--space-lg);
-            /* Pastikan properti ini ada */
         }
 
         .category-meta {
@@ -766,7 +750,6 @@
             box-shadow: none !important;
         }
 
-        /* !important dipertahankan karena seringkali perlu override kuat */
         .btn:disabled::before {
             display: none;
         }
@@ -852,7 +835,6 @@
         }
 
 
-        /* ===== MODERN MODAL STYLING ===== */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -1052,7 +1034,6 @@
         }
 
 
-        /* ===== RESPONSIVE DESIGN ===== */
         @media (max-width: 768px) {
             .chatbot-container {
                 padding: var(--space-md);
@@ -1163,19 +1144,6 @@
             margin-bottom: var(--space-xs);
         }
 
-        /* ... CSS Anda yang sudah ada ... */
-
-
-        /* ===== SIMULATION MODAL CONTENT STYLING ===== */
-
-        /* Memberi padding dan scrollbar jika kontennya panjang */
-        /* ... CSS Anda yang sudah ada ... */
-
-        /* ========================================================== */
-        /* ===== PERBAIKAN: MODAL SIMULASI RESPONSIVE & SCROLLABLE ===== */
-        /* ========================================================== */
-
-        /* Overlay untuk modal */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -1185,7 +1153,6 @@
             width: 100vw;
             height: 100vh;
             background: rgba(18, 25, 38, 0.8);
-            /* Warna lebih gelap untuk kontras lebih baik */
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
             display: flex;
@@ -1210,15 +1177,11 @@
             box-shadow: var(--shadow-xl);
             border: 1px solid var(--border-light);
             max-width: 700px;
-            /* Sedikit lebih lebar untuk konten yang panjang */
             width: 100%;
             max-height: 90vh;
-            /* Menggunakan 90% dari tinggi viewport */
             display: flex;
-            /* Menggunakan flexbox untuk layout header-body-footer */
             flex-direction: column;
             overflow: hidden;
-            /* Mencegah konten keluar dari radius sudut */
             transform: scale(0.95) translateY(20px);
             transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
@@ -1237,7 +1200,6 @@
             align-items: center;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             flex-shrink: 0;
-            /* Mencegah header menyusut */
         }
 
         .modal-title {
@@ -1268,23 +1230,17 @@
             transform: rotate(90deg);
         }
 
-        /* Body Modal (Area yang bisa di-scroll) */
         .modal-body {
             padding: var(--space-xl);
             overflow-y: auto;
-            /* INI KUNCINYA: scroll hanya di bagian body */
             flex: 1;
-            /* Membuat body mengisi ruang yang tersisa */
             -webkit-overflow-scrolling: touch;
-            /* Scroll lebih mulus di mobile */
         }
 
-        /* Styling untuk #simulation-content dan elemen di dalamnya */
         #simulation-content {
             animation: fadeInUp 0.5s ease-out;
         }
 
-        /* Styling untuk blok skenario/pertanyaan */
         .simulation-scenario-block {
             background-color: var(--surface-elevated);
             padding: var(--space-lg);
@@ -1307,7 +1263,6 @@
             line-height: 1.6;
         }
 
-        /* Styling untuk grup tombol pilihan */
         .simulation-options {
             display: grid;
             grid-template-columns: 1fr;
@@ -1315,7 +1270,6 @@
             margin-top: var(--space-lg);
         }
 
-        /* Tombol pilihan di dalam simulasi */
         .simulation-options .btn {
             width: 100%;
             justify-content: flex-start;
@@ -1335,9 +1289,7 @@
             box-shadow: var(--shadow-md);
         }
 
-        /* ===== STYLING KHUSUS UNTUK KESIMPULAN AKHIR ===== */
         .simulation-final-summary {
-            /* overflow-y tidak diperlukan lagi di sini, karena parent (.modal-body) sudah handle */
             padding: var(--space-lg);
             border: 2px dashed var(--success);
             border-radius: var(--radius-xl);
@@ -1356,10 +1308,8 @@
         .simulation-final-summary li {
             color: var(--text-secondary);
             font-size: 1rem;
-            /* Sedikit lebih besar agar mudah dibaca */
             line-height: 1.7;
             word-wrap: break-word;
-            /* Mencegah teks panjang merusak layout */
         }
 
         .simulation-final-summary strong {
@@ -1489,7 +1439,7 @@
                     </div>
                 </div>
 
-                {{-- Overall Summary Button --}}
+                {{-- GANTI BLOK INI --}}
                 <div class="sidebar-card">
                     <div class="sidebar-header">
                         <span>🎯</span>
@@ -1498,12 +1448,15 @@
                     <div class="sidebar-content">
                         <p
                             style="font-size: 0.875rem; color: var(--text-secondary); margin-bottom: var(--space-md); line-height: 1.5;">
-                            Setelah menyelesaikan beberapa kategori, dapatkan rekomendasi jurusan yang komprehensif
+                            Setelah menyelesaikan minimal 2 kategori, dapatkan rekomendasi jurusan komprehensif. <br>
+                            <span style="font-weight: 600; color: var(--primary);">Biaya: 5 Koin.</span>
                         </p>
                         <button id="request-overall-summary-button" class="btn btn-success" style="width: 100%;"
                             onclick="requestOverallSummary()">
-                            <span>✨</span>
-                            Lihat Rekomendasi
+                            <span style="display: flex; align-items: center; gap: 8px;">
+                                <span>✨</span>
+                                <span>Lihat Rekomendasi (🪙 5 koin)</span>
+                            </span>
                         </button>
                     </div>
                 </div>
@@ -1539,7 +1492,6 @@
                 <button onclick="closeSimulation()" class="modal-close" aria-label="Tutup Modal">&times;</button>
             </div>
 
-            {{-- Modal Body (Bagian ini yang akan scroll) --}}
             <div class="modal-body" id="simulation-modal-body">
                 {{-- Progress Bar --}}
                 <div id="simulation-progress" class="progress-container" style="display: none;">
@@ -1601,9 +1553,10 @@
         let questionsToAsk = [];
         let currentQuestionIndex = 0;
         let userAnswersForCurrentCategory = [];
-        let allUserAnswers = userProgressData;
+        let allUserAnswers = Object.assign({}, userProgressData);
         let currentSimulationSession = null;
         let simulationData = null;
+        const SIMULATION_COST = 20;
 
         // DOM Elements
         let categoriesContainer, categoriesSection, chatSection, chatHistoryElement, userInputElement, sendButton;
@@ -1891,22 +1844,54 @@
             setTimeout(() => modalOverlay.classList.add('active'), 10);
         }
 
+        {{-- Ganti fungsi lama di file Anda dengan yang ini --}}
+
         function generateModernQuestionOptions(totalQuestions, costPerQuestion) {
-            let questionCounts = (totalQuestions <= 5) ? Array.from({
-                length: totalQuestions
-            }, (_, i) => i + 1) : [3, 5, totalQuestions];
+            const MINIMUM_QUESTIONS = 3;
+            let questionCounts = [];
+
+            if (totalQuestions < MINIMUM_QUESTIONS) {
+                if (totalQuestions > 0) {
+                    questionCounts.push(totalQuestions);
+                }
+            } else {
+                questionCounts.push(MINIMUM_QUESTIONS);
+
+                if (totalQuestions > 5) {
+                    questionCounts.push(5);
+                }
+
+                if (totalQuestions > MINIMUM_QUESTIONS) {
+                    questionCounts.push(totalQuestions);
+                }
+            }
+
             questionCounts = [...new Set(questionCounts)].sort((a, b) => a - b);
+
+            if (questionCounts.length === 0) {
+                return `<p style="text-align:center; color: var(--text-muted);">Tidak ada soal yang tersedia untuk kategori ini.</p>`;
+            }
+
             return questionCounts.map(count => {
                 const cost = count * costPerQuestion;
                 const canAfford = currentUserCoins >= cost;
+                const buttonClass = canAfford ? 'btn-primary' : 'btn-outline';
+                const icon = canAfford ? '✅' : '❌';
+                const label = count === totalQuestions ? `${count} Soal (Semua)` : `${count} Soal`;
+
                 return `
-                <button onclick="startModernCategoryQuestions(${count})" class="btn ${canAfford ? 'btn-primary' : 'btn-outline'}" ${!canAfford ? 'disabled' : ''} style="padding: var(--space-lg); text-align: left; display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-sm);">
-                    <div>
-                        <div style="font-weight: 600; margin-bottom: 4px;">${count} Soal</div>
-                        <div style="font-size: 0.875rem; opacity: 0.8;">Biaya: ${cost} koin</div>
-                    </div>
-                    <div style="font-size: 1.5rem;">${canAfford ? '✅' : '❌'}</div>
-                </button>`;
+        <button 
+            onclick="startModernCategoryQuestions(${count})" 
+            class="btn ${buttonClass}" 
+            ${!canAfford ? 'disabled' : ''} 
+            style="padding: var(--space-lg); text-align: left; display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-sm);">
+            
+            <div>
+                <div style="font-weight: 600; margin-bottom: 4px;">${label}</div>
+                <div style="font-size: 0.875rem; opacity: 0.8;">Biaya: ${cost} koin</div>
+            </div>
+            <div style="font-size: 1.5rem;">${icon}</div>
+        </button>`;
             }).join('');
         }
 
@@ -2049,11 +2034,11 @@
                     setTimeout(() => {
                         const suggestionHTML = `
                         <p class="text-blue-800 mb-3" style="font-size: 0.9em;">
-                            <strong>💡 Saran:</strong> Untuk rekomendasi yang lebih akurat, coba selesaikan 2-3 kategori, atau langsung lihat rekomendasi final!
+                            <strong>💡 Saran:</strong> Untuk rekomendasi yang lebih akurat, coba selesaikan 2-3 kategori, lalu lihat rekomendasi final!
                         </p>
                         <div class="flex gap-2 justify-center">
                             <button onclick="hideChatInterface()" class="btn btn-secondary btn-sm">📚 Kategori Lain</button>
-                            <button onclick="document.getElementById('request-overall-summary-button').click(); document.getElementById('request-overall-summary-button').scrollIntoView({behavior: 'smooth'});" class="btn btn-success btn-sm">🎯 Rekomendasi Final</button>
+                            <button onclick="document.getElementById('request-overall-summary-button').click(); document.getElementById('request-overall-summary-button').scrollIntoView({behavior: 'smooth'});" class="btn btn-success btn-sm">🎯 Rekomendasi Final (🪙 5 koin)</button>
                         </div>`;
                         displayMessageInModernChat(suggestionHTML, 'bot', true);
                     }, 500);
@@ -2182,6 +2167,7 @@
         // SIMULATION FLOW
         // =================================================================
 
+        // GANTI KEDUA FUNGSI showDirectMajorSelectionButtons DENGAN YANG INI
         function showDirectMajorSelectionButtons(majors, overallSummaryId) {
             if (!majors || majors.length === 0) {
                 console.log("Tidak ada jurusan yang bisa disimulasikan.");
@@ -2198,60 +2184,33 @@
             majorSelectionDiv.style.animation = 'fadeInUp 0.5s ease-out';
 
             // Loop dari array 'majors' yang diterima langsung
-            let buttonsHtml = majors.map(major => `
+            let buttonsHtml = majors.map(major => {
+                const canAfford = currentUserCoins >= SIMULATION_COST;
+                const buttonStyle = canAfford ?
+                    "background: white; color: var(--text-primary); border: 1px solid var(--border-light);" :
+                    "background: var(--surface-elevated); color: var(--text-muted); border: 1px solid var(--border-light); cursor: not-allowed;";
+
+                return `
         <button 
             onclick="handleDirectMajorSelection('${major.replace(/'/g, "\\'")}', ${overallSummaryId})"
             class="btn w-full p-4 mb-3" 
-            style="justify-content: space-between; background: white; color: var(--text-primary); border: 1px solid var(--border-light); transition: all 0.2s ease;">
-            <span class="font-bold text-left">${major}</span>
-            <span class="text-2xl">🎓</span>
-        </button>`).join('');
+            style="justify-content: space-between; transition: all 0.2s ease; ${buttonStyle}"
+            ${!canAfford ? 'disabled' : ''}>
+            
+            <div style="text-align: left;">
+                <span class="font-bold">${major}</span>
+                <div style="font-size: 0.8rem; opacity: 0.9;">Biaya: ${SIMULATION_COST} Koin</div>
+            </div>
+            <span class="text-2xl">${canAfford ? '🎓' : '❌'}</span>
+        </button>`;
+            }).join('');
 
             majorSelectionDiv.innerHTML = `
-        <div class="text-center">
-            <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text-primary); margin-bottom: var(--space-sm);">Pilih Jurusan untuk Simulasi</h3>
-            <p style="color: var(--text-secondary); margin-bottom: var(--space-lg);">AI merekomendasikan beberapa jurusan. Pilih satu untuk merasakan pengalaman singkat di jurusan tersebut.</p>
-            <div class="grid gap-3 max-w-2xl mx-auto">${buttonsHtml}</div>
-        </div>`;
-
-            overallSummaryContainer.appendChild(majorSelectionDiv);
-            majorSelectionDiv.scrollIntoView({
-                behavior: 'smooth',
-                block: 'center'
-            });
-        }
-
-        function showDirectMajorSelectionButtons(majors, overallSummaryId) {
-            if (!majors || majors.length === 0) {
-                console.log("Tidak ada jurusan yang bisa disimulasikan.");
-                return;
-            }
-
-            const existingSelection = document.getElementById('major-selection-section');
-            if (existingSelection) existingSelection.remove();
-
-            const majorSelectionDiv = document.createElement('div');
-            majorSelectionDiv.id = 'major-selection-section';
-            majorSelectionDiv.className =
-                'mt-6 p-6 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg border-2 border-blue-200 shadow-lg';
-            majorSelectionDiv.style.animation = 'fadeInUp 0.5s ease-out';
-
-            // Loop dari array 'majors' yang diterima langsung
-            let buttonsHtml = majors.map(major => `
-        <button 
-            onclick="handleDirectMajorSelection('${major.replace(/'/g, "\\'")}', ${overallSummaryId})"
-            class="btn w-full p-4 mb-3" 
-            style="justify-content: space-between; background: white; color: var(--text-primary); border: 1px solid var(--border-light); transition: all 0.2s ease;">
-            <span class="font-bold text-left">${major}</span>
-            <span class="text-2xl">🎓</span>
-        </button>`).join('');
-
-            majorSelectionDiv.innerHTML = `
-        <div class="text-center">
-            <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text-primary); margin-bottom: var(--space-sm);">Pilih Jurusan untuk Simulasi</h3>
-            <p style="color: var(--text-secondary); margin-bottom: var(--space-lg);">AI merekomendasikan beberapa jurusan. Pilih satu untuk merasakan pengalaman singkat di jurusan tersebut.</p>
-            <div class="grid gap-3 max-w-2xl mx-auto">${buttonsHtml}</div>
-        </div>`;
+    <div class="text-center">
+        <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text-primary); margin-bottom: var(--space-sm);">Pilih Jurusan untuk Simulasi</h3>
+        <p style="color: var(--text-secondary); margin-bottom: var(--space-lg);">AI merekomendasikan beberapa jurusan. Pilih satu untuk merasakan pengalaman singkat di jurusan tersebut (biaya berlaku).</p>
+        <div class="grid gap-3 max-w-2xl mx-auto">${buttonsHtml}</div>
+    </div>`;
 
             overallSummaryContainer.appendChild(majorSelectionDiv);
             majorSelectionDiv.scrollIntoView({
@@ -2261,10 +2220,17 @@
         }
 
         function handleDirectMajorSelection(selectedMajor, overallSummaryId) {
+            if (currentUserCoins < SIMULATION_COST) {
+                alert(
+                    `Koin Anda tidak cukup untuk simulasi ini. Dibutuhkan ${SIMULATION_COST} koin, Anda memiliki ${currentUserCoins}.`
+                    );
+                return;
+            }
+
             console.log(`🎯 User selected major: ${selectedMajor}, using summary ID: ${overallSummaryId}`);
+
             const majorSelectionSection = document.getElementById('major-selection-section');
             if (majorSelectionSection) {
-                // Sembunyikan tombol pilihan agar tidak bisa diklik lagi
                 majorSelectionSection.style.display = 'none';
             }
             startSimulation(selectedMajor, overallSummaryId);
@@ -2299,8 +2265,17 @@
                 });
 
                 const data = await response.json();
+                if (data.new_coin_balance !== undefined) {
+                    updateCoinDisplay(data.new_coin_balance);
+                }
                 if (!response.ok) {
-                    throw new Error(data.error || 'Gagal memulai sesi simulasi.');
+                    alert(data.error || 'Gagal memulai sesi simulasi');
+                    const majorSelectionSection = document.getElementById('major-selection-section');
+                    if(majorSelectionSection){
+                        majorSelectionSection.style.display = 'block';
+                    }
+                    closeSimulation();
+                    return;
                 }
 
                 // Simpan ID sesi dan data langkah pertama

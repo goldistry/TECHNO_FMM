@@ -14,7 +14,7 @@
 
             @auth
                 {{-- Pengguna sudah login --}}
-                <a href="{{ route('chatbot.index') }}"
+                <a href="{{ route('ai.mate.index') }}"
                    class="flex items-center justify-center space-x-1.5 text-sm md:text-base bg-[var(--primary)] rounded-lg px-3 py-1.5 hover:bg-[var(--light-orange)] hover:text-white font-semibold transition-colors duration-200">
                     <i class="fa-solid fa-robot"></i>
                     <span>AI Mate</span>

@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Category; // Gunakan Model Category
+use App\Models\Category; 
 use App\Models\UserCategoryAssessment;
 use App\Models\UserOverallSummary;
-use App\Models\SimulationSession; // Opsional
+use App\Models\SimulationSession;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -118,10 +118,6 @@ class AIChatbotController extends Controller
         ]);
     }
 
-    // Helper methods getUserCoins, decrementUserCoins, incrementUserCoins
-    // bisa tetap ada atau langsung menggunakan $user->coins, $user->decrement('coins', $amount), $user->increment('coins', $amount)
-    // Pastikan $user->save() dipanggil jika tidak menggunakan metode increment/decrement Eloquent.
-
     private function getUserCoins($user)
     {
         return $user->coins ?? 0; // Default ke 0 jika null
@@ -145,7 +141,7 @@ class AIChatbotController extends Controller
     public function getCategorySummary(Request $request)
     {
         $user = Auth::user();
-        $categorySlug = $request->input('categoryId'); // Frontend sekarang mengirim slug
+        $categorySlug = $request->input('categoryId');
         $numQuestionsSelected = (int)$request->input('numQuestions');
         $answers = $request->input('answers');
 
@@ -187,7 +183,7 @@ class AIChatbotController extends Controller
         $prompt .= "Untuk setiap jurusan, berikan nama jurusan dan alasan mengapa cocok dengan singkat dan jelas.\n";
         $prompt .= "Format output harus dalam HTML dasar seperti contoh ini (fokus pada konten, AI akan menyesuaikan detail HTML):\n";
         $prompt .= "<strong>Analisis Rekomendasi Jurusan Berdasarkan {$category->label}</strong><br><br>\n";
-        $prompt .= "<strong>1. [Nama Jurusan 1]</strong><br> &nbsp; &nbsp;Alasan: [Alasan yang detail dan relevan dengan jawaban siswa untuk kategori ini].<br><br>\n";
+        $prompt .= "<strong>1. [Nama Jurusan 1]</strong><br> &nbsp; &nbsp;Alasan: [Alasan yang detail dan relevan dengan jawaban siswa untuk kategori ini].<br><br>&nbsp; &nbsp;\n";
         $prompt .= "<strong>2. [Nama Jurusan 2]</strong><br> &nbsp; &nbsp;Alasan: [Alasan yang detail dan relevan].<br><br>\n";
 
         try {
@@ -265,7 +261,10 @@ class AIChatbotController extends Controller
 
         Log::info("[OverallSummary:BUILD_PROMPT] [$logIdentifier] All validations passed. Starting to build the prompt for AI.");
 
-        $prompt = "Anda adalah AI konselor karir ahli. Berdasarkan data jawaban siswa berikut, berikan 2-3 rekomendasi jurusan.
+        $prompt = "Anda adalah AI konselor karir ahli dengan kemampuan analisis data yang mendalam. Peran Anda adalah menganalisis semua aspek data siswa secara holistik untuk memberikan rekomendasi yang paling seimbang dan realistis.
+
+Berdasarkan data jawaban siswa berikut, berikan 2-3 rekomendasi jurusan yang paling sesuai.
+
 JAWABAN ANDA HARUS BERUPA FORMAT JSON YANG VALID, BUKAN TEKS BIASA ATAU HTML.
 
 Struktur JSON harus seperti ini:
@@ -273,7 +272,7 @@ Struktur JSON harus seperti ini:
   \"rekomendasi\": [
     {
       \"nama_jurusan\": \"(Nama Jurusan yang Direkomendasikan)\",
-      \"alasan\": \"(Jelaskan secara komprehensif mengapa jurusan ini cocok, dengan menggabungkan analisis dari semua kategori. Gunakan tag <br> untuk baris baru jika perlu.)\",
+      \"alasan\": \"(Jelaskan secara komprehensif mengapa jurusan ini cocok. Analisis Anda HARUS menjadi sintesis dari SEMUA kategori jawaban siswa. Timbang setiap kategori, cari titik temu, dan secara eksplisit jelaskan bagaimana rekomendasi ini menyeimbangkan berbagai faktor, terutama jika ada potensi konflik antar kategori (misalnya, antara minat pribadi dengan kemampuan finansial). Alasan ini harus menjadi narasi pemersatu dari semua tingkat kecocokan di bawah. Gunakan tag <br> untuk baris baru jika perlu.)\",
       \"tingkat_kecocokan\": [
         {
           \"kategori\": \"(Nama Kategori 1, misal: Keinginan Orang Tua)\",
@@ -284,6 +283,11 @@ Struktur JSON harus seperti ini:
           \"kategori\": \"(Nama Kategori 2, misal: FINANCIAL)\",
           \"persentase\": \"(Persentase, misal: 80%)\",
           \"detail_alasan\": \"(Alasan singkat untuk persentase di kategori ini.)\"
+        },
+        {
+          \"kategori\": \"(Nama Kategori 3, dan seterusnya...)\",
+          \"persentase\": \"(Persentase)\",
+          \"detail_alasan\": \"(Alasan singkat)\"
         }
       ]
     }
@@ -297,7 +301,6 @@ Pastikan untuk mengisi semua field sesuai format. Berikut adalah data jawaban si
         $processedCategoriesCount = 0;
 
         foreach ($allUserAnswersFromRequest as $categoryLabel => $answersData) {
-            // Pastikan data yang masuk memiliki struktur yang diharapkan
             $slug = $answersData['categoryIdKey'] ?? null;
             if (!$slug) {
                 Log::warning("[OverallSummary:PROCESS_LOOP] [$logIdentifier] Skipping an item because 'categoryIdKey' is missing.", ['item_label' => $categoryLabel]);
@@ -424,16 +427,18 @@ Pastikan untuk mengisi semua field sesuai format. Berikut adalah data jawaban si
         $selectedMajor = $request->input('selected_major');
         $overallSummaryId = $request->input('overall_summary_id');
 
+        $simulationCost = 20;
+        if ($this->getUserCoins($user) < $simulationCost) {
+            return response()->json([
+                'error' => 'Koin Anda tidak cukup untuk memulai simulasi. Dibutuhkan ' . $simulationCost . ' koin.'
+            ], 402); // 402 Payment Required
+        }
+
         Log::info("[Simulation:START] [$logIdentifier] User ID: {$user->id}, Major: {$selectedMajor}");
 
         try {
             $overallSummary = UserOverallSummary::findOrFail($overallSummaryId);
-            // Ambil ringkasan profil siswa dari summary sebelumnya sebagai konteks utama
             $userContext = json_encode($overallSummary->context_data);
-
-            // =========================================================================
-            // BARU: PROMPT YANG LEBIH KOMPREHENSIF UNTUK MERANCANG SELURUH CERITA
-            // =========================================================================
             $prompt = "Anda adalah Perancang Skenario Interaktif dan Konselor Karir. Tugas Anda adalah membuat cerita simulasi singkat (3 langkah) yang relevan dan mendalam untuk seorang siswa yang mempertimbangkan jurusan '{$selectedMajor}'.
 
         PROFIL SISWA (berdasarkan jawaban assessment mereka sebelumnya):
@@ -490,13 +495,16 @@ Pastikan untuk mengisi semua field sesuai format. Berikut adalah data jawaban si
                 throw new \Exception('AI gagal merancang alur cerita yang valid.');
             }
 
-            // Buat sesi baru dan SIMPAN SELURUH CERITA
+            $this->decrementUserCoins($user, $simulationCost);
+
+            // LANGKAH 3: Buat sesi simulasi dan catat biayanya
             $session = SimulationSession::create([
                 'user_id' => $user->id,
                 'overall_summary_id' => $overallSummaryId,
                 'selected_major' => $selectedMajor,
                 'status' => 'started',
-                'simulation_data' => $simulationStory['story_arc'] // DIUBAH: Simpan seluruh cerita
+                'simulation_data' => $simulationStory['story_arc'],
+                'cost_incurred' => $simulationCost, // Catat biaya yang dikeluarkan
             ]);
 
             // Ambil langkah pertama dari cerita yang sudah disimpan
@@ -509,7 +517,7 @@ Pastikan untuk mengisi semua field sesuai format. Berikut adalah data jawaban si
                 'user_choice_value' => 'start',
             ]);
 
-            // Kirim hanya langkah pertama ke frontend
+            // LANGKAH 4: Kirim kembali saldo koin terbaru ke frontend
             return response()->json([
                 'session_id' => $session->id,
                 'current_step' => [
@@ -518,7 +526,8 @@ Pastikan untuk mengisi semua field sesuai format. Berikut adalah data jawaban si
                     'total_steps' => count($session->simulation_data),
                     'scenario_text' => $firstStep['scenario'],
                     'options' => $firstStep['options'],
-                ]
+                ],
+                'new_coin_balance' => $this->getUserCoins($user) // Kirim saldo baru
             ]);
         } catch (\Exception $e) {
             Log::error("[Simulation:START_FAILED] [$logIdentifier]", ['error' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
@@ -526,7 +535,6 @@ Pastikan untuk mengisi semua field sesuai format. Berikut adalah data jawaban si
         }
     }
 
-    // GANTI FUNGSI LAMA DENGAN YANG INI
     public function submitSimulationAnswer(Request $request)
     {
         $user = Auth::user();
@@ -588,8 +596,6 @@ Pastikan untuk mengisi semua field sesuai format. Berikut adalah data jawaban si
         }
     }
 
-    // Ganti fungsi endSimulation lama Anda dengan yang ini
-    // GANTI FUNGSI LAMA DENGAN YANG INI
     protected function endSimulation(SimulationSession $session)
     {
         // Ambil profil awal pengguna dari summary yang terkait
@@ -604,9 +610,6 @@ Pastikan untuk mengisi semua field sesuai format. Berikut adalah data jawaban si
             return null;
         })->filter()->implode("\n");
 
-        // =========================================================================
-        // BARU: PROMPT ANALISIS AKHIR YANG LEBIH HOLISTIK
-        // =========================================================================
         $finalPrompt = "Anda adalah seorang konselor karir AI yang sangat bijaksana. Berikan analisis akhir yang mendalam dari simulasi jurusan yang telah diselesaikan siswa.
 
     Jurusan yang disimulasikan: '{$session->selected_major}'.
