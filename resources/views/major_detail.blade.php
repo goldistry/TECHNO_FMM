@@ -2,6 +2,23 @@
 
 @section('title', $major['title'] . ' - Info Jurusan')
 
+@section('head_extra')
+    <style>
+        .hero-bg { 
+            background: linear-gradient(135deg, var(--light-green) 0%, var(--blue) 50%, var(--green) 100%);
+            background-size: 200% 200%;
+            animation: gradientShift 10s ease infinite alternate;
+            background-position: 0% 50%; 
+        }
+
+        select.hide-default-arrow {
+            -webkit-appearance: none; /* Safari and Chrome */
+            -moz-appearance: none;    /* Firefox */
+            appearance: none;         /* Standard */
+        }
+    </style>
+@endsection
+
 @section('content')
 <div class="hero-bg py-12 px-4 text-white text-center rounded-bl-[4rem] rounded-br-[4rem] flex flex-col items-center justify-center min-h-[250px]">
     <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold leading-tight tracking-tight mt-2 drop-shadow-lg">

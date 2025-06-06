@@ -74,6 +74,7 @@
         }
     </style>
     @yield('head')
+    @yield('head_extra') {{-- Untuk tambahan CSS khusus halaman --}}
 </head>
 
 <body class="overflow-x-hidden"> {{-- Hapus bg-neutral text-white dari sini jika tidak global --}}

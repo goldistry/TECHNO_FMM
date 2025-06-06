@@ -35,13 +35,10 @@ return [
         ],
     ],
 
-<<<<<<< HEAD
-=======
     'openrouter' => [
         'enabled' => env('OPENROUTER_ENABLED', false),
         'api_key' => env('OPENROUTER_API_KEY'),
         'model' => env('OPENROUTER_MODEL', 'nousresearch/hermes-3-llama-3.1-405b:free'),
     ],
 
->>>>>>> 0a7de8735cd3d3a6bef56ec649323bcd3b01ae43
 ];
