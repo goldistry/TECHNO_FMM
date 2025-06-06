@@ -14,10 +14,13 @@ return new class extends Migration
         Schema::create('majors', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->text('short_desc'); //desc di card
-            $table->longText('full_desc')->nullable(); //halaman detail
-            $table->string('img')->nullable();
+            $table->string('short_desc');
+            $table->text('full_desc');
+            $table->text('img');
             $table->string('video_url')->nullable();
+            $table->string('category')->nullable(); // <-- TAMBAHKAN INI
+            $table->json('required_skills')->nullable(); // <-- TAMBAHKAN INI UNTUK SKILL
+            $table->json('career_prospects')->nullable(); // <-- TAMBAHKAN INI UNTUK PROSPEK KARIR
             $table->timestamps();
         });
     }

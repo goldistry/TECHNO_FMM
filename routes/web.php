@@ -7,8 +7,8 @@ use App\Http\Controllers\TestimonialController;
 
 Route::get('/chatbot', [MajorFinderController::class, 'index'])->name('chatbot.index');
 Route::get('/', function () {return view('homepage');})->name('homepage');
-Route::get('/jurusan', [MajorController::class, 'index'])->name('majors.index');
-Route::get('/jurusan/{id}', [MajorController::class, 'show'])->name('majors.show');
+Route::get('/majors', [MajorController::class, 'index'])->name('majors.index');
+Route::get('/majors/{id}', [MajorController::class, 'show'])->name('majors.show');
 Route::get('/testimonials', [TestimonialController::class, 'index'])->name('testimonials.index');
 Route::post('/testimonials', [TestimonialController::class, 'store'])->name('testimonials.store');
 
