@@ -15,6 +15,10 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             MajorSeeder::class,
+<<<<<<< HEAD
+=======
+            CategoriesQuestionsSeeder::class,
+>>>>>>> 0a7de8735cd3d3a6bef56ec649323bcd3b01ae43
         ]);
     }
 }
