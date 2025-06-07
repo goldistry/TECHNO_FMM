@@ -47,7 +47,7 @@
     <h3 class="text-2xl font-bold mb-6 text-center text-gray-800 flex items-center justify-center group transform transition-transform duration-200 hover:scale-105" style="color: var(--green);">
         Daftar Jurusan
         @if($category && $category !== 'all')
-        <span class="ml-2 px-3 py-1 text-sm font-semibold rounded-full bg-[var(--green)] bg-opacity-15 text-[var(--green)]">
+        <span class="ml-2 px-3 py-1 text-sm font-semibold rounded-full bg-[var(--green)] bg-opacity-15 text-white">
             Kategori {{ $category }}
         </span>
         @endif
