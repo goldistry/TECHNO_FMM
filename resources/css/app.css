@@ -10,3 +10,10 @@
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
 }
+.like-btn i.fas {
+  color: var(--primary);
+}
+.reply-form.hidden {
+  display: none;
+}
+

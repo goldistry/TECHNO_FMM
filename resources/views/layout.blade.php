@@ -8,6 +8,10 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     {{-- <title>{{ $title }}</title> --}}
 
+        
+    {{-- Tambahan CSRF Token --}}
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
     {{-- Insert CDN links below --}}
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     {{-- Sweet Alert --}}
@@ -22,6 +26,7 @@
 
     {{-- Font Awesome --}}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
     {{-- Animate On Scroll (AOS) --}}
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
@@ -66,6 +71,7 @@
 </head>
 
 <body>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     @include('loader')
     <div class="min-h-screen overflow-x-hidden bg-neutral text-white mt-8">
         @include('utils.header')
