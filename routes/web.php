@@ -1,8 +1,14 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AIChatbotController;
 use App\Http\Controllers\ProfileController;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\MajorFinderController;
+use App\Http\Controllers\MajorController;
+use App\Http\Controllers\TestimonialController;
+
+require __DIR__ . '/auth.php';
+
 
 // Route::get('/', function () {
 //   return view('welcome');
@@ -20,6 +26,11 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
+    Route::get('/jurusan', [MajorController::class, 'index'])->name('majors.index');
+    Route::get('/jurusan/{id}', [MajorController::class, 'show'])->name('majors.show');
+    Route::get('/testimonials', [TestimonialController::class, 'index'])->name('testimonials.index');
+    Route::post('/testimonials', [TestimonialController::class, 'store'])->name('testimonials.store');
+    
     // Old simulation routes removed - replaced with direct major selection system
     Route::get('/ai-career-advisor', [AIChatbotController::class, 'index'])->name('ai.mate.index');
     Route::post('/ai-career-advisor/category-summary', [AIChatbotController::class, 'getCategorySummary'])->name('ai.mate.categorySummary');
@@ -29,5 +40,3 @@ Route::middleware('auth')->group(function () {
     Route::post('/simulation/start', [AIChatbotController::class, 'startSimulation'])->name('simulation.start');
     Route::post('/simulation/submit-answer', [AIChatbotController::class, 'submitSimulationAnswer'])->name('simulation.submitAnswer');
 });
-
-require __DIR__ . '/auth.php';

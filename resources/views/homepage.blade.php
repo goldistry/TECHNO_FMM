@@ -324,7 +324,7 @@
             Bersama <span class="text-[var(--primary)] font-extrabold">Find My Major</span>, ambil kendali atas pilihanmu
             dan ukir kisah sukses yang kamu impikan!
         </p>
-        <a href="{{ Route('ai.mate.index') }}"
+        <a href="{{ Route('chatbot.index') }}"
             class="bg-[var(--primary)] text-white px-10 py-4 rounded-full text-xl font-semibold hover:bg-opacity-80 transition transform hover:scale-105 shadow-xl">
             Temukan Jurusanmu Sekarang!
         </a>
