@@ -13,6 +13,17 @@
                         <span>Home</span>
                     </div>
                 </a>
+                <a href="{{ route('majors.index') }}"
+                    class="hidden sm:flex items-center justify-center space-x-1.5 text-sm md:text-base hover:text-[var(--primary)] font-semibold transition-colors duration-200 px-2 py-1">
+                    <i class="fa-solid fa-book"></i>
+                    <span>Info Jurusan</span>
+                </a>
+
+                <a href="{{ route('testimonials.index') }}"
+                    class="hidden sm:flex items-center justify-center space-x-1.5 text-sm md:text-base hover:text-[var(--primary)] font-semibold transition-colors duration-200 px-2 py-1">
+                    <i class="fa-solid fa-person"></i>
+                    <span>Community</span>
+                </a>
 
                 {{-- Pengguna sudah login --}}
                 {{-- Tautan AI Mate dengan Pengecekan Route --}}
@@ -56,18 +67,19 @@
                         </button>
                     </form>
                 </div>
-            @else
-                {{-- Pengguna adalah guest --}}
-                <a href="{{ route('login') }}"
-                    class="text-sm md:text-base font-medium hover:text-[var(--primary)] transition-colors duration-200 px-2 py-1">Log
-                    in</a>
-                @if (Route::has('register'))
-                    <a href="{{ route('register') }}"
-                        class="text-sm md:text-base bg-[var(--primary)] rounded-lg px-3 py-1.5 hover:bg-[var(--light-orange)] hover:text-white font-semibold transition-colors duration-200">
-                        Register
-                    </a>
-                @endif
             </div>
-        @endauth
+        @else
+            {{-- Pengguna adalah guest --}}
+            <a href="{{ route('login') }}"
+                class="text-sm md:text-base font-medium hover:text-[var(--primary)] transition-colors duration-200 px-2 py-1">Log
+                in</a>
+            @if (Route::has('register'))
+                <a href="{{ route('register') }}"
+                    class="text-sm md:text-base bg-[var(--primary)] rounded-lg px-3 py-1.5 hover:bg-[var(--light-orange)] hover:text-white font-semibold transition-colors duration-200">
+                    Register
+                </a>
+            @endif
+        </div>
+    @endauth
     </div>
 </nav>
