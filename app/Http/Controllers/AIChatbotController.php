@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Category; 
+use App\Models\Category;
 use App\Models\UserCategoryAssessment;
 use App\Models\UserOverallSummary;
 use App\Models\SimulationSession;
@@ -64,22 +64,31 @@ class AIChatbotController extends Controller
      * @param string $jsonString
      * @return string
      */
+    /**
+     * Membersihkan string JSON dari karakter kontrol dan masalah pengkodean.
+     *
+     * @param string $jsonString
+     * @return string
+     */
     private function sanitizeJsonString(string $jsonString): string
     {
-        // 1. Hapus karakter kontrol kecuali tab, newline, dan carriage return.
-        // Ini adalah perbaikan utama untuk error "Control character error".
-        $cleaned = preg_replace('/[[:cntrl:]&&[^\t\n\r]]/', '', $jsonString);
+        // Langkah 0: Pastikan string dikodekan dengan benar sebagai UTF-8 dan hapus karakter yang tidak valid.
+        // Ini sangat penting untuk mengatasi error "possibly incorrectly encoded".
+        $cleaned = mb_convert_encoding($jsonString, 'UTF-8', 'UTF-8');
 
-        // 2. Terkadang AI menggunakan non-breaking space (U+00A0) yang perlu diganti.
-        // str_replace lebih cepat untuk penggantian karakter tunggal yang spesifik.
+        // Langkah 1: Hapus karakter kontrol ASCII kecuali tab, newline, dan carriage return.
+        $cleaned = preg_replace('/[[:cntrl:]&&[^\t\n\r]]/', '', $cleaned);
+
+        // Langkah 2: Terkadang AI menggunakan non-breaking space (U+00A0) yang perlu diganti.
         $cleaned = str_replace("\u{00a0}", " ", $cleaned);
 
-        // 3. Pastikan tidak ada Byte Order Mark (BOM) di awal string.
+        // Langkah 3: Pastikan tidak ada Byte Order Mark (BOM) di awal string.
         if (substr($cleaned, 0, 3) === "\xEF\xBB\xBF") {
             $cleaned = substr($cleaned, 3);
         }
 
-        return $cleaned;
+        // Langkah 4: Hapus spasi kosong di awal dan akhir string.
+        return trim($cleaned);
     }
     /**
      * Mengekstrak blok JSON dari string teks mentah.
@@ -87,11 +96,19 @@ class AIChatbotController extends Controller
      * @param string $rawText
      * @return string|null
      */
+
     protected function extractJson(string $rawText): ?string
     {
-        if (preg_match('/\{[\s\S]*\}/', $rawText, $matches)) {
+        // Pertama, coba cari blok kode JSON dari markdown.
+        if (preg_match('/```json\s*(\{[\s\S]*\})\s*```/s', $rawText, $matches)) {
+            return $matches[1];
+        }
+
+        // Jika tidak ada, gunakan metode fallback untuk mencari JSON pertama.
+        if (preg_match('/\{[\s\S]*\}/s', $rawText, $matches)) {
             return $matches[0];
         }
+
         return null;
     }
 
@@ -385,27 +402,26 @@ Pastikan untuk mengisi semua field sesuai format. Berikut adalah data jawaban si
             Log::debug("[OverallSummary:API_RESPONSE] AI Raw Response:", ['raw' => $rawResponse]);
 
             // EKSTRAK BLOK JSON DARI RESPONS MENTAH MENGGUNAKAN REGEX
-            $jsonString = null;
-            if (preg_match('/\{[\s\S]*\}/', $rawResponse, $matches)) {
-                $jsonString = $matches[0];
-            }
+            $jsonString = $this->extractJson($rawResponse);
 
-            // JIKA TIDAK ADA BLOK JSON YANG DITEMUKAN, KEMBALIKAN ERROR
             if (!$jsonString) {
-                Log::error("[OverallSummary:JSON_EXTRACTION_ERROR] Could not find a JSON block in the AI response.");
-                return response()->json(['error' => 'Gagal mengekstrak data dari respons AI.'], 500);
+                Log::error("[OverallSummary:JSON_EXTRACTION_ERROR] [$logIdentifier] Tidak dapat menemukan blok JSON di dalam respons AI.", [
+                    'raw_response' => $rawResponse
+                ]);
+                return response()->json(['error' => 'Gagal mengekstrak data JSON dari respons AI.'], 500);
             }
 
             $cleanJsonString = $this->sanitizeJsonString($jsonString);
-
-            // DECODE STRING JSON YANG SUDAH BERSIH
             $summaryData = json_decode($cleanJsonString, true);
 
             // VALIDASI JIKA JSON DARI AI TIDAK VALID
             if (json_last_error() !== JSON_ERROR_NONE) {
-                Log::error("[OverallSummary:JSON_ERROR] Failed to decode JSON from AI.", ['error' => json_last_error_msg()]);
-                // Berikan respons error atau coba parsing manual sebagai fallback
-                return response()->json(['error' => 'Gagal memproses respons dari AI. Format tidak valid.'], 500);
+                // Log error dengan detail yang lebih baik untuk debugging
+                Log::error("[OverallSummary:JSON_DECODE_ERROR] [$logIdentifier] Gagal men-decode JSON dari AI.", [
+                    'error_message' => json_last_error_msg(),
+                    'json_yang_gagal' => $cleanJsonString // <-- INI SANGAT PENTING UNTUK DEBUGGING
+                ]);
+                return response()->json(['error' => 'Gagal memproses respons dari AI karena format tidak valid.'], 500);
             }
 
             Log::info("[OverallSummary:DECREMENT_COINS] ... ");
@@ -463,16 +479,16 @@ Pastikan untuk mengisi semua field sesuai format. Berikut adalah data jawaban si
         try {
             $overallSummary = UserOverallSummary::findOrFail($overallSummaryId);
             $userContext = json_encode($overallSummary->context_data);
-            $prompt = "Anda adalah Perancang Skenario Interaktif dan Konselor Karir. Tugas Anda adalah membuat cerita simulasi singkat (3 langkah) yang relevan dan mendalam untuk seorang siswa yang mempertimbangkan jurusan '{$selectedMajor}'.
+            $prompt = "Anda adalah Perancang Skenario Interaktif dan Konselor Karir. Tugas Anda adalah membuat cerita simulasi singkat (5 langkah) yang relevan dan mendalam untuk seorang siswa yang mempertimbangkan jurusan '{$selectedMajor}'.
 
         PROFIL SISWA (berdasarkan jawaban assessment mereka sebelumnya):
         {$userContext}
 
         INSTRUKSI UTAMA:
-        1.  **Buat Cerita Koheren:** Rancang sebuah narasi 3 langkah yang memiliki awal, tantangan inti di tengah, dan sebuah resolusi di akhir. Cerita harus mencerminkan satu aspek kunci atau proyek realistis yang mungkin dihadapi mahasiswa di jurusan '{$selectedMajor}'.
+        1.  **Buat Cerita Koheren:** Rancang sebuah narasi 5 langkah yang memiliki awal, tantangan inti di tengah, dan sebuah resolusi di akhir. Cerita harus mencerminkan satu aspek kunci atau proyek realistis yang mungkin dihadapi mahasiswa di jurusan '{$selectedMajor}'.
         2.  **Personalisasi Konten:** Gunakan 'PROFIL SISWA' di atas untuk membuat skenario yang relevan. Contoh: jika siswa menunjukkan minat pada 'analisis data', tantangan bisa berupa studi kasus. Jika minat pada 'kreativitas', tantangan bisa berupa tugas desain.
         3.  **Pilihan yang Bermakna:** Setiap pilihan yang Anda berikan harus merefleksikan pendekatan yang berbeda (misalnya: pendekatan analitis vs. kreatif, kolaboratif vs. individual).
-        4.  **Format Output (WAJIB JSON):** Jawaban Anda HARUS berupa satu blok JSON tunggal yang berisi array dari 3 langkah. JANGAN memberikan teks pembuka atau penutup di luar JSON.
+        4.  **Format Output (WAJIB JSON):** Jawaban Anda HARUS berupa satu blok JSON tunggal yang berisi array dari 5 langkah. JANGAN memberikan teks pembuka atau penutup di luar JSON.
 
         Contoh Struktur JSON yang Diinginkan:
         ```json
@@ -514,9 +530,20 @@ Pastikan untuk mengisi semua field sesuai format. Berikut adalah data jawaban si
             $simulationStory = json_decode($jsonString, true);
 
             // Validasi respons dari AI
-            if (json_last_error() !== JSON_ERROR_NONE || !isset($simulationStory['story_arc']) || count($simulationStory['story_arc']) < 3) {
-                Log::error("[Simulation:START_INVALID_STORY]", ['raw_response' => $rawResponse]);
-                throw new \Exception('AI gagal merancang alur cerita yang valid.');
+            if (!$jsonString) {
+                Log::error("[Simulation:JSON_EXTRACTION_ERROR] [$logIdentifier] Tidak dapat menemukan blok JSON.", ['raw_response' => $rawResponse]);
+                throw new \Exception('AI gagal mengembalikan blok JSON yang valid.');
+            }
+            $cleanJsonString = $this->sanitizeJsonString($jsonString);
+            $simulationStory = json_decode($cleanJsonString, true);
+
+            if (json_last_error() !== JSON_ERROR_NONE || !isset($simulationStory['story_arc'])) {
+                Log::error("[Simulation:START_INVALID_STORY] [$logIdentifier]", [
+                    'json_error' => json_last_error_msg(),
+                    'raw_response' => $rawResponse,
+                    'cleaned_json' => $cleanJsonString
+                ]);
+                throw new \Exception('AI gagal merancang alur cerita yang valid atau format JSON salah.');
             }
 
             $this->decrementUserCoins($user, $simulationCost);
