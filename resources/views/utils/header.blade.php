@@ -14,15 +14,20 @@
                     </div>
                 </a>
                 <a href="{{ route('majors.index') }}"
-                    class="hidden sm:flex items-center justify-center space-x-1.5 text-sm md:text-base hover:text-[var(--primary)] font-semibold transition-colors duration-200 px-2 py-1">
-                    <i class="fa-solid fa-book"></i>
-                    <span>Info Jurusan</span>
+                    class="hidden sm:flex items-center justify-center space-x-1.5 text-sm md:text-base hover:text-[var(--primary)] font-semibold transition-colors duration-200 px-2 py-1 {{ request()->is('jurusan', 'jurusan/*') ? 'text-[var(--primary)]' : 'hover:text-[var(--primary)]' }}">
+                    <div class="flex space-x-2 items-center justify-center">
+                        <i class="fa-solid fa-book"></i>
+                        <span>Info Jurusan</span>
+                    </div>
+
                 </a>
 
                 <a href="{{ route('testimonials.index') }}"
-                    class="hidden sm:flex items-center justify-center space-x-1.5 text-sm md:text-base hover:text-[var(--primary)] font-semibold transition-colors duration-200 px-2 py-1">
-                    <i class="fa-solid fa-person"></i>
-                    <span>Community</span>
+                    class="hidden sm:flex items-center justify-center space-x-1.5 text-sm md:text-base hover:text-[var(--primary)] font-semibold transition-colors duration-200 px-2 py-1 {{ request()->is('testimonials', 'testimonials/*') ? 'text-[var(--primary)]' : 'hover:text-[var(--primary)]' }}">
+                    <div class="flex space-x-2 items-center justify-center">
+                        <i class="fa-solid fa-person"></i>
+                        <span>Community</span>
+                    </div>
                 </a>
 
                 {{-- Pengguna sudah login --}}
