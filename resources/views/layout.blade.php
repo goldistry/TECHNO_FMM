@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <link rel="icon" href="{{ asset('assets/logo2425-white.png') }}">
+    <link rel="icon" href="{{ asset('logo2.png') }}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="csrf-token" content="{{ csrf_token() }}"> {{-- Penting untuk AJAX --}}
@@ -124,21 +124,6 @@
             adjustMainContentPadding();
             window.addEventListener('resize', adjustMainContentPadding);
 
-            // Navbar Scroll Effect
-            // window.addEventListener('scroll', function() {
-            //     if (navbar) {
-            //         if (window.scrollY > 20) {
-            //             navbar.classList.add('navbar-scrolled');
-            //             // Jika navbar awal Anda BUKAN var(--blue-dark) dan ingin kembali ke warna itu
-            //             // atau jika var(--blue-dark) tidak ter-override oleh !important
-            //             // Anda bisa set style langsung jika perlu:
-            //             // navbar.style.backgroundColor = 'var(--green)';
-            //         } else {
-            //             navbar.classList.remove('navbar-scrolled');
-            //             // navbar.style.backgroundColor = 'var(--blue-dark)';
-            //         }
-            //     }
-            // });
         });
 
         // Profile Dropdown Toggle (jika ada di utils.header)
