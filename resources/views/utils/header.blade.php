@@ -22,11 +22,11 @@
 
                 </a>
 
-                <a href="{{ route('testimonials.index') }}"
-                    class="hidden sm:flex items-center justify-center space-x-1.5 text-sm md:text-base hover:text-[var(--primary)] font-semibold transition-colors duration-200 px-2 py-1 {{ request()->is('testimonials', 'testimonials/*') ? 'text-[var(--primary)]' : 'hover:text-[var(--primary)]' }}">
+                <a href="{{ route('forum.index') }}"
+                    class="hidden sm:flex items-center justify-center space-x-1.5 text-sm md:text-base hover:text-[var(--primary)] font-semibold transition-colors duration-200 px-2 py-1 {{ request()->is('forum','forum/*') ? 'text-[var(--primary)]' : 'hover:text-[var(--primary)]' }}">
                     <div class="flex space-x-2 items-center justify-center">
-                        <i class="fa-solid fa-person"></i>
-                        <span>Community</span>
+                        <i class="fa-solid fa-comments"></i>
+                        <span>Open Forum</span>
                     </div>
                 </a>
 

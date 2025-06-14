@@ -6,7 +6,9 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\MajorFinderController;
 use App\Http\Controllers\MajorController;
 use App\Http\Controllers\TestimonialController;
-
+use App\Http\Controllers\Forum\DiscussionController;
+use App\Http\Controllers\Forum\CommentController;
+use App\Http\Controllers\Forum\LikeController;
 require __DIR__ . '/auth.php';
 
 
@@ -19,6 +21,23 @@ Route::get('/majors', [MajorController::class, 'index'])->name('majors.index');
 Route::get('/majors/{id}', [MajorController::class, 'show'])->name('majors.show');
 Route::get('/testimonials', [TestimonialController::class, 'index'])->name('testimonials.index');
 Route::post('/testimonials', [TestimonialController::class, 'store'])->name('testimonials.store');
+
+
+Route::prefix('forum')->name('forum.')->group(function() {
+    Route::get('/', [DiscussionController::class, 'index'])
+         ->name('index');
+    Route::get('/{discussion}', [DiscussionController::class, 'show'])
+         ->name('show');
+
+    Route::post('/', [DiscussionController::class, 'store'])
+         ->name('store');
+    Route::post('/{discussion}/comments', [CommentController::class, 'store'])
+         ->name('comments.store');
+    Route::post('/like/{type}/{id}', [LikeController::class, 'toggle'])
+         ->where('type', 'discussion|comment')
+         ->name('like');
+});
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -38,4 +57,11 @@ Route::middleware('auth')->group(function () {
     // Routes untuk Simulasi (jika diimplementasikan)
     Route::post('/simulation/start', [AIChatbotController::class, 'startSimulation'])->name('simulation.start');
     Route::post('/simulation/submit-answer', [AIChatbotController::class, 'submitSimulationAnswer'])->name('simulation.submitAnswer');
-});
+
+
+    
+}
+
+)
+
+;
